@@ -82,7 +82,7 @@ public class BotController {
 			} else {
 				/*************** send Image ******************/
 				TextMessage textMessage = new TextMessage(
-						"This phone number is already registered. Please enter a different number.");
+						"This phone number is already registered. Please enter a different number or type 'hello' to start again");
 
 				PushMessage pushMessage = new PushMessage(userId, textMessage);
 
