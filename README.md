@@ -1,1 +1,1 @@
-# MTHRBot
+# MTBot
