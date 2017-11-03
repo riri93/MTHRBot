@@ -52,6 +52,7 @@ public class BotController {
 		Map<String, Object> json = new HashMap<String, Object>();
 
 		JSONObject jsonResult = new JSONObject(obj);
+		System.out.println("jsonResult : " + jsonResult);
 
 		JSONObject rsl = jsonResult.getJSONObject("originalRequest");
 		JSONObject data = rsl.getJSONObject("data");
