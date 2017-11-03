@@ -110,7 +110,14 @@ public class BotController {
 			candidateToRegister.setjLPT(jLPT);
 		}
 
-		candidateRepository.saveAndFlush(candidateToRegister);
+		if (candidateToRegister.getjLPT() != null && !candidateToRegister.getjLPT().equals("")
+				&& candidateToRegister.getUserName() != null && !candidateToRegister.getUserName().equals("")
+				&& candidateToRegister.getPhone() != null && !candidateToRegister.getPhone().equals("")
+				&& candidateToRegister.getBirthday() != null && candidateToRegister.getDurationInJapan() != null
+				&& !candidateToRegister.getDurationInJapan().equals("")) {
+
+			candidateRepository.saveAndFlush(candidateToRegister);
+		}
 
 		// Registered candidate
 		if (intentName.equals("phone-number-registered-user")) {
