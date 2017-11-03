@@ -85,7 +85,7 @@ public class BotController {
 		if (intentName.equals("birth-date")) {
 			System.out.println("birth date : " + parameters.getString("date"));
 
-			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 			String date = parameters.getString("date");
 			Date birthday;
 			try {
