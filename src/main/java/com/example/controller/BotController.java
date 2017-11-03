@@ -27,6 +27,7 @@ import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.action.URIAction;
 import com.linecorp.bot.model.message.TemplateMessage;
+import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.message.template.CarouselColumn;
 import com.linecorp.bot.model.message.template.CarouselTemplate;
 import com.linecorp.bot.model.response.BotApiResponse;
@@ -52,7 +53,6 @@ public class BotController {
 		Map<String, Object> json = new HashMap<String, Object>();
 
 		JSONObject jsonResult = new JSONObject(obj);
-		System.out.println("jsonResult : " + jsonResult);
 
 		JSONObject rsl = jsonResult.getJSONObject("originalRequest");
 		JSONObject data = rsl.getJSONObject("data");
@@ -68,26 +68,31 @@ public class BotController {
 		JSONObject fulfillment = result.getJSONObject("fulfillment");
 		String speech = fulfillment.getString("speech");
 
-		System.out.println("intentName : " + intentName);
-		System.out.println("userId : " + userId);
-
 		// Not a registered candidate
 
 		if (intentName.equals("name-user")) {
-			System.out.println("user name : " + customerMessage);
 			String userName = customerMessage;
 			candidateToRegister.setUserName(userName);
 		}
 
 		if (intentName.equals("phone-number")) {
-			System.out.println("phone number : " + parameters.getString("phone-number"));
 			String phone = parameters.getString("phone-number");
-			candidateToRegister.setPhone(phone);
+			if (candidateRepository.findByPhone(phone) == null) {
+				candidateToRegister.setPhone(phone);
+			} else {
+				/*************** send Image ******************/
+				TextMessage textMessage = new TextMessage(
+						"This phone number is already registered. Please enter a different number.");
+
+				PushMessage pushMessage = new PushMessage(userId, textMessage);
+
+				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+						.pushMessage(pushMessage).execute();
+				System.out.println(response.code() + " --------- " + response.message());
+			}
 		}
 
 		if (intentName.equals("birth-date")) {
-			System.out.println("birth date : " + parameters.getString("date"));
-
 			SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 			String date = parameters.getString("date");
 			Date birthday;
@@ -97,18 +102,14 @@ public class BotController {
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
-
 		}
 
 		if (intentName.equals("time-in-japan")) {
-			System.out.println("time in japan : " + parameters.getString("number"));
-
 			String durationInJapan = parameters.getString("number");
 			candidateToRegister.setDurationInJapan(durationInJapan);
 		}
 
 		if (intentName.equals("JLPT-level")) {
-			System.out.println("JLPT-level : " + parameters.getString("JLPT-level"));
 			String jLPT = parameters.getString("JLPT-level");
 			candidateToRegister.setjLPT(jLPT);
 		}
@@ -120,7 +121,7 @@ public class BotController {
 				&& !candidateToRegister.getDurationInJapan().equals("")) {
 
 			System.out.println("saving....");
-
+			candidateToRegister.setUserLineId(userId);
 			candidateRepository.saveAndFlush(candidateToRegister);
 			candidateToRegister = new Candidate();
 		}
