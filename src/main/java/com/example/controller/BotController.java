@@ -120,8 +120,8 @@ public class BotController {
 		}
 
 		if (intentName.equals("password")) {
-			System.out.println("password : " + parameters.getString("password"));
-			String password = parameters.getString("password");
+			System.out.println("password : " + customerMessage);
+			String password = customerMessage;
 			candidateToRegister.setPassword(password);
 		}
 
