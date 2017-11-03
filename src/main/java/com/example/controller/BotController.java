@@ -116,6 +116,8 @@ public class BotController {
 				&& candidateToRegister.getBirthday() != null && candidateToRegister.getDurationInJapan() != null
 				&& !candidateToRegister.getDurationInJapan().equals("")) {
 
+			System.out.println("saving....");
+
 			candidateRepository.saveAndFlush(candidateToRegister);
 		}
 
