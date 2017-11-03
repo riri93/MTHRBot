@@ -140,7 +140,7 @@ public class BotController {
 				System.out.println("account not registered...");
 
 				TextMessage textMessage = new TextMessage(
-						"This phone number is not registered. Please type 'hello' to start again");
+						"This phone number is not registered. Please enter a different number or type 'hello' to start again");
 
 				PushMessage pushMessage = new PushMessage(userId, textMessage);
 
