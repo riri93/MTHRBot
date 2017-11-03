@@ -135,7 +135,30 @@ public class BotController {
 
 		// Registered candidate
 		if (intentName.equals("phone-number-registered-user")) {
-			System.out.println("phone number registered user : " + parameters.getString("phone-number"));
+			String phone = parameters.getString("phone-number");
+			if (candidateRepository.findByPhone(phone) == null) {
+				System.out.println("account not registered...");
+
+				TextMessage textMessage = new TextMessage(
+						"This phone number is not registered. Please type 'hello' to start again");
+
+				PushMessage pushMessage = new PushMessage(userId, textMessage);
+
+				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+						.pushMessage(pushMessage).execute();
+
+			} else {
+				System.out.println("account registered...");
+
+				TextMessage textMessage = new TextMessage("Do you want to search for a job?");
+
+				PushMessage pushMessage = new PushMessage(userId, textMessage);
+
+				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+						.pushMessage(pushMessage).execute();
+				System.out.println(response.code() + " --------- " + response.message());
+			}
+
 		}
 
 		return json;
