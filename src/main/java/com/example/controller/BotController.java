@@ -1,21 +1,26 @@
 package com.example.controller;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.util.NumberUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.entity.Candidate;
 import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.action.URIAction;
@@ -57,24 +62,52 @@ public class BotController {
 
 		System.out.println("intentName : " + intentName);
 
+		// Not a registered candidate
+		Candidate candidateToRegister = new Candidate();
+
 		if (intentName.equals("name-user")) {
 			System.out.println("user name : " + customerMessage);
+			String userName = customerMessage;
+			candidateToRegister.setUserName(userName);
 		}
 
 		if (intentName.equals("phone-number")) {
 			System.out.println("phone number : " + parameters.getString("phone-number"));
+			String phone = parameters.getString("phone-number");
+			candidateToRegister.setPhone(phone);
 		}
 
 		if (intentName.equals("birth-date")) {
 			System.out.println("birth date : " + parameters.getString("date"));
+
+			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			String date = parameters.getString("date");
+			Date birthday;
+			try {
+				birthday = formatter.parse(date);
+				candidateToRegister.setBirthday(birthday);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+
 		}
 
 		if (intentName.equals("time-in-japan")) {
 			System.out.println("time in japan : " + parameters.getString("number"));
+
+			String durationInJapan = parameters.getString("number");
+			candidateToRegister.setDurationInJapan(durationInJapan);
 		}
 
 		if (intentName.equals("JLPT-level")) {
 			System.out.println("JLPT-level : " + parameters.getString("JLPT-level"));
+			String jLPT = parameters.getString("JLPT-level");
+			candidateToRegister.setjLPT(jLPT);
+		}
+
+		// Registered candidate
+		if (intentName.equals("phone-number-registered-user")) {
+			System.out.println("phone number registered user : " + parameters.getString("phone-number"));
 		}
 
 		return json;
