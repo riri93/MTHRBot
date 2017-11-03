@@ -55,6 +55,28 @@ public class BotController {
 		JSONObject fulfillment = result.getJSONObject("fulfillment");
 		String speech = fulfillment.getString("speech");
 
+		System.out.println("intentName : " + intentName);
+
+		if (intentName.equals("name-user")) {
+			System.out.println("user name : " + customerMessage);
+		}
+
+		if (intentName.equals("phone-number")) {
+			System.out.println("phone number : " + parameters.getString("phone-number"));
+		}
+
+		if (intentName.equals("birth-date")) {
+			System.out.println("birth date : " + parameters.getString("date"));
+		}
+
+		if (intentName.equals("time-in-japan")) {
+			System.out.println("time in japan : " + parameters.getString("number"));
+		}
+
+		if (intentName.equals("JLPT-level")) {
+			System.out.println("JLPT-level : " + parameters.getString("JLPT-level"));
+		}
+
 		return json;
 
 	}
