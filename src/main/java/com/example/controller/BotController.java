@@ -157,6 +157,12 @@ public class BotController {
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 						.pushMessage(pushMessage).execute();
 				System.out.println(response.code() + " --------- " + response.message());
+
+				Candidate candidate = new Candidate();
+				candidate = candidateRepository.findByPhone(phone);
+				candidate.setUserLineId(userId);
+				candidateRepository.saveAndFlush(candidate);
+
 			}
 
 		}
