@@ -36,6 +36,8 @@ import retrofit2.Response;
 @RestController
 public class BotController {
 
+	private Candidate candidateToRegister = new Candidate();
+
 	@Autowired
 	CandidateRepository candidateRepository;
 
@@ -66,9 +68,9 @@ public class BotController {
 		String speech = fulfillment.getString("speech");
 
 		System.out.println("intentName : " + intentName);
+		System.out.println("userId : " + userId);
 
 		// Not a registered candidate
-		Candidate candidateToRegister = new Candidate();
 
 		if (intentName.equals("name-user")) {
 			System.out.println("user name : " + customerMessage);
@@ -119,6 +121,7 @@ public class BotController {
 			System.out.println("saving....");
 
 			candidateRepository.saveAndFlush(candidateToRegister);
+			candidateToRegister = new Candidate();
 		}
 
 		// Registered candidate
