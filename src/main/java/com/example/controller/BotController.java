@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.NumberUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entity.Candidate;
+import com.example.repository.CandidateRepository;
 import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.action.URIAction;
@@ -33,6 +35,9 @@ import retrofit2.Response;
 
 @RestController
 public class BotController {
+
+	@Autowired
+	CandidateRepository candidateRepository;
 
 	@RequestMapping(value = "/webhook", method = RequestMethod.POST)
 	private @ResponseBody Map<String, Object> webhook(@RequestBody Map<String, Object> obj)
@@ -104,6 +109,8 @@ public class BotController {
 			String jLPT = parameters.getString("JLPT-level");
 			candidateToRegister.setjLPT(jLPT);
 		}
+
+		candidateRepository.saveAndFlush(candidateToRegister);
 
 		// Registered candidate
 		if (intentName.equals("phone-number-registered-user")) {
