@@ -79,8 +79,15 @@ public class BotController {
 			String phone = parameters.getString("phone-number");
 			if (candidateRepository.findByPhone(phone) == null) {
 				candidateToRegister.setPhone(phone);
+
+				TextMessage textMessage = new TextMessage("What is your birth date?");
+
+				PushMessage pushMessage = new PushMessage(userId, textMessage);
+
+				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+						.pushMessage(pushMessage).execute();
+
 			} else {
-				/*************** send Image ******************/
 				TextMessage textMessage = new TextMessage(
 						"This phone number is already registered. Please enter a different number or type 'hello' to start again");
 
