@@ -113,11 +113,25 @@ public class BotController {
 			candidateToRegister.setjLPT(jLPT);
 		}
 
+		if (intentName.equals("email")) {
+			System.out.println("email : " + parameters.getString("email"));
+			String email = parameters.getString("email");
+			candidateToRegister.setEmail(email);
+		}
+
+		if (intentName.equals("password")) {
+			System.out.println("password : " + parameters.getString("password"));
+			String password = parameters.getString("password");
+			candidateToRegister.setPassword(password);
+		}
+
 		if (candidateToRegister.getjLPT() != null && !candidateToRegister.getjLPT().equals("")
 				&& candidateToRegister.getUserName() != null && !candidateToRegister.getUserName().equals("")
 				&& candidateToRegister.getPhone() != null && !candidateToRegister.getPhone().equals("")
 				&& candidateToRegister.getBirthday() != null && candidateToRegister.getDurationInJapan() != null
-				&& !candidateToRegister.getDurationInJapan().equals("")) {
+				&& !candidateToRegister.getDurationInJapan().equals("") && candidateToRegister.getEmail() != null
+				&& !candidateToRegister.getEmail().equals("") && candidateToRegister.getPassword() != null
+				&& !candidateToRegister.getPassword().equals("")) {
 
 			System.out.println("saving....");
 
