@@ -84,6 +84,8 @@ public class BotController {
 			shop.setOpenTime("every day");
 
 			shopRepository.saveAndFlush(shop);
+			shopRepository.flush();
+			System.out.println("shop : " + shop.getIdShop());
 
 			shop = shopRepository.getOne(1);
 
