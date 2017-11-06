@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entity.Job;
+import com.example.entity.Shop;
 import com.example.repository.CandidateRepository;
 import com.example.repository.JobRepository;
+import com.example.repository.ShopRepository;
 import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.action.URIAction;
@@ -39,6 +41,9 @@ public class BotController {
 
 	@Autowired
 	JobRepository jobRepository;
+
+	@Autowired
+	ShopRepository shopRepository;
 
 	@RequestMapping(value = "/webhook", method = RequestMethod.POST)
 	private @ResponseBody Map<String, Object> webhook(@RequestBody Map<String, Object> obj)
@@ -65,6 +70,67 @@ public class BotController {
 		JSONObject parameters = result.getJSONObject("parameters");
 		JSONObject fulfillment = result.getJSONObject("fulfillment");
 		String speech = fulfillment.getString("speech");
+
+		if (intentName.equals("add job")) {
+
+			Shop shop1 = new Shop();
+
+			shop1.setAddressShop("tokyo hizusikio");
+			shop1.setCategory("category");
+			shop1.setChannelToken(channelToken);
+			shop1.setDescriptionShop("description shop 1");
+			shop1.setNameShop("shop1");
+			shop1.setNearestStation("Ōsaka Abenobashi Station");
+			shop1.setOpenTime("every day");
+
+			shopRepository.save(shop1);
+
+			// Job job1 = new Job();
+			// Job job2 = new Job();
+			// Job job3 = new Job();
+			// Job job4 = new Job();
+			// Job job5 = new Job();
+			//
+			// job1.setJobDetails("jobbbbbbbbbb1");
+			// job1.setNumberStaffNeeded(44);
+			// job1.setPositionCategory("pos category 1");
+			// job1.setPositionName("position 1");
+			// job1.setSalary(4541);
+			// job1.setSalaryDetail("salary1");
+			// job1.setShop(shop);
+			//
+			// job2.setJobDetails("jobbbbbbbbbb2");
+			// job2.setNumberStaffNeeded(25);
+			// job2.setPositionCategory("pos category 2");
+			// job2.setPositionName("position 2");
+			// job2.setSalary(4541);
+			// job2.setSalaryDetail("salary2");
+			// job2.setShop(shop);
+			//
+			// job3.setJobDetails("jobbbbbbbbbb3");
+			// job3.setNumberStaffNeeded(47);
+			// job3.setPositionCategory("pos category 3");
+			// job3.setPositionName("position 3");
+			// job3.setSalary(4541);
+			// job3.setSalaryDetail("salary3");
+			// job3.setShop(shop);
+			//
+			// job4.setJobDetails("jobbbbbbbbbb4");
+			// job4.setNumberStaffNeeded(36);
+			// job4.setPositionCategory("pos category 4");
+			// job4.setPositionName("position 4");
+			// job4.setSalary(4541);
+			// job4.setSalaryDetail("salary4");
+			// job4.setShop(shop);
+			//
+			// job5.setJobDetails("jobbbbbbbbbb5");
+			// job5.setNumberStaffNeeded(85);
+			// job5.setPositionCategory("pos category 5");
+			// job5.setPositionName("position 5");
+			// job5.setSalary(4541);
+			// job5.setSalaryDetail("salary5");
+			// job5.setShop(shop);
+		}
 
 		if (intentName.equals("search for a job")) {
 			String address = customerMessage;
