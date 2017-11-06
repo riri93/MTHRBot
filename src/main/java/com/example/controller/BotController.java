@@ -132,6 +132,13 @@ public class BotController {
 			job5.setSalary(4541);
 			job5.setSalaryDetail("salary5");
 			job5.setShop(shop);
+
+			jobRepository.saveAndFlush(job1);
+			jobRepository.saveAndFlush(job2);
+			jobRepository.saveAndFlush(job3);
+			jobRepository.saveAndFlush(job4);
+			jobRepository.saveAndFlush(job5);
+
 		}
 
 		if (intentName.equals("search for a job")) {
