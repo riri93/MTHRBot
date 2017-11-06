@@ -1,28 +1,25 @@
 package com.example.controller;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.NumberUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.entity.Candidate;
+import com.example.entity.Job;
 import com.example.repository.CandidateRepository;
+import com.example.repository.JobRepository;
 import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.action.URIAction;
@@ -37,10 +34,11 @@ import retrofit2.Response;
 @RestController
 public class BotController {
 
-	private Candidate candidateToRegister = new Candidate();
-
 	@Autowired
 	CandidateRepository candidateRepository;
+
+	@Autowired
+	JobRepository jobRepository;
 
 	@RequestMapping(value = "/webhook", method = RequestMethod.POST)
 	private @ResponseBody Map<String, Object> webhook(@RequestBody Map<String, Object> obj)
@@ -68,107 +66,77 @@ public class BotController {
 		JSONObject fulfillment = result.getJSONObject("fulfillment");
 		String speech = fulfillment.getString("speech");
 
-		// Not a registered candidate
+		if (intentName.equals("search for a job")) {
+			String address = customerMessage;
+			List<Job> jobs = new ArrayList<>();
+			List<Job> jobsToDisplay = new ArrayList<>();
 
-		if (intentName.equals("name-user")) {
-			String userName = customerMessage;
-			candidateToRegister.setUserName(userName);
-		}
+			jobs = jobRepository.findByAreaOrStation(address);
 
-		if (intentName.equals("phone-number")) {
-			String phone = parameters.getString("phone-number");
-			if (candidateRepository.findByPhone(phone) == null) {
-				candidateToRegister.setPhone(phone);
+			if (jobs != null) {
+				if (jobs.size() <= 5) {
+					jobsToDisplay.addAll(jobs);
+				} else {
+					for (int i = 0; i < 5; i++) {
+						jobsToDisplay.add(jobs.get(i));
+					}
+				}
 
-				TextMessage textMessage = new TextMessage("What is your birth date?");
-
-				PushMessage pushMessage = new PushMessage(userId, textMessage);
-
-				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
-						.pushMessage(pushMessage).execute();
-
+				carouselForUser(userId, channelToken, jobsToDisplay);
 			} else {
-				TextMessage textMessage = new TextMessage(
-						"This phone number is already registered. Please enter a different number or type 'hello' to start again");
+
+				TextMessage textMessage = new TextMessage("No jobs found");
 
 				PushMessage pushMessage = new PushMessage(userId, textMessage);
 
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 						.pushMessage(pushMessage).execute();
-				System.out.println(response.code() + " --------- " + response.message());
 			}
-		}
-
-		if (intentName.equals("birth-date")) {
-			SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-			String date = parameters.getString("date");
-			Date birthday;
-			try {
-				birthday = formatter.parse(date);
-				candidateToRegister.setBirthday(birthday);
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-		}
-
-		if (intentName.equals("time-in-japan")) {
-			String durationInJapan = parameters.getString("number");
-			candidateToRegister.setDurationInJapan(durationInJapan);
-		}
-
-		if (intentName.equals("JLPT-level")) {
-			String jLPT = parameters.getString("JLPT-level");
-			candidateToRegister.setjLPT(jLPT);
-		}
-
-		if (candidateToRegister.getjLPT() != null && !candidateToRegister.getjLPT().equals("")
-				&& candidateToRegister.getUserName() != null && !candidateToRegister.getUserName().equals("")
-				&& candidateToRegister.getPhone() != null && !candidateToRegister.getPhone().equals("")
-				&& candidateToRegister.getBirthday() != null && candidateToRegister.getDurationInJapan() != null
-				&& !candidateToRegister.getDurationInJapan().equals("")) {
-
-			System.out.println("saving....");
-			candidateToRegister.setUserLineId(userId);
-			candidateRepository.saveAndFlush(candidateToRegister);
-			candidateToRegister = new Candidate();
-		}
-
-		// Registered candidate
-		if (intentName.equals("phone-number-registered-user")) {
-			String phone = parameters.getString("phone-number");
-			if (candidateRepository.findByPhone(phone) == null) {
-				System.out.println("account not registered...");
-
-				TextMessage textMessage = new TextMessage(
-						"This phone number is not registered. Please enter a different number or type 'hello' to start again");
-
-				PushMessage pushMessage = new PushMessage(userId, textMessage);
-
-				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
-						.pushMessage(pushMessage).execute();
-
-			} else {
-				System.out.println("account registered...");
-
-				TextMessage textMessage = new TextMessage("Do you want to search for a job?");
-
-				PushMessage pushMessage = new PushMessage(userId, textMessage);
-
-				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
-						.pushMessage(pushMessage).execute();
-				System.out.println(response.code() + " --------- " + response.message());
-
-				Candidate candidate = new Candidate();
-				candidate = candidateRepository.findByPhone(phone);
-				candidate.setUserLineId(userId);
-				candidateRepository.saveAndFlush(candidate);
-
-			}
-
 		}
 
 		return json;
+	}
 
+	/**
+	 * Method for send carousel template message to use
+	 * 
+	 * @param userId
+	 * @param lChannelAccessToken
+	 * @param nameSatff1
+	 * @param nameSatff2
+	 * @param poster1_url
+	 * @param poster2_url
+	 * @throws IOException
+	 */
+	private void carouselForUser(String userId, String lChannelAccessToken, List<Job> jobsToDisplay)
+			throws IOException {
+
+		java.util.List<CarouselColumn> columns = new ArrayList<>();
+
+		for (Job job : jobsToDisplay) {
+			// Document doc = Jsoup.connect(link).get();
+			// String title = doc.getElementsByClass("tit_articleName").get(0).text();
+			// String img = doc.getElementsByClass("max-width-260").get(0).attr("abs:src");
+			String img = "https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png";
+			String title = job.getPositionName();
+			String link = "http://www.offerme.com/jobs/" + job.getIdJob();
+			CarouselColumn column = new CarouselColumn(img, title, "Click check to apply",
+					Arrays.asList(new URIAction("check", link)));
+			columns.add(column);
+		}
+
+		CarouselTemplate carouselTemplate = new CarouselTemplate(columns);
+
+		TemplateMessage templateMessage = new TemplateMessage("Your search result", carouselTemplate);
+		PushMessage pushMessage = new PushMessage(userId, templateMessage);
+		try {
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(lChannelAccessToken).build()
+					.pushMessage(pushMessage).execute();
+			System.out.println(response.code() + " " + response.message());
+		} catch (IOException e) {
+			System.out.println("Exception is raised ");
+			e.printStackTrace();
+		}
 	}
 
 }
