@@ -75,15 +75,15 @@ public class BotController {
 
 			Shop shop = new Shop();
 
-			// shop1.setAddressShop("tokyo hizusikio");
-			// shop1.setCategory("category");
-			// shop1.setChannelToken(channelToken);
-			// shop1.setDescriptionShop("description shop 1");
-			// shop1.setNameShop("shop1");
-			// shop1.setNearestStation("Ōsaka Abenobashi Station");
-			// shop1.setOpenTime("every day");
-			//
-			// shopRepository.save(shop1);
+			shop.setAddressShop("tokyo hizusikio");
+			shop.setCategory("category");
+			shop.setChannelToken(channelToken);
+			shop.setDescriptionShop("description shop 1");
+			shop.setNameShop("shop1");
+			shop.setNearestStation("Ōsaka Abenobashi Station");
+			shop.setOpenTime("every day");
+
+			shopRepository.saveAndFlush(shop);
 
 			shop = shopRepository.getOne(1);
 
