@@ -198,6 +198,7 @@ public class BotController {
 					.pushMessage(pushMessage).execute();
 
 			System.out.println(response.code() + " " + response.message());
+
 		}
 
 		if (intentName.equals("Yes I called")) {
@@ -210,6 +211,10 @@ public class BotController {
 					.pushMessage(pushMessage).execute();
 
 			System.out.println(response.code() + " " + response.message());
+		}
+
+		if (intentName.equals("interview time")) {
+			System.out.println("parameters : " + parameters.getString("date"));
 		}
 
 		return json;
