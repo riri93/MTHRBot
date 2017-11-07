@@ -146,16 +146,12 @@ public class BotController {
 
 		if (intentName.equals("search for a job")) {
 			String address = customerMessage;
-
-			System.out.println("address : " + address);
-
 			List<Job> jobs = new ArrayList<>();
 			List<Job> jobsToDisplay = new ArrayList<>();
 
 			jobs = jobRepository.findByAreaOrStation(address);
 
 			if (jobs.size() != 0) {
-				System.out.println("jobs : " + jobs.size());
 				if (jobs.size() <= 5) {
 					jobsToDisplay.addAll(jobs);
 				} else {
@@ -168,14 +164,18 @@ public class BotController {
 			} else {
 
 				TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid area name or station");
-
 				PushMessage pushMessage = new PushMessage(userId, textMessage);
-
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 						.pushMessage(pushMessage).execute();
-
 			}
 		}
+
+		TextMessage textMessage = new TextMessage("helloooooooooooooooooooo");
+		PushMessage pushMessage = new PushMessage("<to>", textMessage);
+
+		Response<BotApiResponse> response = LineMessagingServiceBuilder.create("<channel access token>").build()
+				.pushMessage(pushMessage).execute();
+		System.out.println(response.code() + " " + response.message());
 
 		return json;
 	}
