@@ -148,8 +148,9 @@ public class BotController {
 
 			if (parameters != null) {
 
-				System.out.println("parameters : " + parameters.getString("address"));
-				System.out.println("parameters : " + parameters.getString("geo-city"));
+				System.out.println("parameters address: " + parameters.getString("address"));
+				System.out.println("parameters geo city: " + parameters.getString("geo-city"));
+				System.out.println("parameters area name: " + parameters.getString("unit-area-name"));
 
 				String address = customerMessage;
 
