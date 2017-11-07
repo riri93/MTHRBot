@@ -153,7 +153,7 @@ public class BotController {
 
 		}
 
-		if (intentName.equals("Default Fallback Intent")) {
+		if (intentName.equals("Default Fallback Intent - fallback")) {
 
 			String address = customerMessage;
 			List<Job> jobs = new ArrayList<>();
@@ -171,6 +171,7 @@ public class BotController {
 				}
 
 				carouselForUser(userId, channelToken, jobsToDisplay);
+
 			} else {
 
 				TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid area name or station");
@@ -187,6 +188,7 @@ public class BotController {
 
 		System.out.println("intentName : " + intentName);
 		System.out.println("customerMessage : " + customerMessage);
+
 		if (intentName.equals("Rihab")) {
 			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you called the shop?",
 					new MessageAction("Yes", "Did you confirm the interview time?"),
@@ -197,11 +199,6 @@ public class BotController {
 					.pushMessage(pushMessage).execute();
 
 			System.out.println(response.code() + " " + response.message());
-
-			LocationMessage locationMessage = new LocationMessage("tokyo", "Tokyo, Japan", 35.652832, 139.839478);
-			PushMessage pushMessage1 = new PushMessage(userId, locationMessage);
-			Response<BotApiResponse> response1 = LineMessagingServiceBuilder.create(channelToken).build()
-					.pushMessage(pushMessage1).execute();
 
 		}
 
