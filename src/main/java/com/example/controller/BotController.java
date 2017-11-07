@@ -191,8 +191,8 @@ public class BotController {
 
 		if (intentName.equals("Rihab")) {
 			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you called the shop?",
-					new MessageAction("Yes", "Did you confirm the interview time?"),
-					new MessageAction("No", "Please call the shop!"));
+					new MessageAction("Yes", "Kallel"),
+					new MessageAction("No", "call"));
 			TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
