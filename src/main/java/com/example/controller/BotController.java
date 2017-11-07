@@ -30,11 +30,13 @@ import com.example.repository.JobRepository;
 import com.example.repository.ShopRepository;
 import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.model.PushMessage;
+import com.linecorp.bot.model.action.MessageAction;
 import com.linecorp.bot.model.action.URIAction;
 import com.linecorp.bot.model.message.TemplateMessage;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.message.template.CarouselColumn;
 import com.linecorp.bot.model.message.template.CarouselTemplate;
+import com.linecorp.bot.model.message.template.ConfirmTemplate;
 import com.linecorp.bot.model.response.BotApiResponse;
 
 import retrofit2.Response;
@@ -50,8 +52,6 @@ public class BotController {
 
 	@Autowired
 	ShopRepository shopRepository;
-
-	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 	@RequestMapping(value = "/webhook", method = RequestMethod.POST)
 	private @ResponseBody Map<String, Object> webhook(@RequestBody Map<String, Object> obj)
@@ -78,17 +78,6 @@ public class BotController {
 		JSONObject parameters = result.getJSONObject("parameters");
 		JSONObject fulfillment = result.getJSONObject("fulfillment");
 		String speech = fulfillment.getString("speech");
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
-		calendar.set(Calendar.HOUR_OF_DAY, 11);
-		calendar.set(Calendar.MINUTE, 30);
-		calendar.set(Calendar.SECOND, 0);
-		calendar.set(Calendar.MILLISECOND, 0);
-
-		Timer time = new Timer();
-		CallSchedulerController call = new CallSchedulerController(userId, channelToken);
-		time.schedule(call, calendar.getTime());
 
 		if (intentName.equals("add job")) {
 
@@ -187,6 +176,16 @@ public class BotController {
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 						.pushMessage(pushMessage).execute();
 			}
+		}
+
+		if (intentName.equals("rihab")) {
+			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Do it?",
+					new MessageAction("Yes", "What is the interview time?"),
+					new MessageAction("No", "Please call the shop!"));
+			TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
+			PushMessage pushMessage = new PushMessage(userId, templateMessage);
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+					.pushMessage(pushMessage).execute();
 		}
 
 		return json;
