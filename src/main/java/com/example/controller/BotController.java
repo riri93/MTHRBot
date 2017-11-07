@@ -185,11 +185,9 @@ public class BotController {
 		}
 
 		/**
-		 * code to send two confirm buttons template for "Push have you called shop
-		 * name"
+		 * code to send two confirm buttons template for "Push have you called shop name
 		 */
-
-		if (intentName.equals("Rihab")) {
+		if (intentName.equals("called")) {
 			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you called the shop?",
 					new MessageAction("Yes", "Yes I called"), new MessageAction("No", "No I did not"));
 			TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
@@ -214,19 +212,44 @@ public class BotController {
 		}
 
 		if (intentName.equals("interview-time")) {
-
 			if (parameters == null) {
-				TextMessage textMessage = new TextMessage("Please enter a valid date");
+				TextMessage textMessage = new TextMessage("Please enter a valid date and time");
 				PushMessage pushMessage = new PushMessage(userId, textMessage);
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 						.pushMessage(pushMessage).execute();
 			} else {
 				System.out.println("parameters : " + parameters.getString("date"));
+				System.out.println("parameters : " + parameters.getString("time"));
 				TextMessage textMessage = new TextMessage("Okay, good luck!");
 				PushMessage pushMessage = new PushMessage(userId, textMessage);
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 						.pushMessage(pushMessage).execute();
 			}
+		}
+
+		/**
+		 * code to send a reminder for the interview
+		 */
+		if (intentName.equals("reminder")) {
+			TextMessage textMessage = new TextMessage("Tomorrow is the interview!");
+			PushMessage pushMessage = new PushMessage(userId, textMessage);
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+					.pushMessage(pushMessage).execute();
+		}
+
+		/**
+		 * code to send two confirm buttons template for "Push have you passed?
+		 */
+		if (intentName.equals("passed")) {
+			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you passed the interview?",
+					new MessageAction("Yes", "Yes I passed"), new MessageAction("No", "" + ""));
+			TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
+			PushMessage pushMessage = new PushMessage(userId, templateMessage);
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+					.pushMessage(pushMessage).execute();
+
+			System.out.println(response.code() + " " + response.message());
+
 		}
 
 		return json;
