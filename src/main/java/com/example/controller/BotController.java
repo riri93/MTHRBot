@@ -213,7 +213,7 @@ public class BotController {
 			System.out.println(response.code() + " " + response.message());
 		}
 
-		if (intentName.equals("interview time")) {
+		if (intentName.equals("interview-time")) {
 			System.out.println("parameters : " + parameters.getString("date"));
 		}
 
