@@ -156,7 +156,7 @@ public class BotController {
 
 		}
 
-		if (intentName.equals("Default Welcome Intent - fallback")) {
+		if (intentName.equals("Default Fallback Intent")) {
 
 			String address = customerMessage;
 			List<Job> jobs = new ArrayList<>();
