@@ -3,9 +3,15 @@ package com.example.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -45,6 +51,8 @@ public class BotController {
 	@Autowired
 	ShopRepository shopRepository;
 
+	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
 	@RequestMapping(value = "/webhook", method = RequestMethod.POST)
 	private @ResponseBody Map<String, Object> webhook(@RequestBody Map<String, Object> obj)
 			throws JSONException, IOException {
@@ -70,6 +78,17 @@ public class BotController {
 		JSONObject parameters = result.getJSONObject("parameters");
 		JSONObject fulfillment = result.getJSONObject("fulfillment");
 		String speech = fulfillment.getString("speech");
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
+		calendar.set(Calendar.HOUR_OF_DAY, 11);
+		calendar.set(Calendar.MINUTE, 30);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+
+		Timer time = new Timer();
+		CallSchedulerController call = new CallSchedulerController(userId, channelToken);
+		time.schedule(call, calendar.getTime());
 
 		if (intentName.equals("add job")) {
 
@@ -170,13 +189,6 @@ public class BotController {
 			}
 		}
 
-		TextMessage textMessage = new TextMessage("helloooooooooooooooooooo");
-		PushMessage pushMessage = new PushMessage(userId, textMessage);
-
-		Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
-				.pushMessage(pushMessage).execute();
-		System.out.println(response.code() + " " + response.message());
-
 		return json;
 	}
 
@@ -220,6 +232,32 @@ public class BotController {
 			System.out.println("Exception is raised ");
 			e.printStackTrace();
 		}
+	}
+
+	public class CallSchedulerController extends TimerTask {
+
+		String userId;
+		String channelToken;
+
+		public CallSchedulerController(String userId, String channelToken) {
+			this.channelToken = channelToken;
+			this.userId = userId;
+		}
+
+		@Override
+		public void run() {
+			System.out.println("***********CALLLLLLLLLLLL****************");
+
+			TextMessage textMessage = new TextMessage("Have you called shop?");
+			PushMessage pushMessage = new PushMessage(userId, textMessage);
+			try {
+				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+						.pushMessage(pushMessage).execute();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 
 }
