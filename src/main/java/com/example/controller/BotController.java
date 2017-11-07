@@ -185,7 +185,7 @@ public class BotController {
 		 */
 
 		System.out.println("intentName : " + intentName);
-
+		 System.out.println("customerMessage : " + customerMessage);
 		if (intentName.equals("Rihab")) {
 			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you called the shop?",
 					new MessageAction("Yes", "Did you confirm the interview time?"),
