@@ -214,7 +214,19 @@ public class BotController {
 		}
 
 		if (intentName.equals("interview-time")) {
-			System.out.println("parameters : " + parameters.getString("date"));
+
+			if (parameters == null) {
+				TextMessage textMessage = new TextMessage("Please enter a valid date");
+				PushMessage pushMessage = new PushMessage(userId, textMessage);
+				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+						.pushMessage(pushMessage).execute();
+			} else {
+				System.out.println("parameters : " + parameters.getString("date"));
+				TextMessage textMessage = new TextMessage("Okay, good luck!");
+				PushMessage pushMessage = new PushMessage(userId, textMessage);
+				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+						.pushMessage(pushMessage).execute();
+			}
 		}
 
 		return json;
