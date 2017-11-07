@@ -148,6 +148,9 @@ public class BotController {
 
 			if (parameters != null) {
 				if (parameters.getString("address") != null) {
+
+					System.out.println("parameters : " + parameters.getString("address"));
+
 					String address = customerMessage;
 
 					System.out.println("address : " + address);
@@ -158,6 +161,8 @@ public class BotController {
 					jobs = jobRepository.findByAreaOrStation(address);
 
 					if (jobs != null) {
+
+						System.out.println("jobs : " + jobs.size());
 						if (jobs.size() <= 5) {
 							jobsToDisplay.addAll(jobs);
 						} else {
