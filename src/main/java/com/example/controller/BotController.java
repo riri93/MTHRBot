@@ -145,43 +145,34 @@ public class BotController {
 		}
 
 		if (intentName.equals("search for a job")) {
+			String address = customerMessage;
 
-			if (parameters != null) {
+			System.out.println("address : " + address);
 
-				System.out.println("parameters address: " + parameters.getString("address"));
-				System.out.println("parameters geo city: " + parameters.getString("geo-city"));
-				System.out.println("parameters area name: " + parameters.getString("unit-area-name"));
+			List<Job> jobs = new ArrayList<>();
+			List<Job> jobsToDisplay = new ArrayList<>();
 
-				String address = customerMessage;
+			jobs = jobRepository.findByAreaOrStation(address);
 
-				System.out.println("address : " + address);
-
-				List<Job> jobs = new ArrayList<>();
-				List<Job> jobsToDisplay = new ArrayList<>();
-
-				jobs = jobRepository.findByAreaOrStation(address);
-
-				if (jobs != null) {
-
-					System.out.println("jobs : " + jobs.size());
-					if (jobs.size() <= 5) {
-						jobsToDisplay.addAll(jobs);
-					} else {
-						for (int i = 0; i < 5; i++) {
-							jobsToDisplay.add(jobs.get(i));
-						}
-					}
-
-					carouselForUser(userId, channelToken, jobsToDisplay);
+			if (jobs != null) {
+				System.out.println("jobs : " + jobs.size());
+				if (jobs.size() <= 5) {
+					jobsToDisplay.addAll(jobs);
 				} else {
-
-					TextMessage textMessage = new TextMessage("No jobs found");
-
-					PushMessage pushMessage = new PushMessage(userId, textMessage);
-
-					Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
-							.pushMessage(pushMessage).execute();
+					for (int i = 0; i < 5; i++) {
+						jobsToDisplay.add(jobs.get(i));
+					}
 				}
+
+				carouselForUser(userId, channelToken, jobsToDisplay);
+			} else {
+
+				TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid area name or station");
+
+				PushMessage pushMessage = new PushMessage(userId, textMessage);
+
+				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+						.pushMessage(pushMessage).execute();
 
 			}
 		}
