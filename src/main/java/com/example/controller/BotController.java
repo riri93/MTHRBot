@@ -153,6 +153,9 @@ public class BotController {
 		}
 
 		if (intentName.equals("search for a job")) {
+
+			System.out.println("parameters : " + parameters.getString("address"));
+
 			String address = customerMessage;
 			List<Job> jobs = new ArrayList<>();
 			List<Job> jobsToDisplay = new ArrayList<>();
