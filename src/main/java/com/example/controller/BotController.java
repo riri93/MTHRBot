@@ -154,8 +154,6 @@ public class BotController {
 
 		if (intentName.equals("search for a job")) {
 
-			System.out.println("parameters : " + parameters.getString("address"));
-
 			String address = customerMessage;
 			List<Job> jobs = new ArrayList<>();
 			List<Job> jobsToDisplay = new ArrayList<>();
@@ -181,16 +179,23 @@ public class BotController {
 			}
 		}
 
-		if (intentName.equals("rihab")) {
-			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Do it?",
-					new MessageAction("Yes", "What is the interview time?"),
+		/**
+		 * code to send two confirm buttons template for "Push have you called shop
+		 * name"
+		 */
+		if (intentName.equals("Rihab")) {
+			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you called the shop?",
+					new MessageAction("Yes", "Did you confirm the interview time?"),
 					new MessageAction("No", "Please call the shop!"));
 			TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 					.pushMessage(pushMessage).execute();
-		}
 
+			System.out.println(response.code() + " " + response.message());
+
+		}
+		
 		return json;
 	}
 
