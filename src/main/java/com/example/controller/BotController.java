@@ -152,7 +152,7 @@ public class BotController {
 
 		}
 
-		if (intentName.equals("search for a job")) {
+		if (intentName.equals("Default Fallback Intent")) {
 
 			String address = customerMessage;
 			List<Job> jobs = new ArrayList<>();
@@ -183,6 +183,9 @@ public class BotController {
 		 * code to send two confirm buttons template for "Push have you called shop
 		 * name"
 		 */
+
+		System.out.println("intentName : " + intentName);
+
 		if (intentName.equals("Rihab")) {
 			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you called the shop?",
 					new MessageAction("Yes", "Did you confirm the interview time?"),
@@ -195,7 +198,7 @@ public class BotController {
 			System.out.println(response.code() + " " + response.message());
 
 		}
-		
+
 		return json;
 	}
 
