@@ -80,6 +80,9 @@ public class BotController {
 		JSONObject fulfillment = result.getJSONObject("fulfillment");
 		String speech = fulfillment.getString("speech");
 
+		System.out.println("intentName : " + intentName);
+		System.out.println("customerMessage : " + customerMessage);
+
 		if (intentName.equals("add job")) {
 
 			Shop shop = new Shop();
@@ -153,7 +156,7 @@ public class BotController {
 
 		}
 
-		if (intentName.equals("Default Fallback Intent - fallback")) {
+		if (intentName.equals("Default Welcome Intent - fallback")) {
 
 			String address = customerMessage;
 			List<Job> jobs = new ArrayList<>();
@@ -185,9 +188,6 @@ public class BotController {
 		 * code to send two confirm buttons template for "Push have you called shop
 		 * name"
 		 */
-
-		System.out.println("intentName : " + intentName);
-		System.out.println("customerMessage : " + customerMessage);
 
 		if (intentName.equals("Rihab")) {
 			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you called the shop?",
