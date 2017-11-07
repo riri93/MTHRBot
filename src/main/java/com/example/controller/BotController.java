@@ -191,15 +191,25 @@ public class BotController {
 
 		if (intentName.equals("Rihab")) {
 			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you called the shop?",
-					new MessageAction("Yes", "Kallel"),
-					new MessageAction("No", "call"));
+					new MessageAction("Yes", "Yes I called"), new MessageAction("No", "No I did not"));
 			TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 					.pushMessage(pushMessage).execute();
 
 			System.out.println(response.code() + " " + response.message());
+		}
 
+		if (intentName.equals("Yes I called")) {
+			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Did you confirm the interview time?",
+					new MessageAction("Confirmed", "Interview confirmed"),
+					new MessageAction("Not confirmed", "Interview not confirmed"));
+			TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
+			PushMessage pushMessage = new PushMessage(userId, templateMessage);
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+					.pushMessage(pushMessage).execute();
+
+			System.out.println(response.code() + " " + response.message());
 		}
 
 		return json;
