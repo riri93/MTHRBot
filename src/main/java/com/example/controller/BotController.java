@@ -154,7 +154,7 @@ public class BotController {
 
 			jobs = jobRepository.findByAreaOrStation(address);
 
-			if (jobs != null) {
+			if (jobs.size() != 0) {
 				System.out.println("jobs : " + jobs.size());
 				if (jobs.size() <= 5) {
 					jobsToDisplay.addAll(jobs);
