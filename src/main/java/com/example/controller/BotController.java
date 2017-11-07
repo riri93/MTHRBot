@@ -148,7 +148,7 @@ public class BotController {
 
 			if (parameters != null) {
 				if (parameters.getString("address") != null) {
-					String address = parameters.getString("address");
+					String address = customerMessage;
 
 					System.out.println("address : " + address);
 
