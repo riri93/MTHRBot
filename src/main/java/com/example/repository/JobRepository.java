@@ -15,7 +15,7 @@ import com.example.entity.Job;
 @RepositoryRestResource
 public interface JobRepository extends JpaRepository<Job, Serializable> {
 
-	@Query("SELECT j FROM Job j where lower(j.shop.addressShop) like lower(CONCAT('%',:address,'%')) or lower(j.shop.nearestStation) like lower(CONCAT('%',:address,'%')) ")
+	@Query("SELECT j FROM Job j WHERE lower(j.shop.addressShop) LIKE lower(%:address%) or lower(j.shop.nearestStation) like lower(%:address%)")
 	public List<Job> findByAreaOrStation(@Param("address") String address);
 
 }
