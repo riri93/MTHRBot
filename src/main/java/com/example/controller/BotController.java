@@ -32,6 +32,7 @@ import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.action.MessageAction;
 import com.linecorp.bot.model.action.URIAction;
+import com.linecorp.bot.model.message.LocationMessage;
 import com.linecorp.bot.model.message.TemplateMessage;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.message.template.CarouselColumn;
@@ -185,7 +186,7 @@ public class BotController {
 		 */
 
 		System.out.println("intentName : " + intentName);
-		 System.out.println("customerMessage : " + customerMessage);
+		System.out.println("customerMessage : " + customerMessage);
 		if (intentName.equals("Rihab")) {
 			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you called the shop?",
 					new MessageAction("Yes", "Did you confirm the interview time?"),
@@ -196,6 +197,11 @@ public class BotController {
 					.pushMessage(pushMessage).execute();
 
 			System.out.println(response.code() + " " + response.message());
+
+			LocationMessage locationMessage = new LocationMessage("tokyo", "Tokyo, Japan", 35.652832, 139.839478);
+			PushMessage pushMessage1 = new PushMessage(userId, locationMessage);
+			Response<BotApiResponse> response1 = LineMessagingServiceBuilder.create(channelToken).build()
+					.pushMessage(pushMessage1).execute();
 
 		}
 
