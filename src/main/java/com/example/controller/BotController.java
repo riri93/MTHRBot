@@ -171,7 +171,7 @@ public class BotController {
 		}
 
 		TextMessage textMessage = new TextMessage("helloooooooooooooooooooo");
-		PushMessage pushMessage = new PushMessage("<to>", textMessage);
+		PushMessage pushMessage = new PushMessage(userId, textMessage);
 
 		Response<BotApiResponse> response = LineMessagingServiceBuilder.create("<channel access token>").build()
 				.pushMessage(pushMessage).execute();
