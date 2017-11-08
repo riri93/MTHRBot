@@ -7,6 +7,9 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 public class JobCandidateRelation implements Serializable {
@@ -19,6 +22,7 @@ public class JobCandidateRelation implements Serializable {
 	@EmbeddedId
 	private JobCandidateRelationPK jobCandidateRelationPK;
 
+	private String progress;
 	private boolean offered = false;
 	private boolean applied = false;
 	private boolean matched = false;
@@ -30,11 +34,17 @@ public class JobCandidateRelation implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "idCandidate", referencedColumnName = "idUser", insertable = false, updatable = false)
+	@JsonIgnoreProperties({"jobCandidateRelations","shopCandidateRelations"})
 	private Candidate candidate;
 
 	@ManyToOne
 	@JoinColumn(name = "idJob", referencedColumnName = "idJob", insertable = false, updatable = false)
+	@JsonIgnoreProperties({"jobCandidateRelations", "shop", "shopCandidateRelations"})
 	private Job job;
+
+	@OneToOne
+	@JoinColumn(name = "idChat", referencedColumnName = "idChat")
+	private Chat chat;
 
 	public JobCandidateRelationPK getJobCandidateRelationPK() {
 		return jobCandidateRelationPK;
@@ -114,6 +124,22 @@ public class JobCandidateRelation implements Serializable {
 
 	public void setAppliedDate(Date appliedDate) {
 		this.appliedDate = appliedDate;
+	}
+
+	public String getProgress() {
+		return progress;
+	}
+
+	public void setProgress(String progress) {
+		this.progress = progress;
+	}
+
+	public Chat getChat() {
+		return chat;
+	}
+
+	public void setChat(Chat chat) {
+		this.chat = chat;
 	}
 
 }

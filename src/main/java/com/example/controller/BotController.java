@@ -3,14 +3,9 @@ package com.example.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +27,6 @@ import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.action.MessageAction;
 import com.linecorp.bot.model.action.URIAction;
-import com.linecorp.bot.model.message.LocationMessage;
 import com.linecorp.bot.model.message.TemplateMessage;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.message.template.CarouselColumn;
@@ -220,10 +214,14 @@ public class BotController {
 			} else {
 				System.out.println("parameters : " + parameters.getString("date"));
 				System.out.println("parameters : " + parameters.getString("time"));
-				TextMessage textMessage = new TextMessage("Okay, good luck!");
-				PushMessage pushMessage = new PushMessage(userId, textMessage);
-				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
-						.pushMessage(pushMessage).execute();
+
+				if (parameters != null && parameters.getString("date") != null && parameters.getString("time") != null
+						&& !parameters.getString("date").equals("") && !parameters.getString("time").equals("")) {
+					TextMessage textMessage = new TextMessage("Okay, good luck!");
+					PushMessage pushMessage = new PushMessage(userId, textMessage);
+					Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+							.pushMessage(pushMessage).execute();
+				}
 			}
 		}
 
@@ -295,32 +293,6 @@ public class BotController {
 			System.out.println("Exception is raised ");
 			e.printStackTrace();
 		}
-	}
-
-	public class CallSchedulerController extends TimerTask {
-
-		String userId;
-		String channelToken;
-
-		public CallSchedulerController(String userId, String channelToken) {
-			this.channelToken = channelToken;
-			this.userId = userId;
-		}
-
-		@Override
-		public void run() {
-			System.out.println("***********CALLLLLLLLLLLL****************");
-
-			TextMessage textMessage = new TextMessage("Have you called shop?");
-			PushMessage pushMessage = new PushMessage(userId, textMessage);
-			try {
-				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
-						.pushMessage(pushMessage).execute();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
 	}
 
 }

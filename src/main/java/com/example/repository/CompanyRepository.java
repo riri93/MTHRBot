@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import com.example.entity.Company;
 
-
 @Repository
 @RepositoryRestResource
 public interface CompanyRepository extends JpaRepository<Company, Serializable> {

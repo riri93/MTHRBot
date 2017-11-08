@@ -7,10 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 @Entity
 public class Chat implements Serializable {
@@ -24,11 +21,6 @@ public class Chat implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int idChat;
 
-	@OneToOne
-	@JoinColumns({ @JoinColumn(name = "idJob", referencedColumnName = "idJob"),
-			@JoinColumn(name = "idCandidate", referencedColumnName = "idCandidate") })
-	private JobCandidateRelation jobCandidateRelation;
-
 	@OneToMany(mappedBy = "chat")
 	private List<ChatMessage> chatMessages;
 
@@ -38,14 +30,6 @@ public class Chat implements Serializable {
 
 	public void setIdChat(int idChat) {
 		this.idChat = idChat;
-	}
-
-	public JobCandidateRelation getJobCandidateRelation() {
-		return jobCandidateRelation;
-	}
-
-	public void setJobCandidateRelation(JobCandidateRelation jobCandidateRelation) {
-		this.jobCandidateRelation = jobCandidateRelation;
 	}
 
 	public List<ChatMessage> getChatMessages() {

@@ -8,10 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import com.example.entity.Shop;
 
-
 @Repository
 @RepositoryRestResource
 public interface ShopRepository extends JpaRepository<Shop, Serializable> {
-
 
 }

@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 public class Job implements Serializable {
 
@@ -31,9 +33,11 @@ public class Job implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "idShop", referencedColumnName = "idShop")
+	@JsonIgnoreProperties({ "jobs"})
 	private Shop shop;
 
 	@OneToMany(mappedBy = "job")
+	@JsonIgnoreProperties({ "job"})
 	private List<JobCandidateRelation> jobCandidateRelations;
 
 	public int getIdJob() {

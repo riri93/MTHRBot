@@ -13,8 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 @Entity
 public class UserInformation implements Serializable {
 
@@ -26,7 +24,6 @@ public class UserInformation implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int idUser;
-	@NotEmpty
 	private String userName;
 	private String email;
 	private String password;
@@ -35,6 +32,21 @@ public class UserInformation implements Serializable {
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "userRoles", joinColumns = @JoinColumn(name = "idUser", referencedColumnName = "idUser"), inverseJoinColumns = @JoinColumn(name = "idRole", referencedColumnName = "id"))
 	private List<Role> roles;
+
+	public UserInformation() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public UserInformation(UserInformation userInformation) {
+		super();
+		this.idUser = userInformation.idUser;
+		this.userName = userInformation.userName;
+		this.password = userInformation.password;
+		this.email = userInformation.email;
+
+		// TODO Auto-generated constructor stub
+	}
 
 	public int getIdUser() {
 		return idUser;

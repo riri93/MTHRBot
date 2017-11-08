@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 public class ChatLineAdmin implements Serializable {
 
@@ -22,7 +24,8 @@ public class ChatLineAdmin implements Serializable {
 	private int idChatLineAdmin;
 
 	@OneToMany(mappedBy = "chatLineAdmin")
-	private List<ChatMessageLine> ChatMessageLines;
+	@JsonIgnoreProperties("chatLineAdmin")
+	private List<ChatMessageLine> chatMessageLines;
 
 	public int getIdChatLineAdmin() {
 		return idChatLineAdmin;
@@ -33,11 +36,11 @@ public class ChatLineAdmin implements Serializable {
 	}
 
 	public List<ChatMessageLine> getChatMessageLines() {
-		return ChatMessageLines;
+		return chatMessageLines;
 	}
 
 	public void setChatMessageLines(List<ChatMessageLine> chatMessageLines) {
-		ChatMessageLines = chatMessageLines;
+		this.chatMessageLines = chatMessageLines;
 	}
 
 }

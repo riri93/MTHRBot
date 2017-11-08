@@ -10,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class Admin extends UserInformation implements Serializable {
@@ -21,23 +23,23 @@ public class Admin extends UserInformation implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "idLineBotAdmin", referencedColumnName = "idLineBotAdmin")
+	@JsonIgnoreProperties({ "admins" })
 	private LineBotAdmin lineBotAdmin;
 
 	@OneToMany(mappedBy = "admin")
-	private List<Candidate> candidates;
+	@JsonIgnoreProperties({ "admin","memos","candidate" })
+	private List<CandidateAdminRelation> candidateAdminRelations;
+
+	@OneToMany(mappedBy = "admin")
+	@JsonIgnoreProperties({ "admin" })
+	private List<Notification> notifications;
 
 	public Admin(Admin admin) {
 		super();
 	}
+
 	public Admin() {
 		super();
-	}
-	public List<Candidate> getCandidates() {
-		return candidates;
-	}
-
-	public void setCandidates(List<Candidate> candidates) {
-		this.candidates = candidates;
 	}
 
 	public LineBotAdmin getLineBotAdmin() {
@@ -46,6 +48,22 @@ public class Admin extends UserInformation implements Serializable {
 
 	public void setLineBotAdmin(LineBotAdmin lineBotAdmin) {
 		this.lineBotAdmin = lineBotAdmin;
+	}
+
+	public List<CandidateAdminRelation> getCandidateAdminRelations() {
+		return candidateAdminRelations;
+	}
+
+	public void setCandidateAdminRelations(List<CandidateAdminRelation> candidateAdminRelations) {
+		this.candidateAdminRelations = candidateAdminRelations;
+	}
+
+	public List<Notification> getNotifications() {
+		return notifications;
+	}
+
+	public void setNotifications(List<Notification> notifications) {
+		this.notifications = notifications;
 	}
 
 }

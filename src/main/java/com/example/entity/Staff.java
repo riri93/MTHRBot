@@ -8,6 +8,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class Staff extends UserInformation implements Serializable {
@@ -19,6 +21,7 @@ public class Staff extends UserInformation implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "idShop", referencedColumnName = "idShop")
+	@JsonIgnoreProperties({ "job","jobCandidateRelations", "shopCandidateRelations"})
 	private Shop shop;
 
 	public Shop getShop() {

@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 public class ChatMessageLine implements Serializable {
 
@@ -28,6 +30,7 @@ public class ChatMessageLine implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "idChatLineAdmin", referencedColumnName = "idChatLineAdmin")
+	@JsonIgnoreProperties("chatMessageLines")
 	private ChatLineAdmin chatLineAdmin;
 
 	public int getIdChatMessageLine() {

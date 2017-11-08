@@ -2,6 +2,8 @@ package com.example.repository;
 
 import java.io.Serializable;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +16,11 @@ import com.example.entity.Candidate;
 @RepositoryRestResource
 public interface CandidateRepository extends JpaRepository<Candidate, Serializable> {
 
-	@Query("SELECT c FROM Candidate c where c.phone =:phone")
-	public Candidate findByPhone(@Param("phone") String phone);
+	@Query(value = "select s from Candidate s where s.personInCharge.idUser=:idAdmin and s.userName like %:candName%", countQuery = "select count(*) from Candidate s where s.personInCharge.idUser=:idAdmin and s.userName like %:candName% ")
+	public Page<Candidate> getCandidateListByIdAdminPaginated(@Param("idAdmin") int idAdmin,
+			@Param("candName") String candName, Pageable pageable);
+
+	@Query(value = "select s from Candidate s where  s.userName like  %:candName%", countQuery = "select count(*) from Candidate s where  s.userName like %:candName%")
+	public Page<Candidate> searchByCandNamePaginated(@Param("candName") String candName, Pageable pageable);
 
 }

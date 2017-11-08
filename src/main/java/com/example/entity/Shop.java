@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 public class Shop implements Serializable {
 
@@ -42,6 +44,10 @@ public class Shop implements Serializable {
 
 	@OneToMany(mappedBy = "shop")
 	private List<Job> jobs;
+
+	@OneToMany(mappedBy = "shop")
+	@JsonIgnoreProperties({ "shop", "staffs", "candidate" })
+	private List<ShopCandidateRelation> shopCandidateRelations;
 
 	public int getIdShop() {
 		return idShop;
@@ -145,6 +151,14 @@ public class Shop implements Serializable {
 
 	public void setJobs(List<Job> jobs) {
 		this.jobs = jobs;
+	}
+
+	public List<ShopCandidateRelation> getShopCandidateRelations() {
+		return shopCandidateRelations;
+	}
+
+	public void setShopCandidateRelations(List<ShopCandidateRelation> shopCandidateRelations) {
+		this.shopCandidateRelations = shopCandidateRelations;
 	}
 
 }

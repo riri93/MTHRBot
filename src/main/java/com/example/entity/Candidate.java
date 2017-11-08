@@ -8,11 +8,12 @@ import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import org.hibernate.validator.constraints.NotEmpty;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -34,16 +35,29 @@ public class Candidate extends UserInformation implements Serializable {
 	private String durationInJapan;
 	private String memo;
 	private String progress;
-	@ManyToOne
-	@JoinColumn(name = "idAdmin", referencedColumnName = "idUser")
-	private Admin admin;
+
+	private Date registerDate;
 
 	@OneToOne
 	@JoinColumn(name = "idChatLineAdmin", referencedColumnName = "idChatLineAdmin")
 	private ChatLineAdmin chatLineAdmin;
 
 	@OneToMany(mappedBy = "candidate")
+	@JsonIgnoreProperties({ "candidate" })
 	private List<JobCandidateRelation> jobCandidateRelations;
+
+	@OneToMany(mappedBy = "candidate")
+	@JsonIgnoreProperties({ "candidate" })
+	private List<CandidateAdminRelation> candidateAdminRelations;
+
+	@OneToMany(mappedBy = "candidate")
+	@JsonIgnoreProperties({ "candidate", "jobCandidateRelations" ,"candidateAdminRelations"})
+	private List<ShopCandidateRelation> shopCandidateRelations;
+
+	@OneToOne
+	@JoinColumn(name = "idPersonCharge", referencedColumnName = "idUser")
+	@JsonIgnoreProperties({ "lineBotAdmin","candidateAdminRelations","notifications" })
+	private PersonInCharge personInCharge;
 
 	public String getUserLineId() {
 		return userLineId;
@@ -117,14 +131,6 @@ public class Candidate extends UserInformation implements Serializable {
 		this.progress = progress;
 	}
 
-	public Admin getAdmin() {
-		return admin;
-	}
-
-	public void setAdmin(Admin admin) {
-		this.admin = admin;
-	}
-
 	public List<JobCandidateRelation> getJobCandidateRelations() {
 		return jobCandidateRelations;
 	}
@@ -139,6 +145,39 @@ public class Candidate extends UserInformation implements Serializable {
 
 	public void setChatLineAdmin(ChatLineAdmin chatLineAdmin) {
 		this.chatLineAdmin = chatLineAdmin;
+	}
+
+	public List<CandidateAdminRelation> getCandidateAdminRelations() {
+		return candidateAdminRelations;
+	}
+
+	public void setCandidateAdminRelations(List<CandidateAdminRelation> candidateAdminRelations) {
+		this.candidateAdminRelations = candidateAdminRelations;
+	}
+
+	public PersonInCharge getPersonInCharge() {
+		return personInCharge;
+	}
+
+	public void setPersonInCharge(PersonInCharge personInCharge) {
+		this.personInCharge = personInCharge;
+	}
+
+	public Date getRegisterDate() {
+		return registerDate;
+	}
+
+	public void setRegisterDate(Date registerDate) {
+		this.registerDate = registerDate;
+
+	}
+
+	public List<ShopCandidateRelation> getShopCandidateRelations() {
+		return shopCandidateRelations;
+	}
+
+	public void setShopCandidateRelations(List<ShopCandidateRelation> shopCandidateRelations) {
+		this.shopCandidateRelations = shopCandidateRelations;
 	}
 
 }
