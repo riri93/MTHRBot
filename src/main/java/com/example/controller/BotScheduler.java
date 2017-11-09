@@ -82,7 +82,8 @@ public class BotScheduler {
 
 							ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you called the shop?",
 									new MessageAction("Yes", "Yes I called"), new MessageAction("No", "No I did not"));
-							TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
+							TemplateMessage templateMessage = new TemplateMessage("Have you called the shop?",
+									confirmTemplate);
 							PushMessage pushMessage = new PushMessage(
 									jobCandidateRelation.getCandidate().getUserLineId().toString(), templateMessage);
 							Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
@@ -114,7 +115,7 @@ public class BotScheduler {
 	 * @throws Exception
 	 * 
 	 */
-	@Scheduled(cron = "0 50 * * * *")
+	@Scheduled(cron = "0 53 * * * *")
 	public void sendHaveYouPassedMessage() throws Exception {
 
 		System.out.println("************PASSED*******************");
@@ -133,12 +134,19 @@ public class BotScheduler {
 					cal.getTime();
 
 					if (shopCandidateRelation.getPassedInterviewMessageDate() == null) {
+
 						Date currentTime = retrieveCurrentTimeStamp();
+
+						System.out.println("currentTime : " + currentTime);
+
+						System.out.println("cal.getTime() : " + cal.getTime());
+
 						if (currentTime.equals(cal.getTime())) {
 
 							ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you passed the interview?",
 									new MessageAction("Yes", "Yes I passed"), new MessageAction("No", "" + ""));
-							TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
+							TemplateMessage templateMessage = new TemplateMessage("Have you passed the interview?",
+									confirmTemplate);
 							PushMessage pushMessage = new PushMessage(
 									shopCandidateRelation.getCandidate().getUserLineId().toString(), templateMessage);
 							Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
@@ -199,7 +207,8 @@ public class BotScheduler {
 						ConfirmTemplate confirmTemplate = new ConfirmTemplate("Did you confirm the interview time?",
 								new MessageAction("Confirmed", "Interview confirmed"),
 								new MessageAction("Not confirmed", "Interview not confirmed"));
-						TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
+						TemplateMessage templateMessage = new TemplateMessage("Did you confirm the interview time?",
+								confirmTemplate);
 						PushMessage pushMessage = new PushMessage(
 								shopCandidateRelation.getCandidate().getUserLineId().toString(), templateMessage);
 						Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()

@@ -179,7 +179,7 @@ public class BotController {
 
 				ConfirmTemplate confirmTemplate = new ConfirmTemplate("Any interesting jobs?",
 						new MessageAction("yes", "interesting jobs"), new MessageAction("No", "not interesting jobs"));
-				TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
+				TemplateMessage templateMessage = new TemplateMessage("Any interesting jobs?", confirmTemplate);
 				PushMessage pushMessage = new PushMessage(userId, templateMessage);
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 						.pushMessage(pushMessage).execute();
@@ -235,7 +235,7 @@ public class BotController {
 				ConfirmTemplate confirmTemplate = new ConfirmTemplate("Any interesting jobs?",
 						new MessageAction("yes", "interesting jobs"),
 						new MessageAction("No", "not interesting jobs again"));
-				TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
+				TemplateMessage templateMessage = new TemplateMessage("Any interesting jobs?", confirmTemplate);
 				PushMessage pushMessage = new PushMessage(userId, templateMessage);
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 						.pushMessage(pushMessage).execute();
@@ -368,7 +368,7 @@ public class BotController {
 			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Did you confirm the interview time?",
 					new MessageAction("Confirmed", "Interview confirmed"),
 					new MessageAction("Not confirmed", "Interview not confirmed"));
-			TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
+			TemplateMessage templateMessage = new TemplateMessage("Did you confirm the interview time?", confirmTemplate);
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 					.pushMessage(pushMessage).execute();
