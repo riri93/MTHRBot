@@ -63,10 +63,7 @@ public class BotScheduler {
 					cal.add(Calendar.HOUR_OF_DAY, 3);
 					cal.getTime();
 
-					System.out.println("cal.getTime() : " + cal.getTime());
-
-					System.out.println("new Date() : " + new Date());
-
+					
 					if (jobCandidateRelation.getCallShopMessageDate() == null) {
 						Date date = new Date();
 
@@ -77,6 +74,12 @@ public class BotScheduler {
 
 						Date currentTime = sdf.parse(time);
 
+						
+						System.out.println("cal.getTime() : " + cal.getTime());
+
+						System.out.println("new Date() : " + currentTime);
+
+						
 						if (currentTime.after(cal.getTime())) {
 
 							ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you called the shop?",
