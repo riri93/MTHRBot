@@ -109,6 +109,13 @@ public class BotController {
 
 				carouselForUser(userId, channelToken, jobsToDisplay);
 
+				ConfirmTemplate confirmTemplate = new ConfirmTemplate("Any interesting jobs?",
+						new MessageAction("yes", "interesting jobs"), new MessageAction("No", "not interesting jobs"));
+				TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
+				PushMessage pushMessage = new PushMessage(userId, templateMessage);
+				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+						.pushMessage(pushMessage).execute();
+
 			} else {
 
 				TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid area name or station");
@@ -116,6 +123,10 @@ public class BotController {
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 						.pushMessage(pushMessage).execute();
 			}
+		}
+
+		if (intentName.equals("not interesting jobs")) {
+
 		}
 
 		if (intentName.equals("Yes I called")) {

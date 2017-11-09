@@ -38,6 +38,9 @@ public class ShopCandidateRelation implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date passedInterviewMessageDate;
 
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date remindInterviewDate;
+
 	@ManyToOne
 	@JoinColumn(name = "idCandidate", referencedColumnName = "idUser", insertable = false, updatable = false)
 	@JsonIgnoreProperties({ "shopCandidateRelations, jobCandidateRelations", "shop", "jobs", "staffs" })
@@ -110,6 +113,14 @@ public class ShopCandidateRelation implements Serializable {
 
 	public void setPassedInterviewMessageDate(Date passedInterviewMessageDate) {
 		this.passedInterviewMessageDate = passedInterviewMessageDate;
+	}
+
+	public Date getRemindInterviewDate() {
+		return remindInterviewDate;
+	}
+
+	public void setRemindInterviewDate(Date remindInterviewDate) {
+		this.remindInterviewDate = remindInterviewDate;
 	}
 
 }

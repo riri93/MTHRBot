@@ -1,9 +1,11 @@
 package com.example.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -56,7 +58,7 @@ public class BotScheduler {
 			for (JobCandidateRelation jobCandidateRelation : jobCandidateRelations) {
 				if (jobCandidateRelation.getAppliedDate() != null) {
 
-					Calendar cal = Calendar.getInstance();
+					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 					cal.setTime(jobCandidateRelation.getAppliedDate());
 					cal.add(Calendar.HOUR_OF_DAY, 3);
 					cal.getTime();
@@ -66,7 +68,16 @@ public class BotScheduler {
 					System.out.println("new Date() : " + new Date());
 
 					if (jobCandidateRelation.getCallShopMessageDate() == null) {
-						if ((new Date()).after(cal.getTime())) {
+						Date date = new Date();
+
+						SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
+
+						sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+						String time = sdf.format(date);
+
+						Date currentTime = sdf.parse(time);
+
+						if (currentTime.after(cal.getTime())) {
 
 							ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you called the shop?",
 									new MessageAction("Yes", "Yes I called"), new MessageAction("No", "No I did not"));
@@ -106,13 +117,22 @@ public class BotScheduler {
 			for (ShopCandidateRelation shopCandidateRelation : shopCandidateRelations) {
 				if (shopCandidateRelation.getInterviewDate() != null) {
 
-					Calendar cal = Calendar.getInstance();
+					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 					cal.setTime(shopCandidateRelation.getInterviewDate());
 					cal.add(Calendar.DAY_OF_WEEK, 2);
 					cal.getTime();
 
 					if (shopCandidateRelation.getPassedInterviewMessageDate() == null) {
-						if ((new Date()).after(cal.getTime())) {
+						Date date = new Date();
+
+						SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
+
+						sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+						String time = sdf.format(date);
+
+						Date currentTime = sdf.parse(time);
+
+						if (currentTime.after(cal.getTime())) {
 
 							ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you passed the interview?",
 									new MessageAction("Yes", "Yes I passed"), new MessageAction("No", "" + ""));
@@ -156,12 +176,21 @@ public class BotScheduler {
 								&& shopCandidateRelation.isConfirmedInterview()
 								&& shopCandidateRelation.getInterviewDate() == null)) {
 
-					Calendar cal = Calendar.getInstance();
+					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 					cal.setTime(shopCandidateRelation.getAskInterviewDate());
 					cal.add(Calendar.DAY_OF_WEEK, 2);
 					cal.getTime();
 
-					if ((new Date()).equals(cal.getTime())) {
+					Date date = new Date();
+
+					SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
+
+					sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+					String time = sdf.format(date);
+
+					Date currentTime = sdf.parse(time);
+
+					if (currentTime.equals(cal.getTime())) {
 
 						ConfirmTemplate confirmTemplate = new ConfirmTemplate("Did you confirm the interview time?",
 								new MessageAction("Confirmed", "Interview confirmed"),
@@ -197,19 +226,32 @@ public class BotScheduler {
 			for (ShopCandidateRelation shopCandidateRelation : shopCandidateRelations) {
 				if (shopCandidateRelation.getInterviewDate() != null) {
 
-					Calendar cal = Calendar.getInstance();
+					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 					cal.setTime(shopCandidateRelation.getInterviewDate());
 					cal.add(Calendar.DAY_OF_WEEK, -1);
 					cal.getTime();
 
-					if ((new Date()).equals(cal.getTime())) {
+					if (shopCandidateRelation.getRemindInterviewDate() == null) {
+						Date date = new Date();
 
-						TextMessage textMessage = new TextMessage("Tomorrow is the interview!");
-						PushMessage pushMessage = new PushMessage(
-								shopCandidateRelation.getCandidate().getUserLineId().toString(), textMessage);
-						Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
-								.pushMessage(pushMessage).execute();
+						SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
 
+						sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+						String time = sdf.format(date);
+
+						Date currentTime = sdf.parse(time);
+
+						if (currentTime.after(cal.getTime())) {
+
+							TextMessage textMessage = new TextMessage("Tomorrow is the interview!");
+							PushMessage pushMessage = new PushMessage(
+									shopCandidateRelation.getCandidate().getUserLineId().toString(), textMessage);
+							Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+									.pushMessage(pushMessage).execute();
+							shopCandidateRelation.setRemindInterviewDate((new Date()));
+							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
+
+						}
 					}
 				}
 			}
