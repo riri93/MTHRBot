@@ -11,8 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -24,14 +22,11 @@ public class Candidate extends UserInformation implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private String userLineId;
-	@NotEmpty
 	private String phone;
 	private Date birthday;
-	@NotEmpty
 	private String jLPT;
 	private String nearestStation;
 	private String workableTime;
-	@NotEmpty
 	private String durationInJapan;
 	private String memo;
 	private String progress;
@@ -51,12 +46,12 @@ public class Candidate extends UserInformation implements Serializable {
 	private List<CandidateAdminRelation> candidateAdminRelations;
 
 	@OneToMany(mappedBy = "candidate")
-	@JsonIgnoreProperties({ "candidate", "jobCandidateRelations" ,"candidateAdminRelations"})
+	@JsonIgnoreProperties({ "candidate", "jobCandidateRelations", "candidateAdminRelations" })
 	private List<ShopCandidateRelation> shopCandidateRelations;
 
 	@OneToOne
 	@JoinColumn(name = "idPersonCharge", referencedColumnName = "idUser")
-	@JsonIgnoreProperties({ "lineBotAdmin","candidateAdminRelations","notifications" })
+	@JsonIgnoreProperties({ "lineBotAdmin", "candidateAdminRelations", "notifications" })
 	private PersonInCharge personInCharge;
 
 	public String getUserLineId() {

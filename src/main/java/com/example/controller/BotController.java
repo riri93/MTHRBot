@@ -20,9 +20,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entity.Candidate;
+import com.example.entity.ChatLineAdmin;
+import com.example.entity.ChatMessageLine;
 import com.example.entity.Job;
+import com.example.entity.Shop;
 import com.example.entity.ShopCandidateRelation;
+import com.example.entity.ShopCandidateRelationPK;
 import com.example.repository.CandidateRepository;
+import com.example.repository.ChatLineAdminRepository;
+import com.example.repository.ChatMessageLineRepository;
 import com.example.repository.JobRepository;
 import com.example.repository.ShopCandidateRelationRepository;
 import com.example.repository.ShopRepository;
@@ -32,6 +38,7 @@ import com.linecorp.bot.model.action.MessageAction;
 import com.linecorp.bot.model.action.URIAction;
 import com.linecorp.bot.model.message.TemplateMessage;
 import com.linecorp.bot.model.message.TextMessage;
+import com.linecorp.bot.model.message.template.ButtonsTemplate;
 import com.linecorp.bot.model.message.template.CarouselColumn;
 import com.linecorp.bot.model.message.template.CarouselTemplate;
 import com.linecorp.bot.model.message.template.ConfirmTemplate;
@@ -41,6 +48,8 @@ import retrofit2.Response;
 
 @RestController
 public class BotController {
+
+	Candidate candidateToRegister = new Candidate();
 
 	@Autowired
 	CandidateRepository candidateRepository;
@@ -54,15 +63,23 @@ public class BotController {
 	@Autowired
 	ShopCandidateRelationRepository shopCandidateRelationRepository;
 
+	@Autowired
+	ChatLineAdminRepository chatLineAdminRepository;
+
+	@Autowired
+	ChatMessageLineRepository chatMessageLineRepository;
+
 	@RequestMapping(value = "/webhook", method = RequestMethod.POST)
 	private @ResponseBody Map<String, Object> webhook(@RequestBody Map<String, Object> obj)
 			throws JSONException, IOException {
 
 		System.out.println("*****************WEBHOOK*********************");
 
+		Shop shop = new Shop();
 		Candidate candidate = new Candidate();
-
 		ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
+		String addressToSearch = "";
+		ChatLineAdmin chatLineAdmin = new ChatLineAdmin();
 
 		String channelToken = "wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
 
@@ -84,19 +101,69 @@ public class BotController {
 		JSONObject fulfillment = result.getJSONObject("fulfillment");
 		String speech = fulfillment.getString("speech");
 
-		shopCandidateRelation = shopCandidateRelationRepository.findShopCandidateRelationByLineID(userId);
+		if (shopRepository.findByChannelToken(channelToken) == null) {
+			Shop shopToAdd = new Shop();
+			shopToAdd.setChannelToken(channelToken);
+			shopRepository.saveAndFlush(shopToAdd);
+		}
+
+		shop = shopRepository.findByChannelToken(channelToken);
+
+		if (candidateRepository.findByUserLineId(userId) == null) {
+			candidateToRegister = new Candidate();
+			candidateToRegister.setUserLineId(userId);
+			candidateRepository.saveAndFlush(candidateToRegister);
+		}
+
 		candidate = candidateRepository.findByUserLineId(userId);
 
+		if (shopCandidateRelationRepository.findShopCandidateRelationByLineID(userId) == null) {
+			ShopCandidateRelation shopCandidateRelationToAdd = new ShopCandidateRelation();
+			ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
+
+			shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
+			shopCandidateRelationPK.setIdShop(shop.getIdShop());
+			shopCandidateRelationToAdd.setShopCandidateRelationPK(shopCandidateRelationPK);
+			shopCandidateRelationToAdd.setCandidate(candidate);
+			shopCandidateRelationToAdd.setConfirmedInterview(false);
+			shopCandidateRelationToAdd.setShop(shop);
+			shopCandidateRelationRepository.saveAndFlush(shopCandidateRelationToAdd);
+		}
+
+		shopCandidateRelation = shopCandidateRelationRepository.findShopCandidateRelationByLineID(userId);
+
+		if (candidate != null) {
+			if (candidate.getChatLineAdmin() == null) {
+				chatLineAdminRepository.saveAndFlush(chatLineAdmin);
+				candidate.setChatLineAdmin(chatLineAdmin);
+				candidateRepository.saveAndFlush(candidate);
+			}
+		}
+
+		if (customerMessage != null && !customerMessage.equals("")) {
+			if (candidate != null) {
+				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+				chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+				chatMessageLineToAdd.setMessageDate((new Date()));
+				chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+				chatMessageLineToAdd.setMessageText(customerMessage);
+				chatMessageLineToAdd.setReadState(false);
+				chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+			}
+		}
+
+		System.out.println("userId : " + userId);
+		System.out.println("speech : " + speech);
+		System.out.println("timestamp : " + timestamp);
 		System.out.println("intentName : " + intentName);
 		System.out.println("customerMessage : " + customerMessage);
 
 		if (intentName.equals("Default Fallback Intent")) {
-
-			String address = customerMessage;
+			addressToSearch = customerMessage;
 			List<Job> jobs = new ArrayList<>();
 			List<Job> jobsToDisplay = new ArrayList<>();
 
-			jobs = jobRepository.findByAreaOrStation(address);
+			jobs = jobRepository.findByAreaOrStation(addressToSearch);
 
 			if (jobs.size() != 0) {
 				if (jobs.size() <= 5) {
@@ -116,17 +183,123 @@ public class BotController {
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 						.pushMessage(pushMessage).execute();
 
-			} else {
+				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+				chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+				chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+				chatMessageLineToAdd.setMessageText("Send jobs carousel");
+				chatMessageLineToAdd.setReadState(false);
+				chatMessageLineToAdd.setMessageDate((new Date()));
+				chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 
+				ChatMessageLine chatMessageLineToAdd2 = new ChatMessageLine();
+				chatMessageLineToAdd2.setChatLineAdmin(candidate.getChatLineAdmin());
+				chatMessageLineToAdd2.setMessageDate((new Date()));
+				chatMessageLineToAdd2.setMessageText("Any interesting jobs?");
+				chatMessageLineToAdd2.setReadState(false);
+				chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd2);
+
+			} else {
 				TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid area name or station");
 				PushMessage pushMessage = new PushMessage(userId, textMessage);
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 						.pushMessage(pushMessage).execute();
+
+				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+				chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+				chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+				chatMessageLineToAdd.setMessageText("No jobs found. Please enter a valid area name or station");
+				chatMessageLineToAdd.setReadState(false);
+				chatMessageLineToAdd.setMessageDate((new Date()));
+				chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 			}
 		}
 
 		if (intentName.equals("not interesting jobs")) {
+			List<Job> jobs = new ArrayList<>();
+			List<Job> jobsToDisplay = new ArrayList<>();
 
+			jobs = jobRepository.findByAreaOrStation(addressToSearch);
+
+			if (jobs.size() != 0) {
+				if (jobs.size() <= 5) {
+					jobsToDisplay.addAll(jobs);
+				} else {
+					for (int i = 0; i < 5; i++) {
+						jobsToDisplay.add(jobs.get(i));
+					}
+				}
+
+				carouselForUser(userId, channelToken, jobsToDisplay);
+
+				ConfirmTemplate confirmTemplate = new ConfirmTemplate("Any interesting jobs?",
+						new MessageAction("yes", "interesting jobs"),
+						new MessageAction("No", "not interesting jobs again"));
+				TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
+				PushMessage pushMessage = new PushMessage(userId, templateMessage);
+				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+						.pushMessage(pushMessage).execute();
+
+				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+				chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+				chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+				chatMessageLineToAdd.setMessageText("Send jobs carousel");
+				chatMessageLineToAdd.setReadState(false);
+				chatMessageLineToAdd.setMessageDate((new Date()));
+				chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+
+				ChatMessageLine chatMessageLineToAdd2 = new ChatMessageLine();
+				chatMessageLineToAdd2.setChatLineAdmin(candidate.getChatLineAdmin());
+				chatMessageLineToAdd2.setMessageDirection(candidate.getIdUser());
+				chatMessageLineToAdd2.setMessageText("Any interesting jobs?");
+				chatMessageLineToAdd2.setReadState(false);
+				chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd2);
+			}
+		}
+
+		if (intentName.equals("not interesting jobs again")) {
+
+			if (shopCandidateRelation != null) {
+				shopCandidateRelation.setProgress("Potential Candidate");
+				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
+			}
+
+			ButtonsTemplate buttonsTemplate = new ButtonsTemplate("", "Reason", "Please choose your reason",
+					Arrays.asList(new MessageAction("Location", "Location"), new MessageAction("Salary", "Salary"),
+							new MessageAction("Job position", "Job position"),
+							new MessageAction("Work Time", "Work Time"), new MessageAction("Others", "Others")));
+			TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
+
+			PushMessage pushMessage = new PushMessage(userId, templateMessage);
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+					.pushMessage(pushMessage).execute();
+
+			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+			chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+			chatMessageLineToAdd.setMessageText("Please choose your reason");
+			chatMessageLineToAdd.setReadState(false);
+			chatMessageLineToAdd.setMessageDate((new Date()));
+			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+		}
+
+		if (intentName.equals("Others")) {
+			if (shopCandidateRelation != null) {
+				shopCandidateRelation.setProgress("Potential Candidate");
+				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
+			}
+
+			TextMessage textMessage = new TextMessage("What is the reason?");
+			PushMessage pushMessage = new PushMessage(userId, textMessage);
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+					.pushMessage(pushMessage).execute();
+
+			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+			chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+			chatMessageLineToAdd.setMessageText("What is the reason?");
+			chatMessageLineToAdd.setReadState(false);
+			chatMessageLineToAdd.setMessageDate((new Date()));
+			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 		}
 
 		if (intentName.equals("Yes I called")) {
@@ -137,6 +310,14 @@ public class BotController {
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 					.pushMessage(pushMessage).execute();
+
+			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+			chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+			chatMessageLineToAdd.setMessageText("Did you confirm the interview time?");
+			chatMessageLineToAdd.setReadState(false);
+			chatMessageLineToAdd.setMessageDate((new Date()));
+			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 
 			if (shopCandidateRelation != null) {
 				shopCandidateRelation.setAskInterviewDate((new Date()));
@@ -165,6 +346,15 @@ public class BotController {
 				PushMessage pushMessage = new PushMessage(userId, textMessage);
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 						.pushMessage(pushMessage).execute();
+
+				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+				chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+				chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+				chatMessageLineToAdd.setMessageText("Please enter a valid date and time");
+				chatMessageLineToAdd.setReadState(false);
+				chatMessageLineToAdd.setMessageDate((new Date()));
+				chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+
 			} else {
 				System.out.println("parameters : " + parameters.getString("date"));
 				System.out.println("parameters : " + parameters.getString("time"));
@@ -180,6 +370,14 @@ public class BotController {
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
 					Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 							.pushMessage(pushMessage).execute();
+
+					ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+					chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+					chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+					chatMessageLineToAdd.setMessageText("Okay, good luck!");
+					chatMessageLineToAdd.setReadState(false);
+					chatMessageLineToAdd.setMessageDate((new Date()));
+					chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 				}
 			}
 		}

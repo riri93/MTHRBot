@@ -12,8 +12,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import com.example.entity.ChatMessageLine;
 import com.example.entity.JobCandidateRelation;
 import com.example.entity.ShopCandidateRelation;
+import com.example.repository.ChatMessageLineRepository;
 import com.example.repository.JobCandidateRelationRepository;
 import com.example.repository.ShopCandidateRelationRepository;
 import com.linecorp.bot.client.LineMessagingServiceBuilder;
@@ -37,6 +39,9 @@ public class BotScheduler {
 
 	@Autowired
 	ShopCandidateRelationRepository shopCandidateRelationRepository;
+
+	@Autowired
+	ChatMessageLineRepository chatMessageLineRepository;
 
 	/**
 	 * send this message after three hours from apply
@@ -63,7 +68,6 @@ public class BotScheduler {
 					cal.add(Calendar.HOUR_OF_DAY, 3);
 					cal.getTime();
 
-					
 					if (jobCandidateRelation.getCallShopMessageDate() == null) {
 						Date date = new Date();
 
@@ -74,12 +78,10 @@ public class BotScheduler {
 
 						Date currentTime = sdf.parse(time);
 
-						
 						System.out.println("cal.getTime() : " + cal.getTime());
 
 						System.out.println("new Date() : " + currentTime);
 
-						
 						if (currentTime.after(cal.getTime())) {
 
 							ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you called the shop?",
@@ -92,6 +94,15 @@ public class BotScheduler {
 
 							jobCandidateRelation.setCallShopMessageDate((new Date()));
 							jobCandidateRelationRepository.saveAndFlush(jobCandidateRelation);
+
+							ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+							chatMessageLineToAdd
+									.setChatLineAdmin(jobCandidateRelation.getCandidate().getChatLineAdmin());
+							chatMessageLineToAdd.setMessageDirection(jobCandidateRelation.getCandidate().getIdUser());
+							chatMessageLineToAdd.setMessageText("Have you called the shop?");
+							chatMessageLineToAdd.setReadState(false);
+							chatMessageLineToAdd.setMessageDate((new Date()));
+							chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 						}
 					}
 				}
@@ -147,6 +158,15 @@ public class BotScheduler {
 
 							shopCandidateRelation.setPassedInterviewMessageDate((new Date()));
 							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
+
+							ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+							chatMessageLineToAdd
+									.setChatLineAdmin(shopCandidateRelation.getCandidate().getChatLineAdmin());
+							chatMessageLineToAdd.setMessageDirection(shopCandidateRelation.getCandidate().getIdUser());
+							chatMessageLineToAdd.setMessageText("Have you passed the interview?");
+							chatMessageLineToAdd.setReadState(false);
+							chatMessageLineToAdd.setMessageDate((new Date()));
+							chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 						}
 					}
 				}
@@ -204,6 +224,14 @@ public class BotScheduler {
 						Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 								.pushMessage(pushMessage).execute();
 
+						ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+						chatMessageLineToAdd.setChatLineAdmin(shopCandidateRelation.getCandidate().getChatLineAdmin());
+						chatMessageLineToAdd.setMessageDirection(shopCandidateRelation.getCandidate().getIdUser());
+						chatMessageLineToAdd.setMessageText("Did you confirm the interview time?");
+						chatMessageLineToAdd.setReadState(false);
+						chatMessageLineToAdd.setMessageDate((new Date()));
+						chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+
 					}
 				}
 			}
@@ -253,6 +281,15 @@ public class BotScheduler {
 									.pushMessage(pushMessage).execute();
 							shopCandidateRelation.setRemindInterviewDate((new Date()));
 							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
+
+							ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+							chatMessageLineToAdd
+									.setChatLineAdmin(shopCandidateRelation.getCandidate().getChatLineAdmin());
+							chatMessageLineToAdd.setMessageDirection(shopCandidateRelation.getCandidate().getIdUser());
+							chatMessageLineToAdd.setMessageText("Tomorrow is the interview!");
+							chatMessageLineToAdd.setReadState(false);
+							chatMessageLineToAdd.setMessageDate((new Date()));
+							chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 
 						}
 					}
