@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.entity.Candidate;
 import com.example.entity.ChatLineAdmin;
@@ -263,17 +264,10 @@ public class BotController {
 				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 			}
 
-			
 			System.out.println("************** BUTTONS**********************");
-			
-			TextMessage textMessage = new TextMessage("aaaaaaaaaaaaaaaaaa");
-			PushMessage pushMessage2 = new PushMessage(userId, textMessage);
-			Response<BotApiResponse> response2 = LineMessagingServiceBuilder.create(channelToken).build()
-					.pushMessage(pushMessage2).execute();
-			
-			ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
-					"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png", "Reason",
-					"Please choose your reason",
+			String imageUrl = createUri(
+					"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png");
+			ButtonsTemplate buttonsTemplate = new ButtonsTemplate(imageUrl, "Reason", "Please choose your reason",
 					Arrays.asList(new MessageAction("Location", "Location"), new MessageAction("Salary", "Salary"),
 							new MessageAction("Job position", "Job position"),
 							new MessageAction("Work Time", "Work Time"), new MessageAction("Others", "Others")));
@@ -495,6 +489,10 @@ public class BotController {
 			System.out.println("Exception is raised ");
 			e.printStackTrace();
 		}
+	}
+
+	private static String createUri(String path) {
+		return ServletUriComponentsBuilder.fromCurrentContextPath().path(path).build().toUriString();
 	}
 
 }
