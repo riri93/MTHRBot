@@ -181,7 +181,7 @@ public class BotScheduler {
 	 * 
 	 * @throws Exception
 	 */
-	@Scheduled(cron = "0 23 * * * *")
+	@Scheduled(cron = "0 30 * * * *")
 	public void sendInterviewTimeMessage() throws Exception {
 
 		System.out.println("************INTERVIEW*******************");
@@ -208,6 +208,11 @@ public class BotScheduler {
 
 					Date currentTime = new Date();
 
+					
+					System.out.println("currentTime : " + currentTime);
+					
+					System.out.println("cal.getTime() : " + cal.getTime());
+					
 					if (currentTime.equals(cal.getTime())) {
 
 						ConfirmTemplate confirmTemplate = new ConfirmTemplate("Did you confirm the interview time?",
