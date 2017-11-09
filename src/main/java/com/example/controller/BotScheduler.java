@@ -43,7 +43,7 @@ public class BotScheduler {
 	 * 
 	 * @throws Exception
 	 */
-	@Scheduled(cron = "* * * * * *")
+	@Scheduled(cron = "0 0 * * * *")
 	public void sendCallShopMessage() throws Exception {
 
 		System.out.println("************CALL*******************");
@@ -61,17 +61,25 @@ public class BotScheduler {
 					cal.add(Calendar.HOUR_OF_DAY, 3);
 					cal.getTime();
 
-					if ((new Date()).equals(cal.getTime())) {
+					System.out.println("cal.getTime() : " + cal.getTime());
 
-						ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you called the shop?",
-								new MessageAction("Yes", "Yes I called"), new MessageAction("No", "No I did not"));
-						TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
-						PushMessage pushMessage = new PushMessage(
-								jobCandidateRelation.getCandidate().getUserLineId().toString(), templateMessage);
-						Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
-								.pushMessage(pushMessage).execute();
+					System.out.println("new Date() : " + new Date());
+
+					if (jobCandidateRelation.getCallShopMessageDate() == null) {
+						if ((new Date()).after(cal.getTime())) {
+
+							ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you called the shop?",
+									new MessageAction("Yes", "Yes I called"), new MessageAction("No", "No I did not"));
+							TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
+							PushMessage pushMessage = new PushMessage(
+									jobCandidateRelation.getCandidate().getUserLineId().toString(), templateMessage);
+							Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+									.pushMessage(pushMessage).execute();
+
+							jobCandidateRelation.setCallShopMessageDate((new Date()));
+							jobCandidateRelationRepository.saveAndFlush(jobCandidateRelation);
+						}
 					}
-
 				}
 			}
 		}
@@ -103,16 +111,20 @@ public class BotScheduler {
 					cal.add(Calendar.DAY_OF_WEEK, 2);
 					cal.getTime();
 
-					if ((new Date()).equals(cal.getTime())) {
+					if (shopCandidateRelation.getPassedInterviewMessageDate() == null) {
+						if ((new Date()).after(cal.getTime())) {
 
-						ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you passed the interview?",
-								new MessageAction("Yes", "Yes I passed"), new MessageAction("No", "" + ""));
-						TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
-						PushMessage pushMessage = new PushMessage(
-								shopCandidateRelation.getCandidate().getUserLineId().toString(), templateMessage);
-						Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
-								.pushMessage(pushMessage).execute();
+							ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you passed the interview?",
+									new MessageAction("Yes", "Yes I passed"), new MessageAction("No", "" + ""));
+							TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
+							PushMessage pushMessage = new PushMessage(
+									shopCandidateRelation.getCandidate().getUserLineId().toString(), templateMessage);
+							Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+									.pushMessage(pushMessage).execute();
 
+							shopCandidateRelation.setPassedInterviewMessageDate((new Date()));
+							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
+						}
 					}
 				}
 			}

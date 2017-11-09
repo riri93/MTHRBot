@@ -37,6 +37,9 @@ public class JobCandidateRelation implements Serializable {
 	private Date matchDate;
 	private Date postedDate;
 
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date callShopMessageDate;
+
 	@ManyToOne
 	@JoinColumn(name = "idCandidate", referencedColumnName = "idUser", insertable = false, updatable = false)
 	@JsonIgnoreProperties({ "jobCandidateRelations", "shopCandidateRelations" })
@@ -145,6 +148,14 @@ public class JobCandidateRelation implements Serializable {
 
 	public void setChat(Chat chat) {
 		this.chat = chat;
+	}
+
+	public Date getCallShopMessageDate() {
+		return callShopMessageDate;
+	}
+
+	public void setCallShopMessageDate(Date callShopMessageDate) {
+		this.callShopMessageDate = callShopMessageDate;
 	}
 
 }
