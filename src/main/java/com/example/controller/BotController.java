@@ -265,6 +265,12 @@ public class BotController {
 
 			
 			System.out.println("************** BUTTONS**********************");
+			
+			TextMessage textMessage = new TextMessage("aaaaaaaaaaaaaaaaaa");
+			PushMessage pushMessage2 = new PushMessage(userId, textMessage);
+			Response<BotApiResponse> response2 = LineMessagingServiceBuilder.create(channelToken).build()
+					.pushMessage(pushMessage2).execute();
+			
 			ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
 					"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png", "Reason",
 					"Please choose your reason",
