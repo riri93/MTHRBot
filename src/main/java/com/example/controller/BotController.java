@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entity.Candidate;
 import com.example.entity.Job;
-import com.example.entity.Shop;
 import com.example.entity.ShopCandidateRelation;
 import com.example.repository.CandidateRepository;
 import com.example.repository.JobRepository;
@@ -130,6 +129,7 @@ public class BotController {
 
 			if (shopCandidateRelation != null) {
 				shopCandidateRelation.setAskInterviewDate((new Date()));
+				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 			}
 
 		}
@@ -137,12 +137,14 @@ public class BotController {
 		if (intentName.equals("Interview not confirmed")) {
 			if (shopCandidateRelation != null) {
 				shopCandidateRelation.setConfirmedInterview(false);
+				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 			}
 		}
 
 		if (intentName.equals("Interview confirmed")) {
 			if (shopCandidateRelation != null) {
 				shopCandidateRelation.setConfirmedInterview(true);
+				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 			}
 		}
 
