@@ -282,6 +282,66 @@ public class BotController {
 			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 		}
 
+		if (intentName.equals("Location")) {
+			TextMessage textMessage = new TextMessage("Thank you! We will contact you again!");
+			PushMessage pushMessage = new PushMessage(userId, textMessage);
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+					.pushMessage(pushMessage).execute();
+
+			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+			chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+			chatMessageLineToAdd.setMessageText("Thank you! We will contact you again!");
+			chatMessageLineToAdd.setReadState(false);
+			chatMessageLineToAdd.setMessageDate((new Date()));
+			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+		}
+		
+		if (intentName.equals("Salary")) {
+			TextMessage textMessage = new TextMessage("Thank you! We will contact you again!");
+			PushMessage pushMessage = new PushMessage(userId, textMessage);
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+					.pushMessage(pushMessage).execute();
+
+			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+			chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+			chatMessageLineToAdd.setMessageText("Thank you! We will contact you again!");
+			chatMessageLineToAdd.setReadState(false);
+			chatMessageLineToAdd.setMessageDate((new Date()));
+			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+		}
+
+		if (intentName.equals("Job position")) {
+			TextMessage textMessage = new TextMessage("Thank you! We will contact you again!");
+			PushMessage pushMessage = new PushMessage(userId, textMessage);
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+					.pushMessage(pushMessage).execute();
+
+			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+			chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+			chatMessageLineToAdd.setMessageText("Thank you! We will contact you again!");
+			chatMessageLineToAdd.setReadState(false);
+			chatMessageLineToAdd.setMessageDate((new Date()));
+			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+		}
+
+		if (intentName.equals("Work Time")) {
+			TextMessage textMessage = new TextMessage("Thank you! We will contact you again!");
+			PushMessage pushMessage = new PushMessage(userId, textMessage);
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+					.pushMessage(pushMessage).execute();
+
+			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+			chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+			chatMessageLineToAdd.setMessageText("Thank you! We will contact you again!");
+			chatMessageLineToAdd.setReadState(false);
+			chatMessageLineToAdd.setMessageDate((new Date()));
+			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+		}
+
 		if (intentName.equals("Others")) {
 			if (shopCandidateRelation != null) {
 				shopCandidateRelation.setProgress("Potential Candidate");
