@@ -115,7 +115,7 @@ public class BotScheduler {
 	 * @throws Exception
 	 * 
 	 */
-	@Scheduled(cron = "0 57 * * * *")
+	@Scheduled(cron = "0 59 * * * *")
 	public void sendHaveYouPassedMessage() throws Exception {
 
 		System.out.println("************PASSED*******************");
