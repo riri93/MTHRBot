@@ -19,4 +19,7 @@ public interface ShopCandidateRelationRepository extends JpaRepository<ShopCandi
 	List<ShopCandidateRelation> getShopCandidateRelationList(@Param("idShop") int idShop,
 			@Param("idCandidate") int idCandidate);
 
+	@Query("Select sc from ShopCandidateRelation sc where sc.candidate.userLineId =:lineID")
+	ShopCandidateRelation findShopCandidateRelationByLineID(@Param("lineID") String lineID);
+
 }

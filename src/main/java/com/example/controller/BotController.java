@@ -3,6 +3,7 @@ package com.example.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,10 +19,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.entity.Candidate;
 import com.example.entity.Job;
 import com.example.entity.Shop;
+import com.example.entity.ShopCandidateRelation;
 import com.example.repository.CandidateRepository;
 import com.example.repository.JobRepository;
+import com.example.repository.ShopCandidateRelationRepository;
 import com.example.repository.ShopRepository;
 import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.model.PushMessage;
@@ -48,13 +52,20 @@ public class BotController {
 	@Autowired
 	ShopRepository shopRepository;
 
+	@Autowired
+	ShopCandidateRelationRepository shopCandidateRelationRepository;
+
 	@RequestMapping(value = "/webhook", method = RequestMethod.POST)
 	private @ResponseBody Map<String, Object> webhook(@RequestBody Map<String, Object> obj)
 			throws JSONException, IOException {
 
-		String channelToken = "wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
-
 		System.out.println("*****************WEBHOOK*********************");
+
+		Candidate candidate = new Candidate();
+
+		ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
+
+		String channelToken = "wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
 
 		Map<String, Object> json = new HashMap<String, Object>();
 
@@ -74,81 +85,11 @@ public class BotController {
 		JSONObject fulfillment = result.getJSONObject("fulfillment");
 		String speech = fulfillment.getString("speech");
 
+		shopCandidateRelation = shopCandidateRelationRepository.findShopCandidateRelationByLineID(userId);
+		candidate = candidateRepository.findByUserLineId(userId);
+
 		System.out.println("intentName : " + intentName);
 		System.out.println("customerMessage : " + customerMessage);
-
-		if (intentName.equals("add job")) {
-
-			Shop shop = new Shop();
-
-			// shop.setAddressShop("tokyo hizusikio");
-			// shop.setCategory("category");
-			// shop.setChannelToken(channelToken);
-			// shop.setDescriptionShop("description shop 1");
-			// shop.setNameShop("shop1");
-			// shop.setNearestStation("Ōsaka Abenobashi Station");
-			// shop.setOpenTime("every day");
-			//
-			// shopRepository.saveAndFlush(shop);
-			// shopRepository.flush();
-			// System.out.println("*************shop ID ********** : " + shop.getIdShop());
-			//
-			// shop = shopRepository.getOne(11);
-			//
-			// Job job1 = new Job();
-			// Job job2 = new Job();
-			// Job job3 = new Job();
-			// Job job4 = new Job();
-			// Job job5 = new Job();
-			//
-			// job1.setJobDetails("jobbbbbbbbbb1");
-			// job1.setNumberStaffNeeded(44);
-			// job1.setPositionCategory("pos category 1");
-			// job1.setPositionName("position 1");
-			// job1.setSalary(4541);
-			// job1.setSalaryDetail("salary1");
-			// job1.setShop(shop);
-			//
-			// job2.setJobDetails("jobbbbbbbbbb2");
-			// job2.setNumberStaffNeeded(25);
-			// job2.setPositionCategory("pos category 2");
-			// job2.setPositionName("position 2");
-			// job2.setSalary(4541);
-			// job2.setSalaryDetail("salary2");
-			// job2.setShop(shop);
-			//
-			// job3.setJobDetails("jobbbbbbbbbb3");
-			// job3.setNumberStaffNeeded(47);
-			// job3.setPositionCategory("pos category 3");
-			// job3.setPositionName("position 3");
-			// job3.setSalary(4541);
-			// job3.setSalaryDetail("salary3");
-			// job3.setShop(shop);
-			//
-			// job4.setJobDetails("jobbbbbbbbbb4");
-			// job4.setNumberStaffNeeded(36);
-			// job4.setPositionCategory("pos category 4");
-			// job4.setPositionName("position 4");
-			// job4.setSalary(4541);
-			// job4.setSalaryDetail("salary4");
-			// job4.setShop(shop);
-			//
-			// job5.setJobDetails("jobbbbbbbbbb5");
-			// job5.setNumberStaffNeeded(85);
-			// job5.setPositionCategory("pos category 5");
-			// job5.setPositionName("position 5");
-			// job5.setSalary(4541);
-			// job5.setSalaryDetail("salary5");
-			// job5.setShop(shop);
-			//
-			// jobRepository.saveAndFlush(job1);
-			// jobRepository.saveAndFlush(job2);
-			// jobRepository.saveAndFlush(job3);
-			// jobRepository.saveAndFlush(job4);
-			// jobRepository.saveAndFlush(job5);
-			// jobRepository.flush();
-
-		}
 
 		if (intentName.equals("Default Fallback Intent")) {
 
@@ -178,21 +119,6 @@ public class BotController {
 			}
 		}
 
-		/**
-		 * code to send two confirm buttons template for "Push have you called shop name
-		 */
-		if (intentName.equals("called")) {
-			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you called the shop?",
-					new MessageAction("Yes", "Yes I called"), new MessageAction("No", "No I did not"));
-			TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
-			PushMessage pushMessage = new PushMessage(userId, templateMessage);
-			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
-					.pushMessage(pushMessage).execute();
-
-			System.out.println(response.code() + " " + response.message());
-
-		}
-
 		if (intentName.equals("Yes I called")) {
 			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Did you confirm the interview time?",
 					new MessageAction("Confirmed", "Interview confirmed"),
@@ -202,7 +128,22 @@ public class BotController {
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 					.pushMessage(pushMessage).execute();
 
-			System.out.println(response.code() + " " + response.message());
+			if (shopCandidateRelation != null) {
+				shopCandidateRelation.setAskInterviewDate((new Date()));
+			}
+
+		}
+
+		if (intentName.equals("Interview not confirmed")) {
+			if (shopCandidateRelation != null) {
+				shopCandidateRelation.setConfirmedInterview(false);
+			}
+		}
+
+		if (intentName.equals("Interview confirmed")) {
+			if (shopCandidateRelation != null) {
+				shopCandidateRelation.setConfirmedInterview(true);
+			}
 		}
 
 		if (intentName.equals("interview-time")) {
@@ -217,37 +158,17 @@ public class BotController {
 
 				if (parameters != null && parameters.getString("date") != null && parameters.getString("time") != null
 						&& !parameters.getString("date").equals("") && !parameters.getString("time").equals("")) {
+
+					if (shopCandidateRelation != null) {
+						// TODO
+					}
+
 					TextMessage textMessage = new TextMessage("Okay, good luck!");
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
 					Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 							.pushMessage(pushMessage).execute();
 				}
 			}
-		}
-
-		/**
-		 * code to send a reminder for the interview
-		 */
-		if (intentName.equals("reminder")) {
-			TextMessage textMessage = new TextMessage("Tomorrow is the interview!");
-			PushMessage pushMessage = new PushMessage(userId, textMessage);
-			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
-					.pushMessage(pushMessage).execute();
-		}
-
-		/**
-		 * code to send two confirm buttons template for "Push have you passed?
-		 */
-		if (intentName.equals("passed")) {
-			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you passed the interview?",
-					new MessageAction("Yes", "Yes I passed"), new MessageAction("No", "" + ""));
-			TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
-			PushMessage pushMessage = new PushMessage(userId, templateMessage);
-			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
-					.pushMessage(pushMessage).execute();
-
-			System.out.println(response.code() + " " + response.message());
-
 		}
 
 		return json;

@@ -23,4 +23,7 @@ public interface CandidateRepository extends JpaRepository<Candidate, Serializab
 	@Query(value = "select s from Candidate s where  s.userName like  %:candName%", countQuery = "select count(*) from Candidate s where  s.userName like %:candName%")
 	public Page<Candidate> searchByCandNamePaginated(@Param("candName") String candName, Pageable pageable);
 
+	@Query(value = "select s from Candidate s where s.userLineId =:lineID")
+	public Candidate findByUserLineId(@Param("lineID") String lineID);
+
 }

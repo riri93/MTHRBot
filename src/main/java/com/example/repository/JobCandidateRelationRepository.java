@@ -19,4 +19,7 @@ public interface JobCandidateRelationRepository extends JpaRepository<JobCandida
 	List<JobCandidateRelation> getAppliedJobsByShopAndByCandidate(@Param("idShop") int idShop,
 			@Param("idCandidate") int idCandidate);
 
+	@Query("Select jc from JobCandidateRelation jc where jc.applied = true")
+	List<JobCandidateRelation> getAllAppliedCandidates();
+
 }

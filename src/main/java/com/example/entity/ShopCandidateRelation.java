@@ -3,6 +3,7 @@ package com.example.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -25,8 +26,14 @@ public class ShopCandidateRelation implements Serializable {
 
 	private String progress;
 
+	@Column(columnDefinition = "boolean default false", nullable = false)
+	private boolean confirmedInterview;
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date interviewDate;
+
+	@Temporal(TemporalType.DATE)
+	private Date askInterviewDate;
 
 	@ManyToOne
 	@JoinColumn(name = "idCandidate", referencedColumnName = "idUser", insertable = false, updatable = false)
@@ -76,6 +83,22 @@ public class ShopCandidateRelation implements Serializable {
 
 	public void setInterviewDate(Date interviewDate) {
 		this.interviewDate = interviewDate;
+	}
+
+	public Date getAskInterviewDate() {
+		return askInterviewDate;
+	}
+
+	public void setAskInterviewDate(Date askInterviewDate) {
+		this.askInterviewDate = askInterviewDate;
+	}
+
+	public boolean isConfirmedInterview() {
+		return confirmedInterview;
+	}
+
+	public void setConfirmedInterview(boolean confirmedInterview) {
+		this.confirmedInterview = confirmedInterview;
 	}
 
 }

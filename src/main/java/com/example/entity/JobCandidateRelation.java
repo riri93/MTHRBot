@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -28,18 +30,21 @@ public class JobCandidateRelation implements Serializable {
 	private boolean matched = false;
 
 	private Date offerDate;
+
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date appliedDate;
+
 	private Date matchDate;
 	private Date postedDate;
 
 	@ManyToOne
 	@JoinColumn(name = "idCandidate", referencedColumnName = "idUser", insertable = false, updatable = false)
-	@JsonIgnoreProperties({"jobCandidateRelations","shopCandidateRelations"})
+	@JsonIgnoreProperties({ "jobCandidateRelations", "shopCandidateRelations" })
 	private Candidate candidate;
 
 	@ManyToOne
 	@JoinColumn(name = "idJob", referencedColumnName = "idJob", insertable = false, updatable = false)
-	@JsonIgnoreProperties({"jobCandidateRelations", "shop", "shopCandidateRelations"})
+	@JsonIgnoreProperties({ "jobCandidateRelations", "shop", "shopCandidateRelations" })
 	private Job job;
 
 	@OneToOne
