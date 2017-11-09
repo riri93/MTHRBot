@@ -263,13 +263,15 @@ public class BotController {
 				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 			}
 
+			
+			System.out.println("************** BUTTONS**********************");
 			ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
 					"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png", "Reason",
 					"Please choose your reason",
 					Arrays.asList(new MessageAction("Location", "Location"), new MessageAction("Salary", "Salary"),
 							new MessageAction("Job position", "Job position"),
 							new MessageAction("Work Time", "Work Time"), new MessageAction("Others", "Others")));
-			TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
+			TemplateMessage templateMessage = new TemplateMessage("Reason", buttonsTemplate);
 
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
