@@ -46,6 +46,8 @@ public class BotScheduler {
 	@Scheduled(cron = "0 0 * * * *")
 	public void sendCallShopMessage() throws Exception {
 
+		System.out.println("************CALL*******************");
+
 		List<JobCandidateRelation> jobCandidateRelations = new ArrayList<>();
 		jobCandidateRelations = jobCandidateRelationRepository.getAllAppliedCandidates();
 
@@ -86,6 +88,8 @@ public class BotScheduler {
 	@Scheduled(cron = "0 0 0 * * *")
 	public void sendHaveYouPassedMessage() throws Exception {
 
+		System.out.println("************PASSED*******************");
+
 		List<ShopCandidateRelation> shopCandidateRelations = new ArrayList<>();
 		shopCandidateRelations = shopCandidateRelationRepository.findAll();
 
@@ -124,13 +128,16 @@ public class BotScheduler {
 	 */
 	@Scheduled(cron = "0 0 0 * * *")
 	public void sendInterviewTimeMessage() throws Exception {
+
+		System.out.println("************INTERVIEW*******************");
+
 		List<ShopCandidateRelation> shopCandidateRelations = new ArrayList<>();
 		shopCandidateRelations = shopCandidateRelationRepository.findAll();
 
 		if (shopCandidateRelations != null) {
 
 			for (ShopCandidateRelation shopCandidateRelation : shopCandidateRelations) {
-				
+
 				if ((shopCandidateRelation.getAskInterviewDate() != null
 						&& !shopCandidateRelation.isConfirmedInterview())
 						|| (shopCandidateRelation.getAskInterviewDate() != null
@@ -168,6 +175,7 @@ public class BotScheduler {
 	 */
 	@Scheduled(cron = "0 0 0 * * *")
 	public void sendInterviewRemider() throws Exception {
+		System.out.println("************REMINDER*******************");
 
 		List<ShopCandidateRelation> shopCandidateRelations = new ArrayList<>();
 		shopCandidateRelations = shopCandidateRelationRepository.findAll();
