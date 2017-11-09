@@ -36,6 +36,7 @@ import com.example.repository.ShopRepository;
 import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.action.MessageAction;
+import com.linecorp.bot.model.action.PostbackAction;
 import com.linecorp.bot.model.action.URIAction;
 import com.linecorp.bot.model.message.TemplateMessage;
 import com.linecorp.bot.model.message.TextMessage;
@@ -268,9 +269,9 @@ public class BotController {
 			String imageUrl = createUri(
 					"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png");
 			ButtonsTemplate buttonsTemplate = new ButtonsTemplate(imageUrl, "Reason", "Please choose your reason",
-					Arrays.asList(new MessageAction("Location", "Location"), new MessageAction("Salary", "Salary"),
-							new MessageAction("Job position", "Job position"),
-							new MessageAction("Work Time", "Work Time"), new MessageAction("Others", "Others")));
+					Arrays.asList(new PostbackAction("Location", "Location"), new PostbackAction("Salary", "Salary"),
+							new PostbackAction("Job position", "Job position"),
+							new PostbackAction("Work Time", "Work Time"), new PostbackAction("Others", "Others")));
 			TemplateMessage templateMessage = new TemplateMessage("Reason", buttonsTemplate);
 
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
