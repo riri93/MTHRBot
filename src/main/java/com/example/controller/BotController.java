@@ -263,7 +263,9 @@ public class BotController {
 				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 			}
 
-			ButtonsTemplate buttonsTemplate = new ButtonsTemplate("", "Reason", "Please choose your reason",
+			ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
+					"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png", "Reason",
+					"Please choose your reason",
 					Arrays.asList(new MessageAction("Location", "Location"), new MessageAction("Salary", "Salary"),
 							new MessageAction("Job position", "Job position"),
 							new MessageAction("Work Time", "Work Time"), new MessageAction("Others", "Others")));
@@ -296,7 +298,7 @@ public class BotController {
 			chatMessageLineToAdd.setMessageDate((new Date()));
 			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 		}
-		
+
 		if (intentName.equals("Salary")) {
 			TextMessage textMessage = new TextMessage("Thank you! We will contact you again!");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
