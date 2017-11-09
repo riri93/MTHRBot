@@ -264,11 +264,11 @@ public class BotController {
 				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 			}
 
-			System.out.println("************** BUTTONS**********************");
-			String imageUrl = createUri(
-					"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png");
-			ButtonsTemplate buttonsTemplate = new ButtonsTemplate(imageUrl, "Reason", "Please choose your reason",
-					Arrays.asList(new MessageAction("Location", "Location"), new MessageAction("Salary", "Salary")));
+
+			ButtonsTemplate buttonsTemplate = new ButtonsTemplate("", "Reason", "Please choose your reason",
+					Arrays.asList(new MessageAction("Location", "Location"), new MessageAction("Salary", "Salary"),
+							new MessageAction("Job position", "Job position"),
+							new MessageAction("Work Time", "Work Time"), new MessageAction("Others", "Others")));
 			TemplateMessage templateMessage = new TemplateMessage("Reason", buttonsTemplate);
 
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
@@ -487,10 +487,6 @@ public class BotController {
 			System.out.println("Exception is raised ");
 			e.printStackTrace();
 		}
-	}
-
-	private static String createUri(String path) {
-		return ServletUriComponentsBuilder.fromCurrentContextPath().path(path).build().toUriString();
 	}
 
 }
