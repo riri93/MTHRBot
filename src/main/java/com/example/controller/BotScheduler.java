@@ -181,7 +181,7 @@ public class BotScheduler {
 	 * 
 	 * @throws Exception
 	 */
-	@Scheduled(cron = "0 30 * * * *")
+	@Scheduled(cron = "0 40 * * * *")
 	public void sendInterviewTimeMessage() throws Exception {
 
 		System.out.println("************INTERVIEW*******************");
@@ -199,20 +199,17 @@ public class BotScheduler {
 								&& shopCandidateRelation.isConfirmedInterview()
 								&& shopCandidateRelation.getInterviewDate() == null)) {
 
-					System.out.println("INNNNNNNNNNNNNNNNN");
-
 					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 					cal.setTime(shopCandidateRelation.getAskInterviewDate());
 					cal.add(Calendar.DAY_OF_WEEK, 2);
 					cal.getTime();
 
-					Date currentTime = new Date();
+					Date currentTime = retrieveCurrentTimeStamp();
 
-					
-					System.out.println("currentTime : " + currentTime);
-					
+					System.out.println("retrieveCurrentTimeStamp : " + retrieveCurrentTimeStamp());
+
 					System.out.println("cal.getTime() : " + cal.getTime());
-					
+
 					if (currentTime.equals(cal.getTime())) {
 
 						ConfirmTemplate confirmTemplate = new ConfirmTemplate("Did you confirm the interview time?",
@@ -235,6 +232,23 @@ public class BotScheduler {
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * method to get current timeStamp
+	 * 
+	 */
+	public Date retrieveCurrentTimeStamp() {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+		Date currentDateAux = new Date();
+		String formattedDate = formatter.format(currentDateAux);
+		try {
+			Date currentDate = formatter.parse(formattedDate);
+			return currentDate;
+
+		} catch (Exception e) {
+			return null;
 		}
 	}
 
