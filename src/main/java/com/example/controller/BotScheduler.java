@@ -199,19 +199,14 @@ public class BotScheduler {
 								&& shopCandidateRelation.isConfirmedInterview()
 								&& shopCandidateRelation.getInterviewDate() == null)) {
 
+					System.out.println("INNNNNNNNNNNNNNNNN");
+
 					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 					cal.setTime(shopCandidateRelation.getAskInterviewDate());
 					cal.add(Calendar.DAY_OF_WEEK, 2);
 					cal.getTime();
 
-					Date date = new Date();
-
-					SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
-
-					sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-					String time = sdf.format(date);
-
-					Date currentTime = sdf.parse(time);
+					Date currentTime = new Date();
 
 					if (currentTime.equals(cal.getTime())) {
 
