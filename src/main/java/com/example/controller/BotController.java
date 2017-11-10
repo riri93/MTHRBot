@@ -546,7 +546,8 @@ public class BotController extends LineBotServlet {
 
 		TextMessageContent userMessage = event.getMessage();
 
-		// Get user profile
+		System.out.println("EVENNNNNNNNNNTTTT");
+
 		UserProfileResponse userProfile = getUserProfile(event.getSource().getUserId());
 
 		String botResponseText = "Hi," + userProfile.getDisplayName() + "," + "You say '" + userMessage.getText()
@@ -561,6 +562,9 @@ public class BotController extends LineBotServlet {
 	protected ReplyMessage handleDefaultMessageEvent(Event event) {
 		// When other messages not overridden as handle* is received, do nothing
 		// (returns null)
+
+		System.out.println("send message............");
+
 		return null;
 	}
 
