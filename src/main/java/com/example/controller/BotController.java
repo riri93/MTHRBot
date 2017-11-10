@@ -36,6 +36,7 @@ import com.example.repository.ChatMessageLineRepository;
 import com.example.repository.JobRepository;
 import com.example.repository.ShopCandidateRelationRepository;
 import com.example.repository.ShopRepository;
+import com.linecorp.bot.client.LineMessagingService;
 import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.ReplyMessage;
@@ -195,19 +196,6 @@ public class BotController {
 				PushMessage pushMessage = new PushMessage(userId, templateMessage);
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 						.pushMessage(pushMessage).execute();
-
-				DatetimePickerAction date = new DatetimePickerAction("rihab", "rihab", "datetime", "2017-06-18T06:15",
-						"2100-12-31T23:59", "1900-01-01T00:00");
-				CarouselTemplate carouselTemplate = new CarouselTemplate(Arrays.asList(new CarouselColumn(
-						"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png",
-						"Datetime Picker", "Please select a date, time or datetime", Arrays.asList(date))));
-
-				System.out.println("date : " + date.getInitial());
-
-				TemplateMessage templateMessage1 = new TemplateMessage("date time picker", carouselTemplate);
-				PushMessage pushMessage1 = new PushMessage(userId, templateMessage1);
-				Response<BotApiResponse> response1 = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
-						.pushMessage(pushMessage1).execute();
 
 				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 				chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
@@ -422,6 +410,22 @@ public class BotController {
 		}
 
 		if (intentName.equals("Interview confirmed")) {
+
+			// DatetimePickerAction date = new DatetimePickerAction("rihab", "rihab",
+			// "datetime", "2017-06-18T06:15",
+			// "2100-12-31T23:59", "1900-01-01T00:00");
+			// CarouselTemplate carouselTemplate = new CarouselTemplate(Arrays.asList(new
+			// CarouselColumn(
+			// "https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png",
+			// "Datetime Picker", "Please select a date, time or datetime",
+			// Arrays.asList(date))));
+			//
+			// TemplateMessage templateMessage1 = new TemplateMessage("date time picker",
+			// carouselTemplate);
+			// PushMessage pushMessage1 = new PushMessage(userId, templateMessage1);
+			// Response<BotApiResponse> response1 =
+			// LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
+			// .pushMessage(pushMessage1).execute();
 
 			if (shopCandidateRelation != null) {
 				shopCandidateRelation.setConfirmedInterview(true);
