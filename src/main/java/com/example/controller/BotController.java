@@ -36,6 +36,7 @@ import com.example.repository.ShopCandidateRelationRepository;
 import com.example.repository.ShopRepository;
 import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.model.PushMessage;
+import com.linecorp.bot.model.action.DatetimePickerAction;
 import com.linecorp.bot.model.action.MessageAction;
 import com.linecorp.bot.model.action.URIAction;
 import com.linecorp.bot.model.message.TemplateMessage;
@@ -201,6 +202,7 @@ public class BotController {
 				chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd2);
 
 			} else {
+
 				TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid area name or station");
 				PushMessage pushMessage = new PushMessage(userId, textMessage);
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
@@ -240,6 +242,18 @@ public class BotController {
 				PushMessage pushMessage = new PushMessage(userId, templateMessage);
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 						.pushMessage(pushMessage).execute();
+
+			
+				
+				CarouselTemplate carouselTemplate = new CarouselTemplate(Arrays
+						.asList(new CarouselColumn("", "Datetime Picker", "Please select a date, time or datetime",
+								Arrays.asList(new DatetimePickerAction("Datetime", "action=sel", "datetime",
+										"2017-06-18T06:15", "2100-12-31T23:59", "1900-01-01T00:00")))));
+
+				TemplateMessage templateMessage1 = new TemplateMessage("Any interesting jobs?", carouselTemplate);
+				PushMessage pushMessage1 = new PushMessage(userId, templateMessage1);
+				Response<BotApiResponse> response1 = LineMessagingServiceBuilder.create(channelToken).build()
+						.pushMessage(pushMessage1).execute();
 
 				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 				chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
@@ -428,10 +442,10 @@ public class BotController {
 
 					if (shopCandidateRelation != null) {
 						SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
-						
+
 						String dateTime = parameters.getString("date") + " " + parameters.getString("time");
 
-						//shopCandidateRelation.setInterviewDate(interviewDate);
+						// shopCandidateRelation.setInterviewDate(interviewDate);
 					}
 
 					TextMessage textMessage = new TextMessage("Okay, good luck!");
@@ -452,7 +466,7 @@ public class BotController {
 
 					if (shopCandidateRelation != null) {
 
-						//shopCandidateRelation.setInterviewDate(interviewDate);
+						// shopCandidateRelation.setInterviewDate(interviewDate);
 					}
 
 					TextMessage textMessage = new TextMessage("Okay, good luck!");
