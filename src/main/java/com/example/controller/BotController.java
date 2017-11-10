@@ -101,6 +101,7 @@ public class BotController {
 
 		JSONObject jsonResult = new JSONObject(obj);
 
+		
 		JSONObject rsl = jsonResult.getJSONObject("originalRequest");
 		JSONObject data = rsl.getJSONObject("data");
 		JSONObject source = data.getJSONObject("source");
