@@ -202,7 +202,7 @@ public class BotController {
 						"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png",
 						"Datetime Picker", "Please select a date, time or datetime", Arrays.asList(date))));
 
-				System.out.println("date : " + date.getData());
+				System.out.println("date : " + date.getInitial());
 
 				TemplateMessage templateMessage1 = new TemplateMessage("date time picker", carouselTemplate);
 				PushMessage pushMessage1 = new PushMessage(userId, templateMessage1);
