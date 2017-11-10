@@ -101,7 +101,6 @@ public class BotController {
 
 		JSONObject jsonResult = new JSONObject(obj);
 
-		
 		JSONObject rsl = jsonResult.getJSONObject("originalRequest");
 		JSONObject data = rsl.getJSONObject("data");
 		JSONObject source = data.getJSONObject("source");
@@ -172,6 +171,19 @@ public class BotController {
 		System.out.println("timestamp : " + timestamp);
 		System.out.println("intentName : " + intentName);
 		System.out.println("customerMessage : " + customerMessage);
+
+		DatetimePickerAction date = new DatetimePickerAction("rihab", "rihab", "datetime", "2017-06-18T06:15",
+				"2100-12-31T23:59", "1900-01-01T00:00");
+		CarouselTemplate carouselTemplate = new CarouselTemplate(Arrays.asList(
+				new CarouselColumn("https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png",
+						"Datetime Picker", "Please select a date, time or datetime", Arrays.asList(date))));
+
+		TemplateMessage templateMessage1 = new TemplateMessage("date time picker", carouselTemplate);
+		PushMessage pushMessage1 = new PushMessage(userId, templateMessage1);
+		Response<BotApiResponse> response1 = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
+				.pushMessage(pushMessage1).execute();
+		
+		
 
 		if (intentName.equals("Default Fallback Intent")) {
 			addressToSearch = customerMessage;
