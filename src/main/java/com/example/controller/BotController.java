@@ -64,7 +64,6 @@ public class BotController {
 
 	Candidate candidateToRegister = new Candidate();
 
-	BotServlet botServlet;
 
 	private static final String CHANNEL_ACCESS_TOKEN = "[wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
 
@@ -203,7 +202,7 @@ public class BotController {
 				CarouselTemplate carouselTemplate = new CarouselTemplate(Arrays.asList(new CarouselColumn(
 						"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png",
 						"Datetime Picker", "Please select a date, time or datetime",
-						Arrays.asList(new DatetimePickerAction("Datetime", "action=sel", "datetime", "2017-06-18T06:15",
+						Arrays.asList(new DatetimePickerAction("Datetime", "action=rihab", "datetime", "2017-06-18T06:15",
 								"2100-12-31T23:59", "1900-01-01T00:00")))));
 
 				TemplateMessage templateMessage1 = new TemplateMessage("date time picker", carouselTemplate);
@@ -211,10 +210,6 @@ public class BotController {
 				Response<BotApiResponse> response1 = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 						.pushMessage(pushMessage1).execute();
 
-				ServletHandler handler = new ServletHandler();
-
-				handler.addServletWithMapping(BotServlet.class, "/webhook");
-				
 				
 				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 				chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
