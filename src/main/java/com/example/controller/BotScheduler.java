@@ -46,11 +46,11 @@ public class BotScheduler {
 	/**
 	 * send this message after three hours from apply
 	 * 
-	 * scheduler cron checks the database every hour
+	 * scheduler cron checks the database every day
 	 * 
 	 * @throws Exception
 	 */
-	@Scheduled(cron = "0 0 * * * *")
+	@Scheduled(cron = "0 30 * * * *")
 	public void sendCallShopMessage() throws Exception {
 
 		System.out.println("************CALL*******************");
@@ -65,7 +65,7 @@ public class BotScheduler {
 
 					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 					cal.setTime(jobCandidateRelation.getAppliedDate());
-					cal.add(Calendar.HOUR_OF_DAY, 3);
+					cal.add(Calendar.DAY_OF_WEEK, 1);
 					cal.getTime();
 
 					if (jobCandidateRelation.getCallShopMessageDate() == null) {
@@ -115,7 +115,7 @@ public class BotScheduler {
 	 * @throws Exception
 	 * 
 	 */
-	@Scheduled(cron = "0 28 * * * *")
+	@Scheduled(cron = "0 0 0 * * *")
 	public void sendHaveYouPassedMessage() throws Exception {
 
 		System.out.println("************PASSED*******************");
