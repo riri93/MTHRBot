@@ -454,36 +454,25 @@ public class BotController {
 				System.out.println("parameters time : " + parameters.getString("time"));
 				System.out.println("parameters date-time: " + parameters.getString("date-time"));
 
-				if (parameters != null && parameters.getString("date") != null && parameters.getString("time") != null
-						&& !parameters.getString("date").equals("") && !parameters.getString("time").equals("")) {
+				if (parameters != null && parameters.getString("date") != null
+						&& !parameters.getString("date").equals("")) {
 
-					if (shopCandidateRelation != null) {
-						SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-						String dateTime = parameters.getString("date") + " " + parameters.getString("time");
-						Date interviewDate = formatter.parse(dateTime);
-						shopCandidateRelation.setInterviewDate(interviewDate);
-						shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
-					}
-
-					TextMessage textMessage = new TextMessage("Okay, good luck!");
-					PushMessage pushMessage = new PushMessage(userId, textMessage);
-					Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
-							.pushMessage(pushMessage).execute();
-
-					ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
-					chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
-					chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
-					chatMessageLineToAdd.setMessageText("Okay, good luck!");
-					chatMessageLineToAdd.setReadState(false);
-					chatMessageLineToAdd.setMessageDate((new Date()));
-					chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
-
-				} else if (parameters != null && parameters.getString("date-time") != null
-						&& !parameters.getString("date-time").equals("")) {
-
-					if (shopCandidateRelation != null) {
-
-						// shopCandidateRelation.setInterviewDate(interviewDate);
+					if (parameters.getString("time") != null && !parameters.getString("time").equals("")) {
+						if (shopCandidateRelation != null) {
+							SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+							String dateTime = parameters.getString("date") + " " + parameters.getString("time");
+							Date interviewDate = formatter.parse(dateTime);
+							shopCandidateRelation.setInterviewDate(interviewDate);
+							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
+						}
+					} else {
+						if (shopCandidateRelation != null) {
+							SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+							String dateTime = parameters.getString("date");
+							Date interviewDate = formatter.parse(dateTime);
+							shopCandidateRelation.setInterviewDate(interviewDate);
+							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
+						}
 					}
 
 					TextMessage textMessage = new TextMessage("Okay, good luck!");
