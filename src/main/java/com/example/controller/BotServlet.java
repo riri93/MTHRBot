@@ -21,6 +21,8 @@ public class BotServlet extends LineBotServlet {
 	@Override
 	protected ReplyMessage handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws IOException {
 
+		System.out.println("EVENTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+		
 		TextMessageContent userMessage = event.getMessage();
 
 		// Get user profile

@@ -92,9 +92,7 @@ public class BotController {
 
 		System.out.println("*****************WEBHOOK*********************");
 
-		ServletHandler handler = new ServletHandler();
 
-		handler.addServletWithMapping(BotServlet.class, "/callback");
 
 		Shop shop = new Shop();
 		Candidate candidate = new Candidate();
@@ -213,6 +211,11 @@ public class BotController {
 				Response<BotApiResponse> response1 = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 						.pushMessage(pushMessage1).execute();
 
+				ServletHandler handler = new ServletHandler();
+
+				handler.addServletWithMapping(BotServlet.class, "/callback");
+				
+				
 				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 				chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
 				chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
