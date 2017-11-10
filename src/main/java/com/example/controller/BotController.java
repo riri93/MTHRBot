@@ -64,7 +64,6 @@ public class BotController {
 
 	Candidate candidateToRegister = new Candidate();
 
-
 	private static final String CHANNEL_ACCESS_TOKEN = "[wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
 
 	@Autowired
@@ -90,8 +89,6 @@ public class BotController {
 			throws JSONException, IOException {
 
 		System.out.println("*****************WEBHOOK*********************");
-
-
 
 		Shop shop = new Shop();
 		Candidate candidate = new Candidate();
@@ -199,18 +196,19 @@ public class BotController {
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 						.pushMessage(pushMessage).execute();
 
+				DatetimePickerAction date = new DatetimePickerAction("rihab", "rihab", "datetime", "2017-06-18T06:15",
+						"2100-12-31T23:59", "1900-01-01T00:00");
 				CarouselTemplate carouselTemplate = new CarouselTemplate(Arrays.asList(new CarouselColumn(
 						"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png",
-						"Datetime Picker", "Please select a date, time or datetime",
-						Arrays.asList(new DatetimePickerAction("rihab", "rihab", "datetime", "2017-06-18T06:15",
-								"2100-12-31T23:59", "1900-01-01T00:00")))));
+						"Datetime Picker", "Please select a date, time or datetime", Arrays.asList(date))));
+
+				System.out.println("date : " + date.getData());
 
 				TemplateMessage templateMessage1 = new TemplateMessage("date time picker", carouselTemplate);
 				PushMessage pushMessage1 = new PushMessage(userId, templateMessage1);
 				Response<BotApiResponse> response1 = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 						.pushMessage(pushMessage1).execute();
 
-				
 				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 				chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
 				chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
