@@ -213,7 +213,7 @@ public class BotController {
 
 				ServletHandler handler = new ServletHandler();
 
-				handler.addServletWithMapping(BotServlet.class, "/callback");
+				handler.addServletWithMapping(BotServlet.class, "/webhook");
 				
 				
 				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
