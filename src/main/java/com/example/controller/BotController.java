@@ -39,6 +39,7 @@ import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.action.DatetimePickerAction;
 import com.linecorp.bot.model.action.MessageAction;
 import com.linecorp.bot.model.action.URIAction;
+import com.linecorp.bot.model.event.PostbackEvent;
 import com.linecorp.bot.model.message.TemplateMessage;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.message.template.ButtonsTemplate;
@@ -46,6 +47,7 @@ import com.linecorp.bot.model.message.template.CarouselColumn;
 import com.linecorp.bot.model.message.template.CarouselTemplate;
 import com.linecorp.bot.model.message.template.ConfirmTemplate;
 import com.linecorp.bot.model.response.BotApiResponse;
+import com.linecorp.bot.spring.boot.annotation.EventMapping;
 
 import retrofit2.Response;
 
@@ -186,6 +188,16 @@ public class BotController {
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 						.pushMessage(pushMessage).execute();
 
+				CarouselTemplate carouselTemplate = new CarouselTemplate(Arrays.asList(new CarouselColumn(
+						"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png",
+						"Datetime Picker", "Please select a date, time or datetime",
+						Arrays.asList(new DatetimePickerAction("Datetime", "action=sel", "datetime", "2017-06-18T06:15",
+								"2100-12-31T23:59", "1900-01-01T00:00")))));
+				TemplateMessage templateMessage1 = new TemplateMessage("Any interesting jobs?", carouselTemplate);
+				PushMessage pushMessage1 = new PushMessage(userId, templateMessage1);
+				Response<BotApiResponse> response1 = LineMessagingServiceBuilder.create(channelToken).build()
+						.pushMessage(pushMessage1).execute();
+
 				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 				chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
 				chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
@@ -242,17 +254,6 @@ public class BotController {
 				PushMessage pushMessage = new PushMessage(userId, templateMessage);
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 						.pushMessage(pushMessage).execute();
-
-			
-				
-				CarouselTemplate carouselTemplate = new CarouselTemplate(Arrays
-						.asList(new CarouselColumn("https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png", "Datetime Picker", "Please select a date, time or datetime",
-								Arrays.asList(new DatetimePickerAction("Datetime", "action=sel", "datetime",
-										"2017-06-18T06:15", "2100-12-31T23:59", "1900-01-01T00:00")))));
-				TemplateMessage templateMessage1 = new TemplateMessage("Any interesting jobs?", carouselTemplate);
-				PushMessage pushMessage1 = new PushMessage(userId, templateMessage1);
-				Response<BotApiResponse> response1 = LineMessagingServiceBuilder.create(channelToken).build()
-						.pushMessage(pushMessage1).execute();
 
 				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 				chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
@@ -410,6 +411,7 @@ public class BotController {
 		}
 
 		if (intentName.equals("Interview confirmed")) {
+
 			if (shopCandidateRelation != null) {
 				shopCandidateRelation.setConfirmedInterview(true);
 				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
@@ -486,6 +488,17 @@ public class BotController {
 		}
 
 		return json;
+	}
+
+	@EventMapping
+	public void handlePostbackEvent(PostbackEvent event) throws IOException {
+		String replyToken = event.getReplyToken();
+
+		TextMessage textMessage = new TextMessage(
+				event.getPostbackContent().getParams().toString() + "data: " + event.getPostbackContent().getData());
+		PushMessage pushMessage = new PushMessage("Uc50dae51cd16ba230c7abb40cf0e7b95", textMessage);
+		Response<BotApiResponse> response = LineMessagingServiceBuilder.create(replyToken).build()
+				.pushMessage(pushMessage).execute();
 	}
 
 	/**
