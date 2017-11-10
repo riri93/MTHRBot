@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jetty.servlet.ServletHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -59,11 +60,12 @@ import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import retrofit2.Response;
 
 @RestController
-public class BotController extends LineBotServlet {
+public class BotController {
 
 	Candidate candidateToRegister = new Candidate();
 
-	private static final String CHANNEL_SECRET = "ad750d2dcf8c2679abf87d3d61ca85d8";
+	BotServlet botServlet;
+
 	private static final String CHANNEL_ACCESS_TOKEN = "[wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
 
 	@Autowired
@@ -89,6 +91,10 @@ public class BotController extends LineBotServlet {
 			throws JSONException, IOException {
 
 		System.out.println("*****************WEBHOOK*********************");
+
+		ServletHandler handler = new ServletHandler();
+
+		handler.addServletWithMapping(BotServlet.class, "/callback");
 
 		Shop shop = new Shop();
 		Candidate candidate = new Candidate();
@@ -539,43 +545,6 @@ public class BotController extends LineBotServlet {
 			System.out.println("Exception is raised ");
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	protected ReplyMessage handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws IOException {
-
-		TextMessageContent userMessage = event.getMessage();
-
-		System.out.println("EVENNNNNNNNNNTTTT");
-
-		UserProfileResponse userProfile = getUserProfile(event.getSource().getUserId());
-
-		String botResponseText = "Hi," + userProfile.getDisplayName() + "," + "You say '" + userMessage.getText()
-				+ "' !";
-
-		TextMessage textMessage = new TextMessage(botResponseText);
-
-		return new ReplyMessage(event.getReplyToken(), Arrays.asList(textMessage));
-	}
-
-	@Override
-	protected ReplyMessage handleDefaultMessageEvent(Event event) {
-		// When other messages not overridden as handle* is received, do nothing
-		// (returns null)
-
-		System.out.println("send message............");
-
-		return null;
-	}
-
-	@Override
-	public String getChannelSecret() {
-		return CHANNEL_SECRET;
-	}
-
-	@Override
-	public String getChannelAccessToken() {
-		return CHANNEL_ACCESS_TOKEN;
 	}
 
 }
