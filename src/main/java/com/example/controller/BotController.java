@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -264,7 +265,6 @@ public class BotController {
 				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 			}
 
-
 			ButtonsTemplate buttonsTemplate = new ButtonsTemplate("", "Reason", "Please choose your reason",
 					Arrays.asList(new MessageAction("Location", "Location"), new MessageAction("Salary", "Salary"),
 							new MessageAction("Job position", "Job position"),
@@ -368,7 +368,8 @@ public class BotController {
 			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Did you confirm the interview time?",
 					new MessageAction("Confirmed", "Interview confirmed"),
 					new MessageAction("Not confirmed", "Interview not confirmed"));
-			TemplateMessage templateMessage = new TemplateMessage("Did you confirm the interview time?", confirmTemplate);
+			TemplateMessage templateMessage = new TemplateMessage("Did you confirm the interview time?",
+					confirmTemplate);
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 					.pushMessage(pushMessage).execute();
@@ -418,14 +419,19 @@ public class BotController {
 				chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 
 			} else {
-				System.out.println("parameters : " + parameters.getString("date"));
-				System.out.println("parameters : " + parameters.getString("time"));
+				System.out.println("parameters date : " + parameters.getString("date"));
+				System.out.println("parameters time : " + parameters.getString("time"));
+				System.out.println("parameters date-time: " + parameters.getString("date-time"));
 
 				if (parameters != null && parameters.getString("date") != null && parameters.getString("time") != null
 						&& !parameters.getString("date").equals("") && !parameters.getString("time").equals("")) {
 
 					if (shopCandidateRelation != null) {
-						// TODO
+						SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+						
+						String dateTime = parameters.getString("date") + " " + parameters.getString("time");
+
+						//shopCandidateRelation.setInterviewDate(interviewDate);
 					}
 
 					TextMessage textMessage = new TextMessage("Okay, good luck!");
@@ -440,6 +446,28 @@ public class BotController {
 					chatMessageLineToAdd.setReadState(false);
 					chatMessageLineToAdd.setMessageDate((new Date()));
 					chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+
+				} else if (parameters != null && parameters.getString("date-time") != null
+						&& !parameters.getString("date-time").equals("")) {
+
+					if (shopCandidateRelation != null) {
+
+						//shopCandidateRelation.setInterviewDate(interviewDate);
+					}
+
+					TextMessage textMessage = new TextMessage("Okay, good luck!");
+					PushMessage pushMessage = new PushMessage(userId, textMessage);
+					Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+							.pushMessage(pushMessage).execute();
+
+					ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+					chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+					chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+					chatMessageLineToAdd.setMessageText("Okay, good luck!");
+					chatMessageLineToAdd.setReadState(false);
+					chatMessageLineToAdd.setMessageDate((new Date()));
+					chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+
 				}
 			}
 		}

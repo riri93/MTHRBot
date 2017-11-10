@@ -115,7 +115,7 @@ public class BotScheduler {
 	 * @throws Exception
 	 * 
 	 */
-	@Scheduled(cron = "0 02 * * * *")
+	@Scheduled(cron = "0 0 0 * * *")
 	public void sendHaveYouPassedMessage() throws Exception {
 
 		System.out.println("************PASSED*******************");
@@ -137,14 +137,8 @@ public class BotScheduler {
 
 						Date currentTime = retrieveCurrentTimeStamp();
 
-						System.out.println("currentTime : " + currentTime);
-
-						System.out.println("cal.getTime() : " + cal.getTime());
-
 						if (currentTime.equals(cal.getTime())) {
 
-							System.out.println("*************CONFIRM**************");
-							
 							ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you passed the interview?",
 									new MessageAction("Yes", "Yes I passed"), new MessageAction("No", "No I failed"));
 							TemplateMessage templateMessage = new TemplateMessage("Have you passed the interview?",
