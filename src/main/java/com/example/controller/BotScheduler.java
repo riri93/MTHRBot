@@ -173,7 +173,7 @@ public class BotScheduler {
 	 * 
 	 * @throws Exception
 	 */
-	@Scheduled(cron = "0 09 * * * *")
+	@Scheduled(cron = "0 12 * * * *")
 	public void sendInterviewTimeMessage() throws Exception {
 
 		System.out.println("************INTERVIEW*******************");
