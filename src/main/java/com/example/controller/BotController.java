@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.riversun.linebot.LineBotServlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,25 +37,34 @@ import com.example.repository.ShopCandidateRelationRepository;
 import com.example.repository.ShopRepository;
 import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.model.PushMessage;
+import com.linecorp.bot.model.ReplyMessage;
 import com.linecorp.bot.model.action.DatetimePickerAction;
 import com.linecorp.bot.model.action.MessageAction;
 import com.linecorp.bot.model.action.URIAction;
+import com.linecorp.bot.model.event.CallbackRequest;
+import com.linecorp.bot.model.event.Event;
+import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.PostbackEvent;
+import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.TemplateMessage;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.message.template.ButtonsTemplate;
 import com.linecorp.bot.model.message.template.CarouselColumn;
 import com.linecorp.bot.model.message.template.CarouselTemplate;
 import com.linecorp.bot.model.message.template.ConfirmTemplate;
+import com.linecorp.bot.model.profile.UserProfileResponse;
 import com.linecorp.bot.model.response.BotApiResponse;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
 
 import retrofit2.Response;
 
 @RestController
-public class BotController {
+public class BotController extends LineBotServlet {
 
 	Candidate candidateToRegister = new Candidate();
+
+	private static final String CHANNEL_SECRET = "ad750d2dcf8c2679abf87d3d61ca85d8";
+	private static final String CHANNEL_ACCESS_TOKEN = "[wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
 
 	@Autowired
 	CandidateRepository candidateRepository;
@@ -86,8 +96,6 @@ public class BotController {
 		String addressToSearch = "";
 		ChatLineAdmin chatLineAdmin = new ChatLineAdmin();
 
-		String channelToken = "wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
-
 		Map<String, Object> json = new HashMap<String, Object>();
 
 		JSONObject jsonResult = new JSONObject(obj);
@@ -106,13 +114,13 @@ public class BotController {
 		JSONObject fulfillment = result.getJSONObject("fulfillment");
 		String speech = fulfillment.getString("speech");
 
-		if (shopRepository.findByChannelToken(channelToken) == null) {
+		if (shopRepository.findByChannelToken(CHANNEL_ACCESS_TOKEN) == null) {
 			Shop shopToAdd = new Shop();
-			shopToAdd.setChannelToken(channelToken);
+			shopToAdd.setChannelToken(CHANNEL_ACCESS_TOKEN);
 			shopRepository.saveAndFlush(shopToAdd);
 		}
 
-		shop = shopRepository.findByChannelToken(channelToken);
+		shop = shopRepository.findByChannelToken(CHANNEL_ACCESS_TOKEN);
 
 		if (candidateRepository.findByUserLineId(userId) == null) {
 			candidateToRegister = new Candidate();
@@ -179,13 +187,13 @@ public class BotController {
 					}
 				}
 
-				carouselForUser(userId, channelToken, jobsToDisplay);
+				carouselForUser(userId, CHANNEL_ACCESS_TOKEN, jobsToDisplay);
 
 				ConfirmTemplate confirmTemplate = new ConfirmTemplate("Any interesting jobs?",
 						new MessageAction("yes", "interesting jobs"), new MessageAction("No", "not interesting jobs"));
 				TemplateMessage templateMessage = new TemplateMessage("Any interesting jobs?", confirmTemplate);
 				PushMessage pushMessage = new PushMessage(userId, templateMessage);
-				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 						.pushMessage(pushMessage).execute();
 
 				CarouselTemplate carouselTemplate = new CarouselTemplate(Arrays.asList(new CarouselColumn(
@@ -193,9 +201,10 @@ public class BotController {
 						"Datetime Picker", "Please select a date, time or datetime",
 						Arrays.asList(new DatetimePickerAction("Datetime", "action=sel", "datetime", "2017-06-18T06:15",
 								"2100-12-31T23:59", "1900-01-01T00:00")))));
-				TemplateMessage templateMessage1 = new TemplateMessage("Any interesting jobs?", carouselTemplate);
+
+				TemplateMessage templateMessage1 = new TemplateMessage("date time picker", carouselTemplate);
 				PushMessage pushMessage1 = new PushMessage(userId, templateMessage1);
-				Response<BotApiResponse> response1 = LineMessagingServiceBuilder.create(channelToken).build()
+				Response<BotApiResponse> response1 = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 						.pushMessage(pushMessage1).execute();
 
 				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
@@ -217,7 +226,7 @@ public class BotController {
 
 				TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid area name or station");
 				PushMessage pushMessage = new PushMessage(userId, textMessage);
-				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 						.pushMessage(pushMessage).execute();
 
 				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
@@ -245,14 +254,14 @@ public class BotController {
 					}
 				}
 
-				carouselForUser(userId, channelToken, jobsToDisplay);
+				carouselForUser(userId, CHANNEL_ACCESS_TOKEN, jobsToDisplay);
 
 				ConfirmTemplate confirmTemplate = new ConfirmTemplate("Any interesting jobs?",
 						new MessageAction("yes", "interesting jobs"),
 						new MessageAction("No", "not interesting jobs again"));
 				TemplateMessage templateMessage = new TemplateMessage("Any interesting jobs?", confirmTemplate);
 				PushMessage pushMessage = new PushMessage(userId, templateMessage);
-				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 						.pushMessage(pushMessage).execute();
 
 				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
@@ -286,7 +295,7 @@ public class BotController {
 			TemplateMessage templateMessage = new TemplateMessage("Reason", buttonsTemplate);
 
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
-			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
 
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
@@ -301,7 +310,7 @@ public class BotController {
 		if (intentName.equals("Location")) {
 			TextMessage textMessage = new TextMessage("Thank you! We will contact you again!");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
-			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
 
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
@@ -316,7 +325,7 @@ public class BotController {
 		if (intentName.equals("Salary")) {
 			TextMessage textMessage = new TextMessage("Thank you! We will contact you again!");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
-			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
 
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
@@ -331,7 +340,7 @@ public class BotController {
 		if (intentName.equals("Job position")) {
 			TextMessage textMessage = new TextMessage("Thank you! We will contact you again!");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
-			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
 
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
@@ -346,7 +355,7 @@ public class BotController {
 		if (intentName.equals("Work Time")) {
 			TextMessage textMessage = new TextMessage("Thank you! We will contact you again!");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
-			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
 
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
@@ -366,7 +375,7 @@ public class BotController {
 
 			TextMessage textMessage = new TextMessage("What is the reason?");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
-			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
 
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
@@ -385,7 +394,7 @@ public class BotController {
 			TemplateMessage templateMessage = new TemplateMessage("Did you confirm the interview time?",
 					confirmTemplate);
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
-			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
 
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
@@ -422,7 +431,7 @@ public class BotController {
 			if (parameters == null) {
 				TextMessage textMessage = new TextMessage("Please enter a valid date and time");
 				PushMessage pushMessage = new PushMessage(userId, textMessage);
-				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 						.pushMessage(pushMessage).execute();
 
 				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
@@ -451,7 +460,7 @@ public class BotController {
 
 					TextMessage textMessage = new TextMessage("Okay, good luck!");
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
-					Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+					Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 							.pushMessage(pushMessage).execute();
 
 					ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
@@ -472,7 +481,7 @@ public class BotController {
 
 					TextMessage textMessage = new TextMessage("Okay, good luck!");
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
-					Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+					Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 							.pushMessage(pushMessage).execute();
 
 					ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
@@ -488,17 +497,6 @@ public class BotController {
 		}
 
 		return json;
-	}
-
-	@EventMapping
-	public void handlePostbackEvent(PostbackEvent event) throws IOException {
-		String replyToken = event.getReplyToken();
-
-		TextMessage textMessage = new TextMessage(
-				event.getPostbackContent().getParams().toString() + "data: " + event.getPostbackContent().getData());
-		PushMessage pushMessage = new PushMessage("Uc50dae51cd16ba230c7abb40cf0e7b95", textMessage);
-		Response<BotApiResponse> response = LineMessagingServiceBuilder.create(replyToken).build()
-				.pushMessage(pushMessage).execute();
 	}
 
 	/**
@@ -541,6 +539,39 @@ public class BotController {
 			System.out.println("Exception is raised ");
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	protected ReplyMessage handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws IOException {
+
+		TextMessageContent userMessage = event.getMessage();
+
+		// Get user profile
+		UserProfileResponse userProfile = getUserProfile(event.getSource().getUserId());
+
+		String botResponseText = "Hi," + userProfile.getDisplayName() + "," + "You say '" + userMessage.getText()
+				+ "' !";
+
+		TextMessage textMessage = new TextMessage(botResponseText);
+
+		return new ReplyMessage(event.getReplyToken(), Arrays.asList(textMessage));
+	}
+
+	@Override
+	protected ReplyMessage handleDefaultMessageEvent(Event event) {
+		// When other messages not overridden as handle* is received, do nothing
+		// (returns null)
+		return null;
+	}
+
+	@Override
+	public String getChannelSecret() {
+		return CHANNEL_SECRET;
+	}
+
+	@Override
+	public String getChannelAccessToken() {
+		return CHANNEL_ACCESS_TOKEN;
 	}
 
 }
