@@ -50,7 +50,7 @@ public class BotScheduler {
 	 * 
 	 * @throws Exception
 	 */
-	@Scheduled(cron = "0 47 * * * *")
+	@Scheduled(cron = "0 0 0 * * *")
 	public void sendCallShopMessage() throws Exception {
 
 		System.out.println("************CALL*******************");
@@ -80,9 +80,9 @@ public class BotScheduler {
 
 						if (currentTime.after(cal.getTime())) {
 
-							ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you called the shop?",
+							ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you got in contact with the shop?",
 									new MessageAction("Yes", "Yes I called"), new MessageAction("No", "No I did not"));
-							TemplateMessage templateMessage = new TemplateMessage("Have you called the shop?",
+							TemplateMessage templateMessage = new TemplateMessage("Have you got in contact with the shop?",
 									confirmTemplate);
 							PushMessage pushMessage = new PushMessage(
 									jobCandidateRelation.getCandidate().getUserLineId().toString(), templateMessage);
@@ -96,7 +96,7 @@ public class BotScheduler {
 							chatMessageLineToAdd
 									.setChatLineAdmin(jobCandidateRelation.getCandidate().getChatLineAdmin());
 							chatMessageLineToAdd.setMessageDirection(jobCandidateRelation.getCandidate().getIdUser());
-							chatMessageLineToAdd.setMessageText("Have you called the shop?");
+							chatMessageLineToAdd.setMessageText("Have you got in contact with the shop?");
 							chatMessageLineToAdd.setReadState(false);
 							chatMessageLineToAdd.setMessageDate((new Date()));
 							chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);

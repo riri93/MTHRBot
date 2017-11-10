@@ -279,9 +279,10 @@ public class BotController {
 				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 			}
 
-			ButtonsTemplate buttonsTemplate = new ButtonsTemplate("", "Reason", "Please choose your reason",
+			ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
+					"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png", "Reason",
+					"Please choose your reason",
 					Arrays.asList(new MessageAction("Location", "Location"), new MessageAction("Salary", "Salary"),
-							new MessageAction("Job position", "Job position"),
 							new MessageAction("Work Time", "Work Time"), new MessageAction("Others", "Others")));
 			TemplateMessage templateMessage = new TemplateMessage("Reason", buttonsTemplate);
 
@@ -379,11 +380,14 @@ public class BotController {
 		}
 
 		if (intentName.equals("Yes I called")) {
-			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Did you confirm the interview time?",
-					new MessageAction("Confirmed", "Interview confirmed"),
-					new MessageAction("Not confirmed", "Interview not confirmed"));
-			TemplateMessage templateMessage = new TemplateMessage("Did you confirm the interview time?",
-					confirmTemplate);
+			ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
+					"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png", "Reason",
+					"Did you confirm the interview time?",
+					Arrays.asList(new MessageAction("Confirmed", "Interview confirmed"),
+							new MessageAction("Not confirmed", "Interview not confirmed"),
+							new MessageAction("No interview", "No interview")));
+			TemplateMessage templateMessage = new TemplateMessage("Reason", buttonsTemplate);
+
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
@@ -400,7 +404,57 @@ public class BotController {
 				shopCandidateRelation.setAskInterviewDate((new Date()));
 				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 			}
+		}
+		
+		
+		if(intentName.equals("No I did not")) {
+			
+			TextMessage textMessage = new TextMessage("Please call the shop");
+			PushMessage pushMessage = new PushMessage(userId, textMessage);
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
+					.pushMessage(pushMessage).execute();
 
+			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+			chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+			chatMessageLineToAdd.setMessageText("Please call the shop");
+			chatMessageLineToAdd.setReadState(false);
+			chatMessageLineToAdd.setMessageDate((new Date()));
+			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+		}
+
+		if (intentName.equals("No interview")) {
+			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Do you want to apply for a job again?",
+					new MessageAction("yes", "Yes I want to apply for a job again"),
+					new MessageAction("No", "No I do not want to apply for a job again"));
+			TemplateMessage templateMessage = new TemplateMessage("Do you want to apply for a job again?",
+					confirmTemplate);
+			PushMessage pushMessage = new PushMessage(userId, templateMessage);
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
+					.pushMessage(pushMessage).execute();
+
+			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+			chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+			chatMessageLineToAdd.setMessageText("Do you want to apply for a job again?");
+			chatMessageLineToAdd.setReadState(false);
+			chatMessageLineToAdd.setMessageDate((new Date()));
+			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+		}
+
+		if (intentName.equals("Yes I want to apply for a job again")) {
+			TextMessage textMessage = new TextMessage("Please enter an area or a station");
+			PushMessage pushMessage = new PushMessage(userId, textMessage);
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
+					.pushMessage(pushMessage).execute();
+
+			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+			chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+			chatMessageLineToAdd.setMessageText("Please enter an area or a station");
+			chatMessageLineToAdd.setReadState(false);
+			chatMessageLineToAdd.setMessageDate((new Date()));
+			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 		}
 
 		if (intentName.equals("Interview not confirmed")) {
@@ -490,6 +544,25 @@ public class BotController {
 
 				}
 			}
+		}
+
+		if (intentName.equals("No I failed")) {
+			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Do you want to apply for a job again?",
+					new MessageAction("yes", "Yes I want to apply for a job again"),
+					new MessageAction("No", "No I do not want to apply for a job again"));
+			TemplateMessage templateMessage = new TemplateMessage("Do you want to apply for a job again?",
+					confirmTemplate);
+			PushMessage pushMessage = new PushMessage(userId, templateMessage);
+			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
+					.pushMessage(pushMessage).execute();
+
+			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+			chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+			chatMessageLineToAdd.setMessageText("Do you want to apply for a job again?");
+			chatMessageLineToAdd.setReadState(false);
+			chatMessageLineToAdd.setMessageDate((new Date()));
+			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 		}
 
 		return json;
