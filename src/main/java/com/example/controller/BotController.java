@@ -202,7 +202,7 @@ public class BotController {
 				CarouselTemplate carouselTemplate = new CarouselTemplate(Arrays.asList(new CarouselColumn(
 						"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png",
 						"Datetime Picker", "Please select a date, time or datetime",
-						Arrays.asList(new DatetimePickerAction("Datetime", "rihab", "datetime", "2017-06-18T06:15",
+						Arrays.asList(new DatetimePickerAction("rihab", "rihab", "datetime", "2017-06-18T06:15",
 								"2100-12-31T23:59", "1900-01-01T00:00")))));
 
 				TemplateMessage templateMessage1 = new TemplateMessage("date time picker", carouselTemplate);
