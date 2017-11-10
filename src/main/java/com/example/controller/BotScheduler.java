@@ -50,7 +50,7 @@ public class BotScheduler {
 	 * 
 	 * @throws Exception
 	 */
-	@Scheduled(cron = "0 30 * * * *")
+	@Scheduled(cron = "0 36 * * * *")
 	public void sendCallShopMessage() throws Exception {
 
 		System.out.println("************CALL*******************");

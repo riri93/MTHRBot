@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,7 +88,7 @@ public class BotController {
 
 	@RequestMapping(value = "/webhook", method = RequestMethod.POST)
 	private @ResponseBody Map<String, Object> webhook(@RequestBody Map<String, Object> obj)
-			throws JSONException, IOException {
+			throws JSONException, IOException, Exception {
 
 		System.out.println("*****************WEBHOOK*********************");
 
@@ -457,11 +458,11 @@ public class BotController {
 						&& !parameters.getString("date").equals("") && !parameters.getString("time").equals("")) {
 
 					if (shopCandidateRelation != null) {
-						SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
-
+						SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 						String dateTime = parameters.getString("date") + " " + parameters.getString("time");
-
-						// shopCandidateRelation.setInterviewDate(interviewDate);
+						Date interviewDate = formatter.parse(dateTime);
+						shopCandidateRelation.setInterviewDate(interviewDate);
+						shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 					}
 
 					TextMessage textMessage = new TextMessage("Okay, good luck!");
