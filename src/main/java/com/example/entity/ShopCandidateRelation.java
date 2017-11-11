@@ -26,6 +26,9 @@ public class ShopCandidateRelation implements Serializable {
 
 	private String progress;
 
+	@Column(columnDefinition = "int default 0")
+	private int askInterviewCounter;
+
 	@Column(columnDefinition = "boolean default false", nullable = false)
 	private boolean confirmedInterview;
 
@@ -121,6 +124,14 @@ public class ShopCandidateRelation implements Serializable {
 
 	public void setRemindInterviewDate(Date remindInterviewDate) {
 		this.remindInterviewDate = remindInterviewDate;
+	}
+
+	public int getAskInterviewCounter() {
+		return askInterviewCounter;
+	}
+
+	public void setAskInterviewCounter(int askInterviewCounter) {
+		this.askInterviewCounter = askInterviewCounter;
 	}
 
 }

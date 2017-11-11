@@ -44,13 +44,16 @@ public class BotScheduler {
 	ChatMessageLineRepository chatMessageLineRepository;
 
 	/**
-	 * send this message after three hours from apply
 	 * 
-	 * scheduler cron checks the database every day
+	 * @author Rihab Kallel
+	 * 
+	 *         send this message after three hours from apply
+	 * 
+	 *         scheduler cron checks the database every day
 	 * 
 	 * @throws Exception
 	 */
-	@Scheduled(cron = "0 * * * * *")
+	@Scheduled(cron = "0 0 0 * * *")
 	public void sendCallShopMessage() throws Exception {
 
 		System.out.println("************CALL*******************");
@@ -109,14 +112,17 @@ public class BotScheduler {
 	}
 
 	/**
-	 * send this message after two days from interview
 	 * 
-	 * scheduler cron checks the database every day
+	 * @author Rihab Kallel
+	 * 
+	 *         send this message after two days from interview
+	 * 
+	 *         scheduler cron checks the database every day
 	 * 
 	 * @throws Exception
 	 * 
 	 */
-	@Scheduled(cron = "0 * * * * *")
+	@Scheduled(cron = "0 0 0 * * *")
 	public void sendHaveYouPassedMessage() throws Exception {
 
 		System.out.println("************PASSED*******************");
@@ -168,9 +174,12 @@ public class BotScheduler {
 	}
 
 	/**
-	 * send this message if interview time is not yet confirmed after two days
+	 * @author Rihab Kallel
 	 * 
-	 * scheduler cron checks the database every day
+	 *         send this message if interview time is not yet confirmed after two
+	 *         days
+	 * 
+	 *         scheduler cron checks the database every day
 	 * 
 	 * @throws Exception
 	 */
@@ -192,6 +201,8 @@ public class BotScheduler {
 								&& shopCandidateRelation.isConfirmedInterview()
 								&& shopCandidateRelation.getInterviewDate() == null)) {
 
+					int askInterviewCounter = shopCandidateRelation.getAskInterviewCounter();
+
 					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 					cal.setTime(shopCandidateRelation.getAskInterviewDate());
 					cal.add(Calendar.DAY_OF_WEEK, 2);
@@ -199,26 +210,31 @@ public class BotScheduler {
 
 					Date currentTime = retrieveCurrentTimeStamp();
 
-					if (currentTime.equals(cal.getTime())) {
+					if (askInterviewCounter < 2) {
+						if (currentTime.equals(cal.getTime())) {
 
-						ConfirmTemplate confirmTemplate = new ConfirmTemplate("Did you confirm the interview time?",
-								new MessageAction("Confirmed", "Interview confirmed"),
-								new MessageAction("Not confirmed", "Interview not confirmed"));
-						TemplateMessage templateMessage = new TemplateMessage("Did you confirm the interview time?",
-								confirmTemplate);
-						PushMessage pushMessage = new PushMessage(
-								shopCandidateRelation.getCandidate().getUserLineId().toString(), templateMessage);
-						Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
-								.pushMessage(pushMessage).execute();
+							ConfirmTemplate confirmTemplate = new ConfirmTemplate("Did you confirm the interview time?",
+									new MessageAction("Confirmed", "Interview confirmed"),
+									new MessageAction("Not confirmed", "Interview not confirmed"));
+							TemplateMessage templateMessage = new TemplateMessage("Did you confirm the interview time?",
+									confirmTemplate);
+							PushMessage pushMessage = new PushMessage(
+									shopCandidateRelation.getCandidate().getUserLineId().toString(), templateMessage);
+							Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
+									.pushMessage(pushMessage).execute();
 
-						ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
-						chatMessageLineToAdd.setChatLineAdmin(shopCandidateRelation.getCandidate().getChatLineAdmin());
-						chatMessageLineToAdd.setMessageDirection(shopCandidateRelation.getCandidate().getIdUser());
-						chatMessageLineToAdd.setMessageText("Did you confirm the interview time?");
-						chatMessageLineToAdd.setReadState(false);
-						chatMessageLineToAdd.setMessageDate((new Date()));
-						chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+							shopCandidateRelation.setAskInterviewCounter(askInterviewCounter++);
+							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 
+							ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+							chatMessageLineToAdd
+									.setChatLineAdmin(shopCandidateRelation.getCandidate().getChatLineAdmin());
+							chatMessageLineToAdd.setMessageDirection(shopCandidateRelation.getCandidate().getIdUser());
+							chatMessageLineToAdd.setMessageText("Did you confirm the interview time?");
+							chatMessageLineToAdd.setReadState(false);
+							chatMessageLineToAdd.setMessageDate((new Date()));
+							chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+						}
 					}
 				}
 			}
@@ -226,13 +242,15 @@ public class BotScheduler {
 	}
 
 	/**
-	 * send interview reminder one day before the interview
+	 * @author Rihab Kallel
 	 * 
-	 * scheduler cron checks the database every day
+	 *         send interview reminder one day before the interview
+	 * 
+	 *         scheduler cron checks the database every day
 	 * 
 	 * @throws Exception
 	 */
-	@Scheduled(cron = "0 * * * * *")
+	@Scheduled(cron = "0 0 0 * * *")
 	public void sendInterviewRemider() throws Exception {
 		System.out.println("************REMINDER*******************");
 
@@ -280,7 +298,9 @@ public class BotScheduler {
 	}
 
 	/**
-	 * method to get current timeStamp
+	 * @author Rihab Kallel
+	 * 
+	 *         method to get current date
 	 * 
 	 */
 	public Date retrieveCurrentTimeStamp() {

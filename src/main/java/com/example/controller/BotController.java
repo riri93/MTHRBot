@@ -1,7 +1,6 @@
 package com.example.controller;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,19 +9,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jetty.servlet.ServletHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.riversun.linebot.LineBotServlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.entity.Candidate;
 import com.example.entity.ChatLineAdmin;
@@ -30,34 +24,23 @@ import com.example.entity.ChatMessageLine;
 import com.example.entity.Job;
 import com.example.entity.Shop;
 import com.example.entity.ShopCandidateRelation;
-import com.example.entity.ShopCandidateRelationPK;
 import com.example.repository.CandidateRepository;
 import com.example.repository.ChatLineAdminRepository;
 import com.example.repository.ChatMessageLineRepository;
 import com.example.repository.JobRepository;
 import com.example.repository.ShopCandidateRelationRepository;
 import com.example.repository.ShopRepository;
-import com.linecorp.bot.client.LineMessagingService;
 import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.model.PushMessage;
-import com.linecorp.bot.model.ReplyMessage;
-import com.linecorp.bot.model.action.DatetimePickerAction;
 import com.linecorp.bot.model.action.MessageAction;
 import com.linecorp.bot.model.action.URIAction;
-import com.linecorp.bot.model.event.CallbackRequest;
-import com.linecorp.bot.model.event.Event;
-import com.linecorp.bot.model.event.MessageEvent;
-import com.linecorp.bot.model.event.PostbackEvent;
-import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.TemplateMessage;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.message.template.ButtonsTemplate;
 import com.linecorp.bot.model.message.template.CarouselColumn;
 import com.linecorp.bot.model.message.template.CarouselTemplate;
 import com.linecorp.bot.model.message.template.ConfirmTemplate;
-import com.linecorp.bot.model.profile.UserProfileResponse;
 import com.linecorp.bot.model.response.BotApiResponse;
-import com.linecorp.bot.spring.boot.annotation.EventMapping;
 
 import retrofit2.Response;
 
@@ -571,7 +554,10 @@ public class BotController {
 	}
 
 	/**
-	 * Method for send carousel template message to use
+	 * 
+	 * @author Rihab Kallel
+	 * 
+	 *         Method for send carousel template message to use
 	 * 
 	 * @param userId
 	 * @param lChannelAccessToken
