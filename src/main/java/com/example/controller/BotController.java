@@ -489,9 +489,6 @@ public class BotController {
 				chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 
 			} else {
-				System.out.println("parameters date : " + parameters.getString("date"));
-				System.out.println("parameters time : " + parameters.getString("time"));
-				System.out.println("parameters date-time: " + parameters.getString("date-time"));
 
 				if (parameters != null && parameters.getString("date") != null
 						&& !parameters.getString("date").equals("")) {

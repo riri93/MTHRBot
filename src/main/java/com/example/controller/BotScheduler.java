@@ -127,7 +127,7 @@ public class BotScheduler {
 	 * @throws Exception
 	 * 
 	 */
-	@Scheduled(cron = "0 0 0 * * *")
+	@Scheduled(cron = "0 * * * * *")
 	public void sendHaveYouPassedMessage() throws Exception {
 
 		System.out.println("************PASSED*******************");
@@ -232,8 +232,6 @@ public class BotScheduler {
 									.pushMessage(pushMessage).execute();
 
 							askInterviewCounter++;
-							System.out.println("askInterviewCounter : " + askInterviewCounter);
-
 							shopCandidateRelation.setAskInterviewCounter(askInterviewCounter);
 							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 
