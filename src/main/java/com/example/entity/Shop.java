@@ -34,6 +34,7 @@ public class Shop implements Serializable {
 	private String logoShop;
 	private String userIdLine;
 	private String channelToken;
+	private String phoneNumber;
 
 	@ManyToOne
 	@JoinColumn(name = "idCompany", referencedColumnName = "idCompany")
@@ -159,6 +160,14 @@ public class Shop implements Serializable {
 
 	public void setShopCandidateRelations(List<ShopCandidateRelation> shopCandidateRelations) {
 		this.shopCandidateRelations = shopCandidateRelations;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
 }

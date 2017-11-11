@@ -73,6 +73,17 @@ public class BotController {
 	@Autowired
 	BotScheduler botScheduler;
 
+	/**
+	 * @author Rihab Kallel
+	 * 
+	 *         Dialog flow api webhook service for line bot, gets and sends message
+	 *         to line bot
+	 * @param obj
+	 * @return
+	 * @throws JSONException
+	 * @throws IOException
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/webhook", method = RequestMethod.POST)
 	private @ResponseBody Map<String, Object> webhook(@RequestBody Map<String, Object> obj)
 			throws JSONException, IOException, Exception {
@@ -418,8 +429,6 @@ public class BotController {
 			chatMessageLineToAdd.setMessageDate((new Date()));
 			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 
-			System.out.println("botScheduler.getShop() : " + botScheduler.getShop().getIdShop());
-
 			ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
 			ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
 			shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
@@ -434,8 +443,8 @@ public class BotController {
 		}
 
 		if (intentName.equals("No I did not")) {
-
-			TextMessage textMessage = new TextMessage("Please call the shop");
+			TextMessage textMessage = new TextMessage(
+					"Please call the shop: " + botScheduler.getShop().getPhoneNumber());
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
