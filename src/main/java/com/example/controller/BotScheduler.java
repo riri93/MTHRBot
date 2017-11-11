@@ -2,6 +2,7 @@ package com.example.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +24,7 @@ import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.action.MessageAction;
 import com.linecorp.bot.model.message.TemplateMessage;
 import com.linecorp.bot.model.message.TextMessage;
+import com.linecorp.bot.model.message.template.ButtonsTemplate;
 import com.linecorp.bot.model.message.template.ConfirmTemplate;
 import com.linecorp.bot.model.response.BotApiResponse;
 
@@ -105,6 +107,9 @@ public class BotScheduler {
 							chatMessageLineToAdd.setMessageDate((new Date()));
 							chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 						}
+					} else {
+
+						// TODO
 					}
 				}
 			}
@@ -213,17 +218,23 @@ public class BotScheduler {
 					if (askInterviewCounter < 2) {
 						if (currentTime.equals(cal.getTime())) {
 
-							ConfirmTemplate confirmTemplate = new ConfirmTemplate("Did you confirm the interview time?",
-									new MessageAction("Confirmed", "Interview confirmed"),
-									new MessageAction("Not confirmed", "Interview not confirmed"));
-							TemplateMessage templateMessage = new TemplateMessage("Did you confirm the interview time?",
-									confirmTemplate);
+							ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
+									"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png",
+									"Reason", "Did you confirm the interview time?",
+									Arrays.asList(new MessageAction("Confirmed", "Interview confirmed"),
+											new MessageAction("Not confirmed", "Interview not confirmed"),
+											new MessageAction("No interview", "No interview")));
+							TemplateMessage templateMessage = new TemplateMessage("Reason", buttonsTemplate);
+
 							PushMessage pushMessage = new PushMessage(
 									shopCandidateRelation.getCandidate().getUserLineId().toString(), templateMessage);
 							Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 									.pushMessage(pushMessage).execute();
 
-							shopCandidateRelation.setAskInterviewCounter(askInterviewCounter++);
+							askInterviewCounter++;
+							System.out.println("askInterviewCounter : " + askInterviewCounter);
+
+							shopCandidateRelation.setAskInterviewCounter(askInterviewCounter);
 							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 
 							ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
