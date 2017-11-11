@@ -113,8 +113,8 @@ public class BotScheduler {
 									PushMessage pushMessage = new PushMessage(
 											jobCandidateRelation.getCandidate().getUserLineId().toString(),
 											templateMessage);
-									Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken)
-											.build().pushMessage(pushMessage).execute();
+									LineMessagingServiceBuilder.create(channelToken).build().pushMessage(pushMessage)
+											.execute();
 
 									shop = jobCandidateRelation.getJob().getShop();
 
@@ -152,8 +152,8 @@ public class BotScheduler {
 									PushMessage pushMessage = new PushMessage(
 											jobCandidateRelation.getCandidate().getUserLineId().toString(),
 											templateMessage);
-									Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken)
-											.build().pushMessage(pushMessage).execute();
+									LineMessagingServiceBuilder.create(channelToken).build().pushMessage(pushMessage)
+											.execute();
 
 									shop = jobCandidateRelation.getJob().getShop();
 
@@ -239,8 +239,8 @@ public class BotScheduler {
 									PushMessage pushMessage = new PushMessage(
 											jobCandidateRelation.getCandidate().getUserLineId().toString(),
 											templateMessage);
-									Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken)
-											.build().pushMessage(pushMessage).execute();
+									LineMessagingServiceBuilder.create(channelToken).build().pushMessage(pushMessage)
+											.execute();
 
 									shop = jobCandidateRelation.getJob().getShop();
 
@@ -301,8 +301,7 @@ public class BotScheduler {
 									confirmTemplate);
 							PushMessage pushMessage = new PushMessage(
 									shopCandidateRelation.getCandidate().getUserLineId().toString(), templateMessage);
-							Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
-									.pushMessage(pushMessage).execute();
+							LineMessagingServiceBuilder.create(channelToken).build().pushMessage(pushMessage).execute();
 
 							shopCandidateRelation.setPassedInterviewMessageDate((new Date()));
 							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
@@ -365,8 +364,7 @@ public class BotScheduler {
 
 							PushMessage pushMessage = new PushMessage(
 									shopCandidateRelation.getCandidate().getUserLineId().toString(), templateMessage);
-							Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
-									.pushMessage(pushMessage).execute();
+							LineMessagingServiceBuilder.create(channelToken).build().pushMessage(pushMessage).execute();
 
 							askInterviewCounter++;
 							shopCandidateRelation.setAskInterviewCounter(askInterviewCounter);
@@ -416,13 +414,11 @@ public class BotScheduler {
 							TextMessage textMessage = new TextMessage("Tomorrow is the interview!");
 							PushMessage pushMessage = new PushMessage(
 									shopCandidateRelation.getCandidate().getUserLineId().toString(), textMessage);
-							Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
-									.pushMessage(pushMessage).execute();
+							LineMessagingServiceBuilder.create(channelToken).build().pushMessage(pushMessage).execute();
 							shopCandidateRelation.setRemindInterviewDate((new Date()));
 							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 
-							saveChatLineMessage(shopCandidateRelation.getCandidate(),
-									"Tomorrow is the interview!");
+							saveChatLineMessage(shopCandidateRelation.getCandidate(), "Tomorrow is the interview!");
 						}
 					}
 				}
