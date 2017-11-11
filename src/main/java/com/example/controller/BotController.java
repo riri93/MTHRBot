@@ -48,7 +48,6 @@ import retrofit2.Response;
 @RestController
 public class BotController {
 
-	private BotScheduler botScheduler = new BotScheduler();
 	private Candidate candidateToRegister = new Candidate();
 
 	private static final String CHANNEL_ACCESS_TOKEN = "wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
@@ -70,6 +69,9 @@ public class BotController {
 
 	@Autowired
 	ChatMessageLineRepository chatMessageLineRepository;
+
+	@Autowired
+	BotScheduler botScheduler;
 
 	@RequestMapping(value = "/webhook", method = RequestMethod.POST)
 	private @ResponseBody Map<String, Object> webhook(@RequestBody Map<String, Object> obj)
