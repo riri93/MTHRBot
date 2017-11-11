@@ -116,13 +116,13 @@ public class BotController {
 		JSONObject fulfillment = result.getJSONObject("fulfillment");
 		String speech = fulfillment.getString("speech");
 
-		if (shopRepository.findByChannelToken(CHANNEL_ACCESS_TOKEN) == null) {
-			Shop shopToAdd = new Shop();
-			shopToAdd.setChannelToken(CHANNEL_ACCESS_TOKEN);
-			shopRepository.saveAndFlush(shopToAdd);
-		}
-
-		shop = shopRepository.findByChannelToken(CHANNEL_ACCESS_TOKEN);
+		// if (shopRepository.findByChannelToken(CHANNEL_ACCESS_TOKEN) == null) {
+		// Shop shopToAdd = new Shop();
+		// shopToAdd.setChannelToken(CHANNEL_ACCESS_TOKEN);
+		// shopRepository.saveAndFlush(shopToAdd);
+		// }
+		//
+		// shop = shopRepository.findByChannelToken(CHANNEL_ACCESS_TOKEN);
 
 		if (candidateRepository.findByUserLineId(userId) == null) {
 			candidateToRegister = new Candidate();
@@ -132,18 +132,21 @@ public class BotController {
 
 		candidate = candidateRepository.findByUserLineId(userId);
 
-		if (shopCandidateRelationRepository.findShopCandidateRelationByLineID(userId) == null) {
-			ShopCandidateRelation shopCandidateRelationToAdd = new ShopCandidateRelation();
-			ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
-
-			shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
-			shopCandidateRelationPK.setIdShop(shop.getIdShop());
-			shopCandidateRelationToAdd.setShopCandidateRelationPK(shopCandidateRelationPK);
-			shopCandidateRelationToAdd.setCandidate(candidate);
-			shopCandidateRelationToAdd.setConfirmedInterview(false);
-			shopCandidateRelationToAdd.setShop(shop);
-			shopCandidateRelationRepository.saveAndFlush(shopCandidateRelationToAdd);
-		}
+		// if (shopCandidateRelationRepository.findShopCandidateRelationByLineID(userId)
+		// == null) {
+		// ShopCandidateRelation shopCandidateRelationToAdd = new
+		// ShopCandidateRelation();
+		// ShopCandidateRelationPK shopCandidateRelationPK = new
+		// ShopCandidateRelationPK();
+		//
+		// shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
+		// shopCandidateRelationPK.setIdShop(shop.getIdShop());
+		// shopCandidateRelationToAdd.setShopCandidateRelationPK(shopCandidateRelationPK);
+		// shopCandidateRelationToAdd.setCandidate(candidate);
+		// shopCandidateRelationToAdd.setConfirmedInterview(false);
+		// shopCandidateRelationToAdd.setShop(shop);
+		// shopCandidateRelationRepository.saveAndFlush(shopCandidateRelationToAdd);
+		// }
 
 		shopCandidateRelation = shopCandidateRelationRepository.findShopCandidateRelationByLineID(userId);
 
@@ -405,10 +408,9 @@ public class BotController {
 				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 			}
 		}
-		
-		
-		if(intentName.equals("No I did not")) {
-			
+
+		if (intentName.equals("No I did not")) {
+
 			TextMessage textMessage = new TextMessage("Please call the shop");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()

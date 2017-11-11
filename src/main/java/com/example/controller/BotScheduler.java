@@ -50,7 +50,7 @@ public class BotScheduler {
 	 * 
 	 * @throws Exception
 	 */
-	@Scheduled(cron = "0 0 0 * * *")
+	@Scheduled(cron = "0 * * * * *")
 	public void sendCallShopMessage() throws Exception {
 
 		System.out.println("************CALL*******************");
@@ -80,10 +80,11 @@ public class BotScheduler {
 
 						if (currentTime.after(cal.getTime())) {
 
-							ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you got in contact with the shop?",
-									new MessageAction("Yes", "Yes I called"), new MessageAction("No", "No I did not"));
-							TemplateMessage templateMessage = new TemplateMessage("Have you got in contact with the shop?",
-									confirmTemplate);
+							ConfirmTemplate confirmTemplate = new ConfirmTemplate(
+									"Have you got in contact with the shop?", new MessageAction("Yes", "Yes I called"),
+									new MessageAction("No", "No I did not"));
+							TemplateMessage templateMessage = new TemplateMessage(
+									"Have you got in contact with the shop?", confirmTemplate);
 							PushMessage pushMessage = new PushMessage(
 									jobCandidateRelation.getCandidate().getUserLineId().toString(), templateMessage);
 							Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
@@ -115,7 +116,7 @@ public class BotScheduler {
 	 * @throws Exception
 	 * 
 	 */
-	@Scheduled(cron = "0 0 0 * * *")
+	@Scheduled(cron = "0 * * * * *")
 	public void sendHaveYouPassedMessage() throws Exception {
 
 		System.out.println("************PASSED*******************");
@@ -173,7 +174,7 @@ public class BotScheduler {
 	 * 
 	 * @throws Exception
 	 */
-	@Scheduled(cron = "0 0 0 * * *")
+	@Scheduled(cron = "0 * * * * *")
 	public void sendInterviewTimeMessage() throws Exception {
 
 		System.out.println("************INTERVIEW*******************");
@@ -231,7 +232,7 @@ public class BotScheduler {
 	 * 
 	 * @throws Exception
 	 */
-	@Scheduled(cron = "0 0 0 * * *")
+	@Scheduled(cron = "0 * * * * *")
 	public void sendInterviewRemider() throws Exception {
 		System.out.println("************REMINDER*******************");
 
