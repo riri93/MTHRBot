@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,50 +71,174 @@ public class BotScheduler {
 			for (JobCandidateRelation jobCandidateRelation : jobCandidateRelations) {
 				if (jobCandidateRelation.getAppliedDate() != null) {
 
+					if (jobCandidateRelation.getCallShopMessageDate() == null) {
+
+						int callShopMessageCounter = jobCandidateRelation.getCallShopMessageCounter();
+
+						if (callShopMessageCounter < 3) {
+							Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+							cal.setTime(jobCandidateRelation.getAppliedDate());
+							cal.add(Calendar.DAY_OF_WEEK, 1);
+							cal.getTime();
+							Date date = new Date();
+							SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
+							sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+							String time = sdf.format(date);
+							Date currentTime = sdf.parse(time);
+
+							if (currentTime.after(cal.getTime())) {
+
+								ConfirmTemplate confirmTemplate = new ConfirmTemplate(
+										"Have you got in contact with the shop?",
+										new MessageAction("Yes", "Yes I called"),
+										new MessageAction("No", "No I did not"));
+								TemplateMessage templateMessage = new TemplateMessage(
+										"Have you got in contact with the shop?", confirmTemplate);
+								PushMessage pushMessage = new PushMessage(
+										jobCandidateRelation.getCandidate().getUserLineId().toString(),
+										templateMessage);
+								Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken)
+										.build().pushMessage(pushMessage).execute();
+
+								shop = jobCandidateRelation.getJob().getShop();
+
+								callShopMessageCounter++;
+								jobCandidateRelation.setCallShopMessageCounter(callShopMessageCounter);
+								jobCandidateRelation.setCallShopMessageDate((new Date()));
+								jobCandidateRelationRepository.saveAndFlush(jobCandidateRelation);
+
+								ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+								chatMessageLineToAdd
+										.setChatLineAdmin(jobCandidateRelation.getCandidate().getChatLineAdmin());
+								chatMessageLineToAdd
+										.setMessageDirection(jobCandidateRelation.getCandidate().getIdUser());
+								chatMessageLineToAdd.setMessageText("Have you got in contact with the shop?");
+								chatMessageLineToAdd.setReadState(false);
+								chatMessageLineToAdd.setMessageDate((new Date()));
+								chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+							}
+						} else {
+							
+							Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+							cal.setTime(jobCandidateRelation.getCallShopMessageDate());
+							cal.add(Calendar.DAY_OF_WEEK, 2);
+							cal.getTime();
+							Date date = new Date();
+							SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
+							sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+							String time = sdf.format(date);
+							Date currentTime = sdf.parse(time);
+
+							if (currentTime.after(cal.getTime())) {
+
+								ConfirmTemplate confirmTemplate = new ConfirmTemplate(
+										"Have you got in contact with the shop?",
+										new MessageAction("Yes", "Yes I called"),
+										new MessageAction("No", "No I did not"));
+								TemplateMessage templateMessage = new TemplateMessage(
+										"Have you got in contact with the shop?", confirmTemplate);
+								PushMessage pushMessage = new PushMessage(
+										jobCandidateRelation.getCandidate().getUserLineId().toString(),
+										templateMessage);
+								Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken)
+										.build().pushMessage(pushMessage).execute();
+
+								shop = jobCandidateRelation.getJob().getShop();
+
+								callShopMessageCounter++;
+								jobCandidateRelation.setCallShopMessageCounter(callShopMessageCounter);
+								jobCandidateRelation.setCallShopMessageDate((new Date()));
+								jobCandidateRelationRepository.saveAndFlush(jobCandidateRelation);
+
+								ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+								chatMessageLineToAdd
+										.setChatLineAdmin(jobCandidateRelation.getCandidate().getChatLineAdmin());
+								chatMessageLineToAdd
+										.setMessageDirection(jobCandidateRelation.getCandidate().getIdUser());
+								chatMessageLineToAdd.setMessageText("Have you got in contact with the shop?");
+								chatMessageLineToAdd.setReadState(false);
+								chatMessageLineToAdd.setMessageDate((new Date()));
+								chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * @author Rihab Kallel
+	 * 
+	 *         send this message after 3 hours if user answered no to "have got in
+	 *         contact with the shop?"
+	 * 
+	 *         scheduler cron checks the database every hour
+	 * @throws Exception
+	 * 
+	 */
+	@Scheduled(cron = "0 * * * * *")
+	public void sendCallShopMessage3Hours() throws Exception {
+
+		List<JobCandidateRelation> jobCandidateRelations = new ArrayList<>();
+		jobCandidateRelations = jobCandidateRelationRepository.getAllAppliedCandidates();
+
+		if (jobCandidateRelations != null) {
+
+			for (JobCandidateRelation jobCandidateRelation : jobCandidateRelations) {
+				if (jobCandidateRelation.getAppliedDate() != null) {
+
 					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-					cal.setTime(jobCandidateRelation.getAppliedDate());
-					cal.add(Calendar.DAY_OF_WEEK, 1);
+					cal.setTime(jobCandidateRelation.getCallShopMessageDate());
+					cal.add(Calendar.HOUR_OF_DAY, 3);
 					cal.getTime();
 
-					if (jobCandidateRelation.getCallShopMessageDate() == null) {
-						Date date = new Date();
+					int callShopMessageCounter = jobCandidateRelation.getCallShopMessageCounter();
 
-						SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
+					if (callShopMessageCounter < 3) {
+						if (jobCandidateRelation.getCallShopMessageDate() != null) {
+							Date date = new Date();
 
-						sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-						String time = sdf.format(date);
+							SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
 
-						Date currentTime = sdf.parse(time);
+							sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+							String time = sdf.format(date);
 
-						if (currentTime.after(cal.getTime())) {
+							Date currentTime = sdf.parse(time);
 
-							ConfirmTemplate confirmTemplate = new ConfirmTemplate(
-									"Have you got in contact with the shop?", new MessageAction("Yes", "Yes I called"),
-									new MessageAction("No", "No I did not"));
-							TemplateMessage templateMessage = new TemplateMessage(
-									"Have you got in contact with the shop?", confirmTemplate);
-							PushMessage pushMessage = new PushMessage(
-									jobCandidateRelation.getCandidate().getUserLineId().toString(), templateMessage);
-							Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
-									.pushMessage(pushMessage).execute();
+							if (currentTime.after(cal.getTime())) {
 
-							shop = jobCandidateRelation.getJob().getShop();
+								ConfirmTemplate confirmTemplate = new ConfirmTemplate(
+										"Have you got in contact with the shop?",
+										new MessageAction("Yes", "Yes I called"),
+										new MessageAction("No", "No I did not"));
+								TemplateMessage templateMessage = new TemplateMessage(
+										"Have you got in contact with the shop?", confirmTemplate);
+								PushMessage pushMessage = new PushMessage(
+										jobCandidateRelation.getCandidate().getUserLineId().toString(),
+										templateMessage);
+								Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken)
+										.build().pushMessage(pushMessage).execute();
 
-							jobCandidateRelation.setCallShopMessageDate((new Date()));
-							jobCandidateRelationRepository.saveAndFlush(jobCandidateRelation);
+								shop = jobCandidateRelation.getJob().getShop();
 
-							ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
-							chatMessageLineToAdd
-									.setChatLineAdmin(jobCandidateRelation.getCandidate().getChatLineAdmin());
-							chatMessageLineToAdd.setMessageDirection(jobCandidateRelation.getCandidate().getIdUser());
-							chatMessageLineToAdd.setMessageText("Have you got in contact with the shop?");
-							chatMessageLineToAdd.setReadState(false);
-							chatMessageLineToAdd.setMessageDate((new Date()));
-							chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+								callShopMessageCounter++;
+								jobCandidateRelation.setCallShopMessageCounter(callShopMessageCounter);
+								jobCandidateRelation.setCallShopMessageDate((new Date()));
+								jobCandidateRelationRepository.saveAndFlush(jobCandidateRelation);
+
+								ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+								chatMessageLineToAdd
+										.setChatLineAdmin(jobCandidateRelation.getCandidate().getChatLineAdmin());
+								chatMessageLineToAdd
+										.setMessageDirection(jobCandidateRelation.getCandidate().getIdUser());
+								chatMessageLineToAdd.setMessageText("Have you got in contact with the shop?");
+								chatMessageLineToAdd.setReadState(false);
+								chatMessageLineToAdd.setMessageDate((new Date()));
+								chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+							}
 						}
-					} else {
-
-						// TODO
 					}
 				}
 			}

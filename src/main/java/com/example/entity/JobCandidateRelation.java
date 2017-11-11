@@ -3,6 +3,7 @@ package com.example.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -25,6 +26,10 @@ public class JobCandidateRelation implements Serializable {
 	private JobCandidateRelationPK jobCandidateRelationPK;
 
 	private String progress;
+
+	@Column(columnDefinition = "int default 0")
+	private int callShopMessageCounter;
+
 	private boolean offered = false;
 	private boolean applied = false;
 	private boolean matched = false;
@@ -156,6 +161,14 @@ public class JobCandidateRelation implements Serializable {
 
 	public void setCallShopMessageDate(Date callShopMessageDate) {
 		this.callShopMessageDate = callShopMessageDate;
+	}
+
+	public int getCallShopMessageCounter() {
+		return callShopMessageCounter;
+	}
+
+	public void setCallShopMessageCounter(int callShopMessageCounter) {
+		this.callShopMessageCounter = callShopMessageCounter;
 	}
 
 }
