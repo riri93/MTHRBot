@@ -181,6 +181,8 @@ public class BotController {
 
 		if (intentName.equals("Default Fallback Intent")) {
 
+			System.out.println("searchCriteria : " + searchCriteria);
+
 			if (searchCriteria.equals("address")) {
 				addressToSearch = customerMessage;
 				List<Job> jobs = new ArrayList<>();
@@ -276,6 +278,9 @@ public class BotController {
 				}
 
 				if (searchCriteria.equals("salary")) {
+					
+					System.out.println("***SSSSSSSSSSSSSSSSSSSSSSSSSSSS*****");
+					
 					String salary = customerMessage;
 					List<Job> jobs = new ArrayList<>();
 					List<Job> jobsToDisplay = new ArrayList<>();
@@ -286,6 +291,9 @@ public class BotController {
 						salaryToSearch = Double.parseDouble(salary);
 
 						jobs = jobRepository.findByAreaOrStationAndSalary(addressToSearch, salaryToSearch);
+
+						System.out.println("jobs.size() : " + jobs.size());
+
 						if (jobs.size() != 0) {
 							if (jobs.size() <= 5) {
 								jobsToDisplay.addAll(jobs);
