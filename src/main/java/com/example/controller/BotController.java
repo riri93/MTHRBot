@@ -416,6 +416,8 @@ public class BotController {
 			chatMessageLineToAdd.setMessageDate((new Date()));
 			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 
+			System.out.println("botScheduler.getShop() : " + botScheduler.getShop().getIdShop());
+
 			ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
 			ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
 			shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
