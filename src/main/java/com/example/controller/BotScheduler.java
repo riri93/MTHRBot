@@ -99,6 +99,8 @@ public class BotScheduler {
 
 							shop = jobCandidateRelation.getJob().getShop();
 
+							System.out.println("*******SHHHHOOOPPP : " + shop.getIdShop());
+
 							jobCandidateRelation.setCallShopMessageDate((new Date()));
 							jobCandidateRelationRepository.saveAndFlush(jobCandidateRelation);
 
