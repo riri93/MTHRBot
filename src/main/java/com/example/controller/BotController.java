@@ -112,6 +112,7 @@ public class BotController {
 		JSONObject fulfillment = result.getJSONObject("fulfillment");
 		String speech = fulfillment.getString("speech");
 
+		// create candidate if not registered
 		if (candidateRepository.findByUserLineId(userId) == null) {
 			candidateToRegister = new Candidate();
 			candidateToRegister.setUserLineId(userId);
@@ -120,6 +121,7 @@ public class BotController {
 
 		candidate = candidateRepository.findByUserLineId(userId);
 
+		// create shop candidate relations if not exist
 		if (shopRepository.findAll() != null) {
 
 			List<Shop> shops = new ArrayList<>();
@@ -141,6 +143,7 @@ public class BotController {
 			}
 		}
 
+		// create chatLineAdmin if not exists
 		if (candidate != null) {
 			if (candidate.getChatLineAdmin() == null) {
 				chatLineAdminRepository.saveAndFlush(chatLineAdmin);
@@ -149,6 +152,7 @@ public class BotController {
 			}
 		}
 
+		// save every user message from bot
 		if (customerMessage != null && !customerMessage.equals("")) {
 			if (candidate != null) {
 				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
@@ -191,6 +195,7 @@ public class BotController {
 				PushMessage pushMessage = new PushMessage(userId, templateMessage);
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 						.pushMessage(pushMessage).execute();
+				System.out.println(response.code() + " " + response.message());
 
 				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 				chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
@@ -213,6 +218,7 @@ public class BotController {
 				PushMessage pushMessage = new PushMessage(userId, textMessage);
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 						.pushMessage(pushMessage).execute();
+				System.out.println(response.code() + " " + response.message());
 
 				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 				chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
@@ -248,6 +254,7 @@ public class BotController {
 				PushMessage pushMessage = new PushMessage(userId, templateMessage);
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 						.pushMessage(pushMessage).execute();
+				System.out.println(response.code() + " " + response.message());
 
 				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 				chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
@@ -300,6 +307,7 @@ public class BotController {
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
+			System.out.println(response.code() + " " + response.message());
 
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
@@ -315,6 +323,7 @@ public class BotController {
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
+			System.out.println(response.code() + " " + response.message());
 
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
@@ -330,6 +339,7 @@ public class BotController {
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
+			System.out.println(response.code() + " " + response.message());
 
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
@@ -345,6 +355,7 @@ public class BotController {
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
+			System.out.println(response.code() + " " + response.message());
 
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
@@ -360,6 +371,7 @@ public class BotController {
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
+			System.out.println(response.code() + " " + response.message());
 
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
@@ -398,6 +410,7 @@ public class BotController {
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
+			System.out.println(response.code() + " " + response.message());
 
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
@@ -420,6 +433,7 @@ public class BotController {
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
+			System.out.println(response.code() + " " + response.message());
 
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
@@ -448,6 +462,7 @@ public class BotController {
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
+			System.out.println(response.code() + " " + response.message());
 
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
@@ -467,6 +482,7 @@ public class BotController {
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
+			System.out.println(response.code() + " " + response.message());
 
 			ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
 			ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
@@ -494,6 +510,7 @@ public class BotController {
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
+			System.out.println(response.code() + " " + response.message());
 
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
@@ -519,22 +536,6 @@ public class BotController {
 		}
 
 		if (intentName.equals("Interview confirmed")) {
-
-			// DatetimePickerAction date = new DatetimePickerAction("rihab", "rihab",
-			// "datetime", "2017-06-18T06:15",
-			// "2100-12-31T23:59", "1900-01-01T00:00");
-			// CarouselTemplate carouselTemplate = new CarouselTemplate(Arrays.asList(new
-			// CarouselColumn(
-			// "https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png",
-			// "Datetime Picker", "Please select a date, time or datetime",
-			// Arrays.asList(date))));
-			//
-			// TemplateMessage templateMessage1 = new TemplateMessage("date time picker",
-			// carouselTemplate);
-			// PushMessage pushMessage1 = new PushMessage(userId, templateMessage1);
-			// Response<BotApiResponse> response1 =
-			// LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
-			// .pushMessage(pushMessage1).execute();
 			ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
 			ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
 			shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
@@ -554,6 +555,7 @@ public class BotController {
 				PushMessage pushMessage = new PushMessage(userId, textMessage);
 				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 						.pushMessage(pushMessage).execute();
+				System.out.println(response.code() + " " + response.message());
 
 				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 				chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
@@ -597,6 +599,7 @@ public class BotController {
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
 					Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 							.pushMessage(pushMessage).execute();
+					System.out.println(response.code() + " " + response.message());
 
 					ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 					chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
@@ -619,6 +622,7 @@ public class BotController {
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
+			System.out.println(response.code() + " " + response.message());
 
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
@@ -633,17 +637,15 @@ public class BotController {
 	}
 
 	/**
-	 * 
 	 * @author Rihab Kallel
 	 * 
-	 *         Method for send carousel template message to use
-	 * 
+	 *         Method for send carousel template message to user
 	 * @param userId
+	 *            userlineID
 	 * @param lChannelAccessToken
-	 * @param nameSatff1
-	 * @param nameSatff2
-	 * @param poster1_url
-	 * @param poster2_url
+	 *            channel access token
+	 * @param jobsToDisplay
+	 *            list of jobs for the carousel
 	 * @throws IOException
 	 */
 	private void carouselForUser(String userId, String lChannelAccessToken, List<Job> jobsToDisplay)
