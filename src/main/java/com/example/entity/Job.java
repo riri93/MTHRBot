@@ -28,16 +28,17 @@ public class Job implements Serializable {
 	private String positionCategory;
 	private String salaryDetail;
 	private String jobDetails;
+	private String jobType;
 	private int numberStaffNeeded;
 	private double salary;
 
 	@ManyToOne
 	@JoinColumn(name = "idShop", referencedColumnName = "idShop")
-	@JsonIgnoreProperties({ "jobs"})
+	@JsonIgnoreProperties({ "jobs" })
 	private Shop shop;
 
 	@OneToMany(mappedBy = "job")
-	@JsonIgnoreProperties({ "job"})
+	@JsonIgnoreProperties({ "job" })
 	private List<JobCandidateRelation> jobCandidateRelations;
 
 	public int getIdJob() {
@@ -110,6 +111,14 @@ public class Job implements Serializable {
 
 	public void setSalary(double salary) {
 		this.salary = salary;
+	}
+
+	public String getJobType() {
+		return jobType;
+	}
+
+	public void setJobType(String jobType) {
+		this.jobType = jobType;
 	}
 
 }

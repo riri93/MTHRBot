@@ -48,10 +48,17 @@ import retrofit2.Response;
 @RestController
 public class BotController {
 
+	// class declaration
 	private Candidate candidateToRegister = new Candidate();
 
+	// channel token declaration
 	private static final String CHANNEL_ACCESS_TOKEN = "wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
 
+	// String declaration
+	private String searchCriteria = "address";
+	private String addressToSearch;
+
+	// Repositories and services injection
 	@Autowired
 	CandidateRepository candidateRepository;
 
@@ -70,6 +77,7 @@ public class BotController {
 	@Autowired
 	ChatMessageLineRepository chatMessageLineRepository;
 
+	// scheduler declaration
 	@Autowired
 	BotScheduler botScheduler;
 
@@ -91,7 +99,7 @@ public class BotController {
 		System.out.println("*****************WEBHOOK*********************");
 
 		Candidate candidate = new Candidate();
-		String addressToSearch = "";
+
 		ChatLineAdmin chatLineAdmin = new ChatLineAdmin();
 
 		Map<String, Object> json = new HashMap<String, Object>();
@@ -172,61 +180,175 @@ public class BotController {
 		System.out.println("customerMessage : " + customerMessage);
 
 		if (intentName.equals("Default Fallback Intent")) {
-			addressToSearch = customerMessage;
-			List<Job> jobs = new ArrayList<>();
-			List<Job> jobsToDisplay = new ArrayList<>();
 
-			jobs = jobRepository.findByAreaOrStation(addressToSearch);
+			if (searchCriteria.equals("address")) {
+				addressToSearch = customerMessage;
+				List<Job> jobs = new ArrayList<>();
+				List<Job> jobsToDisplay = new ArrayList<>();
 
-			if (jobs.size() != 0) {
-				if (jobs.size() <= 5) {
-					jobsToDisplay.addAll(jobs);
+				jobs = jobRepository.findByAreaOrStation(addressToSearch);
+
+				if (jobs.size() != 0) {
+					if (jobs.size() <= 5) {
+						jobsToDisplay.addAll(jobs);
+					} else {
+						for (int i = 0; i < 5; i++) {
+							jobsToDisplay.add(jobs.get(i));
+						}
+					}
+
+					carouselForUser(userId, CHANNEL_ACCESS_TOKEN, jobsToDisplay);
+
+					ConfirmTemplate confirmTemplate = new ConfirmTemplate("Any interesting jobs?",
+							new MessageAction("yes", "interesting jobs"),
+							new MessageAction("No", "not interesting jobs"));
+					TemplateMessage templateMessage = new TemplateMessage("Any interesting jobs?", confirmTemplate);
+					PushMessage pushMessage = new PushMessage(userId, templateMessage);
+					Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
+							.pushMessage(pushMessage).execute();
+					System.out.println(response.code() + " " + response.message());
+
+					ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+					chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+					chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+					chatMessageLineToAdd.setMessageText("Send jobs carousel");
+					chatMessageLineToAdd.setReadState(false);
+					chatMessageLineToAdd.setMessageDate((new Date()));
+					chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+
+					ChatMessageLine chatMessageLineToAdd2 = new ChatMessageLine();
+					chatMessageLineToAdd2.setChatLineAdmin(candidate.getChatLineAdmin());
+					chatMessageLineToAdd2.setMessageDate((new Date()));
+					chatMessageLineToAdd2.setMessageText("Any interesting jobs?");
+					chatMessageLineToAdd2.setReadState(false);
+					chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd2);
+
 				} else {
-					for (int i = 0; i < 5; i++) {
-						jobsToDisplay.add(jobs.get(i));
+
+					TextMessage textMessage = new TextMessage(
+							"No jobs found. Please enter a valid area name or station");
+					PushMessage pushMessage = new PushMessage(userId, textMessage);
+					Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
+							.pushMessage(pushMessage).execute();
+					System.out.println(response.code() + " " + response.message());
+
+					ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+					chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+					chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+					chatMessageLineToAdd.setMessageText("No jobs found. Please enter a valid area name or station");
+					chatMessageLineToAdd.setReadState(false);
+					chatMessageLineToAdd.setMessageDate((new Date()));
+					chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+				}
+			} else {
+
+				if (searchCriteria.equals("location")) {
+					String location = customerMessage;
+					List<Job> jobs = new ArrayList<>();
+					List<Job> jobsToDisplay = new ArrayList<>();
+					jobs = jobRepository.findByAreaOrStation(location);
+
+					if (jobs.size() != 0) {
+						if (jobs.size() <= 5) {
+							jobsToDisplay.addAll(jobs);
+						} else {
+							for (int i = 0; i < 5; i++) {
+								jobsToDisplay.add(jobs.get(i));
+							}
+						}
+						carouselForUser(userId, CHANNEL_ACCESS_TOKEN, jobsToDisplay);
+					} else {
+						TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid location");
+						PushMessage pushMessage = new PushMessage(userId, textMessage);
+						Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN)
+								.build().pushMessage(pushMessage).execute();
+						System.out.println(response.code() + " " + response.message());
+
+						ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+						chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+						chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+						chatMessageLineToAdd.setMessageText("No jobs found. Please enter a valid location");
+						chatMessageLineToAdd.setReadState(false);
+						chatMessageLineToAdd.setMessageDate((new Date()));
+						chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+
 					}
 				}
 
-				carouselForUser(userId, CHANNEL_ACCESS_TOKEN, jobsToDisplay);
+				if (searchCriteria.equals("salary")) {
+					String salary = customerMessage;
+					List<Job> jobs = new ArrayList<>();
+					List<Job> jobsToDisplay = new ArrayList<>();
 
-				ConfirmTemplate confirmTemplate = new ConfirmTemplate("Any interesting jobs?",
-						new MessageAction("yes", "interesting jobs"), new MessageAction("No", "not interesting jobs"));
-				TemplateMessage templateMessage = new TemplateMessage("Any interesting jobs?", confirmTemplate);
-				PushMessage pushMessage = new PushMessage(userId, templateMessage);
-				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
-						.pushMessage(pushMessage).execute();
-				System.out.println(response.code() + " " + response.message());
+					double salaryToSearch = 0;
 
-				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
-				chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
-				chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
-				chatMessageLineToAdd.setMessageText("Send jobs carousel");
-				chatMessageLineToAdd.setReadState(false);
-				chatMessageLineToAdd.setMessageDate((new Date()));
-				chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+					try {
+						salaryToSearch = Double.parseDouble(salary);
 
-				ChatMessageLine chatMessageLineToAdd2 = new ChatMessageLine();
-				chatMessageLineToAdd2.setChatLineAdmin(candidate.getChatLineAdmin());
-				chatMessageLineToAdd2.setMessageDate((new Date()));
-				chatMessageLineToAdd2.setMessageText("Any interesting jobs?");
-				chatMessageLineToAdd2.setReadState(false);
-				chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd2);
+						jobs = jobRepository.findByAreaOrStationAndSalary(addressToSearch, salaryToSearch);
+						if (jobs.size() != 0) {
+							if (jobs.size() <= 5) {
+								jobsToDisplay.addAll(jobs);
+							} else {
+								for (int i = 0; i < 5; i++) {
+									jobsToDisplay.add(jobs.get(i));
+								}
+							}
+							carouselForUser(userId, CHANNEL_ACCESS_TOKEN, jobsToDisplay);
+						}
 
-			} else {
+					} catch (Exception e) {
 
-				TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid area name or station");
-				PushMessage pushMessage = new PushMessage(userId, textMessage);
-				Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
-						.pushMessage(pushMessage).execute();
-				System.out.println(response.code() + " " + response.message());
+						TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid salary");
+						PushMessage pushMessage = new PushMessage(userId, textMessage);
+						Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN)
+								.build().pushMessage(pushMessage).execute();
+						System.out.println(response.code() + " " + response.message());
 
-				ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
-				chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
-				chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
-				chatMessageLineToAdd.setMessageText("No jobs found. Please enter a valid area name or station");
-				chatMessageLineToAdd.setReadState(false);
-				chatMessageLineToAdd.setMessageDate((new Date()));
-				chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+						ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+						chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+						chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+						chatMessageLineToAdd.setMessageText("No jobs found. Please enter a valid salary");
+						chatMessageLineToAdd.setReadState(false);
+						chatMessageLineToAdd.setMessageDate((new Date()));
+						chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+						e.printStackTrace();
+					}
+				}
+
+				if (searchCriteria.equals("work time")) {
+					String workTime = customerMessage;
+					List<Job> jobs = new ArrayList<>();
+					List<Job> jobsToDisplay = new ArrayList<>();
+					jobs = jobRepository.findByAreaOrStation(workTime);
+
+					if (jobs.size() != 0) {
+						if (jobs.size() <= 5) {
+							jobsToDisplay.addAll(jobs);
+						} else {
+							for (int i = 0; i < 5; i++) {
+								jobsToDisplay.add(jobs.get(i));
+							}
+						}
+						carouselForUser(userId, CHANNEL_ACCESS_TOKEN, jobsToDisplay);
+					} else {
+						TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid work time");
+						PushMessage pushMessage = new PushMessage(userId, textMessage);
+						Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN)
+								.build().pushMessage(pushMessage).execute();
+						System.out.println(response.code() + " " + response.message());
+
+						ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
+						chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
+						chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
+						chatMessageLineToAdd.setMessageText("No jobs found. Please enter a valid work time");
+						chatMessageLineToAdd.setReadState(false);
+						chatMessageLineToAdd.setMessageDate((new Date()));
+						chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+
+					}
+				}
+
 			}
 		}
 
@@ -319,7 +441,8 @@ public class BotController {
 		}
 
 		if (intentName.equals("Location")) {
-			TextMessage textMessage = new TextMessage("Thank you! We will contact you again!");
+			searchCriteria = "location";
+			TextMessage textMessage = new TextMessage("What is your location?");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
@@ -328,14 +451,15 @@ public class BotController {
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
 			chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
-			chatMessageLineToAdd.setMessageText("Thank you! We will contact you again!");
+			chatMessageLineToAdd.setMessageText("What is your location?");
 			chatMessageLineToAdd.setReadState(false);
 			chatMessageLineToAdd.setMessageDate((new Date()));
 			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 		}
 
 		if (intentName.equals("Salary")) {
-			TextMessage textMessage = new TextMessage("Thank you! We will contact you again!");
+			searchCriteria = "salary";
+			TextMessage textMessage = new TextMessage("What is your salary?");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
@@ -344,30 +468,15 @@ public class BotController {
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
 			chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
-			chatMessageLineToAdd.setMessageText("Thank you! We will contact you again!");
-			chatMessageLineToAdd.setReadState(false);
-			chatMessageLineToAdd.setMessageDate((new Date()));
-			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
-		}
-
-		if (intentName.equals("Job position")) {
-			TextMessage textMessage = new TextMessage("Thank you! We will contact you again!");
-			PushMessage pushMessage = new PushMessage(userId, textMessage);
-			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
-					.pushMessage(pushMessage).execute();
-			System.out.println(response.code() + " " + response.message());
-
-			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
-			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
-			chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
-			chatMessageLineToAdd.setMessageText("Thank you! We will contact you again!");
+			chatMessageLineToAdd.setMessageText("What is your salary?");
 			chatMessageLineToAdd.setReadState(false);
 			chatMessageLineToAdd.setMessageDate((new Date()));
 			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 		}
 
 		if (intentName.equals("Work Time")) {
-			TextMessage textMessage = new TextMessage("Thank you! We will contact you again!");
+			searchCriteria = "Work Time";
+			TextMessage textMessage = new TextMessage("What is your work time?");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
@@ -376,7 +485,7 @@ public class BotController {
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
 			chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
-			chatMessageLineToAdd.setMessageText("Thank you! We will contact you again!");
+			chatMessageLineToAdd.setMessageText("What is your work time?");
 			chatMessageLineToAdd.setReadState(false);
 			chatMessageLineToAdd.setMessageDate((new Date()));
 			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
@@ -669,6 +778,8 @@ public class BotController {
 
 		TemplateMessage templateMessage = new TemplateMessage("Your search result", carouselTemplate);
 		PushMessage pushMessage = new PushMessage(userId, templateMessage);
+
+		searchCriteria = "address";
 		try {
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(lChannelAccessToken).build()
 					.pushMessage(pushMessage).execute();
