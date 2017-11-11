@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import com.example.entity.ChatMessageLine;
 import com.example.entity.JobCandidateRelation;
+import com.example.entity.Shop;
 import com.example.entity.ShopCandidateRelation;
 import com.example.repository.ChatMessageLineRepository;
 import com.example.repository.JobCandidateRelationRepository;
@@ -34,7 +35,8 @@ import retrofit2.Response;
 @EnableScheduling
 public class BotScheduler {
 
-	String channelToken = "wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
+	private Shop shop = new Shop();
+	private String channelToken = "wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
 
 	@Autowired
 	JobCandidateRelationRepository jobCandidateRelationRepository;
@@ -94,6 +96,8 @@ public class BotScheduler {
 									jobCandidateRelation.getCandidate().getUserLineId().toString(), templateMessage);
 							Response<BotApiResponse> response = LineMessagingServiceBuilder.create(channelToken).build()
 									.pushMessage(pushMessage).execute();
+
+							shop = jobCandidateRelation.getJob().getShop();
 
 							jobCandidateRelation.setCallShopMessageDate((new Date()));
 							jobCandidateRelationRepository.saveAndFlush(jobCandidateRelation);
@@ -324,4 +328,13 @@ public class BotScheduler {
 			return null;
 		}
 	}
+
+	public Shop getShop() {
+		return shop;
+	}
+
+	public void setShop(Shop shop) {
+		this.shop = shop;
+	}
+
 }

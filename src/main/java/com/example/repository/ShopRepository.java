@@ -16,4 +16,7 @@ public interface ShopRepository extends JpaRepository<Shop, Serializable> {
 
 	@Query(value = "select s from Shop s where s.channelToken =:token")
 	public Shop findByChannelToken(@Param("token") String token);
+	
+	@Query(value = "select s from Shop s where s.nameShop =:name")
+	public Shop findByNameShop(@Param("name") String name);
 }

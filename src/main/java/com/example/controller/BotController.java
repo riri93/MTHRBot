@@ -24,6 +24,7 @@ import com.example.entity.ChatMessageLine;
 import com.example.entity.Job;
 import com.example.entity.Shop;
 import com.example.entity.ShopCandidateRelation;
+import com.example.entity.ShopCandidateRelationPK;
 import com.example.repository.CandidateRepository;
 import com.example.repository.ChatLineAdminRepository;
 import com.example.repository.ChatMessageLineRepository;
@@ -47,9 +48,10 @@ import retrofit2.Response;
 @RestController
 public class BotController {
 
-	Candidate candidateToRegister = new Candidate();
+	private BotScheduler botScheduler = new BotScheduler();
+	private Candidate candidateToRegister = new Candidate();
 
-	private static final String CHANNEL_ACCESS_TOKEN = "[wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
+	private static final String CHANNEL_ACCESS_TOKEN = "wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
 
 	@Autowired
 	CandidateRepository candidateRepository;
@@ -75,9 +77,7 @@ public class BotController {
 
 		System.out.println("*****************WEBHOOK*********************");
 
-		Shop shop = new Shop();
 		Candidate candidate = new Candidate();
-		ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
 		String addressToSearch = "";
 		ChatLineAdmin chatLineAdmin = new ChatLineAdmin();
 
@@ -99,14 +99,6 @@ public class BotController {
 		JSONObject fulfillment = result.getJSONObject("fulfillment");
 		String speech = fulfillment.getString("speech");
 
-		// if (shopRepository.findByChannelToken(CHANNEL_ACCESS_TOKEN) == null) {
-		// Shop shopToAdd = new Shop();
-		// shopToAdd.setChannelToken(CHANNEL_ACCESS_TOKEN);
-		// shopRepository.saveAndFlush(shopToAdd);
-		// }
-		//
-		// shop = shopRepository.findByChannelToken(CHANNEL_ACCESS_TOKEN);
-
 		if (candidateRepository.findByUserLineId(userId) == null) {
 			candidateToRegister = new Candidate();
 			candidateToRegister.setUserLineId(userId);
@@ -115,23 +107,26 @@ public class BotController {
 
 		candidate = candidateRepository.findByUserLineId(userId);
 
-		// if (shopCandidateRelationRepository.findShopCandidateRelationByLineID(userId)
-		// == null) {
-		// ShopCandidateRelation shopCandidateRelationToAdd = new
-		// ShopCandidateRelation();
-		// ShopCandidateRelationPK shopCandidateRelationPK = new
-		// ShopCandidateRelationPK();
-		//
-		// shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
-		// shopCandidateRelationPK.setIdShop(shop.getIdShop());
-		// shopCandidateRelationToAdd.setShopCandidateRelationPK(shopCandidateRelationPK);
-		// shopCandidateRelationToAdd.setCandidate(candidate);
-		// shopCandidateRelationToAdd.setConfirmedInterview(false);
-		// shopCandidateRelationToAdd.setShop(shop);
-		// shopCandidateRelationRepository.saveAndFlush(shopCandidateRelationToAdd);
-		// }
+		if (shopRepository.findAll() != null) {
 
-		shopCandidateRelation = shopCandidateRelationRepository.findShopCandidateRelationByLineID(userId);
+			List<Shop> shops = new ArrayList<>();
+			shops = shopRepository.findAll();
+
+			for (Shop shop1 : shops) {
+				ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
+				shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
+				shopCandidateRelationPK.setIdShop(shop1.getIdShop());
+
+				if (shopCandidateRelationRepository.findOne(shopCandidateRelationPK) == null) {
+					ShopCandidateRelation shopCandidateRelationToAdd = new ShopCandidateRelation();
+					shopCandidateRelationToAdd.setShopCandidateRelationPK(shopCandidateRelationPK);
+					shopCandidateRelationToAdd.setCandidate(candidate);
+					shopCandidateRelationToAdd.setConfirmedInterview(false);
+					shopCandidateRelationToAdd.setShop(shop1);
+					shopCandidateRelationRepository.saveAndFlush(shopCandidateRelationToAdd);
+				}
+			}
+		}
 
 		if (candidate != null) {
 			if (candidate.getChatLineAdmin() == null) {
@@ -260,6 +255,23 @@ public class BotController {
 
 		if (intentName.equals("not interesting jobs again")) {
 
+			Shop shop = new Shop();
+
+			if (shopRepository.findByNameShop("admin shop") == null) {
+				Shop shopToAdd = new Shop();
+				shopToAdd.setNameShop("admin shop");
+				shopRepository.saveAndFlush(shopToAdd);
+			}
+
+			shop = shopRepository.findByNameShop("admin shop");
+
+			ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
+			ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
+			shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
+			shopCandidateRelationPK.setIdShop(shop.getIdShop());
+
+			shopCandidateRelation = shopCandidateRelationRepository.findOne(shopCandidateRelationPK);
+
 			if (shopCandidateRelation != null) {
 				shopCandidateRelation.setProgress("Potential Candidate");
 				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
@@ -346,6 +358,24 @@ public class BotController {
 		}
 
 		if (intentName.equals("Others")) {
+
+			Shop shop = new Shop();
+
+			if (shopRepository.findByNameShop("admin shop") == null) {
+				Shop shopToAdd = new Shop();
+				shopToAdd.setNameShop("admin shop");
+				shopRepository.saveAndFlush(shopToAdd);
+			}
+
+			shop = shopRepository.findByNameShop("admin shop");
+
+			ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
+			ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
+			shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
+			shopCandidateRelationPK.setIdShop(shop.getIdShop());
+
+			shopCandidateRelation = shopCandidateRelationRepository.findOne(shopCandidateRelationPK);
+
 			if (shopCandidateRelation != null) {
 				shopCandidateRelation.setProgress("Potential Candidate");
 				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
@@ -367,8 +397,8 @@ public class BotController {
 
 		if (intentName.equals("Yes I called")) {
 			ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
-					"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png", "Reason",
-					"Did you confirm the interview time?",
+					"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png",
+					"Did you confirm the interview time?", "Did you confirm the interview time?",
 					Arrays.asList(new MessageAction("Confirmed", "Interview confirmed"),
 							new MessageAction("Not confirmed", "Interview not confirmed"),
 							new MessageAction("No interview", "No interview")));
@@ -385,6 +415,13 @@ public class BotController {
 			chatMessageLineToAdd.setReadState(false);
 			chatMessageLineToAdd.setMessageDate((new Date()));
 			chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
+
+			ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
+			ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
+			shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
+			shopCandidateRelationPK.setIdShop(botScheduler.getShop().getIdShop());
+
+			shopCandidateRelation = shopCandidateRelationRepository.findOne(shopCandidateRelationPK);
 
 			if (shopCandidateRelation != null) {
 				shopCandidateRelation.setAskInterviewDate((new Date()));
@@ -418,6 +455,18 @@ public class BotController {
 			Response<BotApiResponse> response = LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 					.pushMessage(pushMessage).execute();
 
+			ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
+			ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
+			shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
+			shopCandidateRelationPK.setIdShop(botScheduler.getShop().getIdShop());
+
+			shopCandidateRelation = shopCandidateRelationRepository.findOne(shopCandidateRelationPK);
+
+			if (shopCandidateRelation != null) {
+				shopCandidateRelation.setConfirmedInterview(false);
+				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
+			}
+
 			ChatMessageLine chatMessageLineToAdd = new ChatMessageLine();
 			chatMessageLineToAdd.setChatLineAdmin(candidate.getChatLineAdmin());
 			chatMessageLineToAdd.setMessageDirection(candidate.getIdUser());
@@ -443,6 +492,13 @@ public class BotController {
 		}
 
 		if (intentName.equals("Interview not confirmed")) {
+			ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
+			ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
+			shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
+			shopCandidateRelationPK.setIdShop(botScheduler.getShop().getIdShop());
+
+			shopCandidateRelation = shopCandidateRelationRepository.findOne(shopCandidateRelationPK);
+
 			if (shopCandidateRelation != null) {
 				shopCandidateRelation.setConfirmedInterview(false);
 				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
@@ -466,6 +522,12 @@ public class BotController {
 			// Response<BotApiResponse> response1 =
 			// LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
 			// .pushMessage(pushMessage1).execute();
+			ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
+			ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
+			shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
+			shopCandidateRelationPK.setIdShop(botScheduler.getShop().getIdShop());
+
+			shopCandidateRelation = shopCandidateRelationRepository.findOne(shopCandidateRelationPK);
 
 			if (shopCandidateRelation != null) {
 				shopCandidateRelation.setConfirmedInterview(true);
@@ -492,6 +554,13 @@ public class BotController {
 
 				if (parameters != null && parameters.getString("date") != null
 						&& !parameters.getString("date").equals("")) {
+
+					ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
+					ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
+					shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
+					shopCandidateRelationPK.setIdShop(botScheduler.getShop().getIdShop());
+
+					shopCandidateRelation = shopCandidateRelationRepository.findOne(shopCandidateRelationPK);
 
 					if (parameters.getString("time") != null && !parameters.getString("time").equals("")) {
 						if (shopCandidateRelation != null) {
