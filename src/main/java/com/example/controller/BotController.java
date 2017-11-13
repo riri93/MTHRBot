@@ -235,12 +235,22 @@ public class BotController {
 
 					// session.sendMessage(channel, customerMessage, null);
 
-					TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid area or station address");
-					PushMessage pushMessage = new PushMessage(userId, textMessage);
-					LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
+					if (!menuClicked) {
+						TextMessage textMessage = new TextMessage("Please enter a valid area or station address");
+						PushMessage pushMessage = new PushMessage(userId, textMessage);
+						LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage)
+								.execute();
 
-					saveChatLineMessage(candidate, "No jobs found. Please enter a valid area or station address");
+						saveChatLineMessage(candidate, "Please enter a valid area or station address");
+					} else {
+						TextMessage textMessage = new TextMessage(
+								"No jobs found. Please enter a valid area or station address");
+						PushMessage pushMessage = new PushMessage(userId, textMessage);
+						LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage)
+								.execute();
 
+						saveChatLineMessage(candidate, "No jobs found. Please enter a valid area or station address");
+					}
 				}
 
 			} else {
@@ -353,6 +363,7 @@ public class BotController {
 
 		if (intentName.equals("search job")) {
 
+			menuClicked = true;
 			TextMessage textMessage = new TextMessage("Please enter an area or station address");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
 			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
