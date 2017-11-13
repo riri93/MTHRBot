@@ -32,7 +32,7 @@ public class Job implements Serializable {
 	private String jobType;
 	private int numberStaffNeeded;
 	private double salary;
-	@Column(columnDefinition = "double default 0f")
+	@Column(columnDefinition = "double default 0")
 	private double hourlyWage;
 
 	@ManyToOne
