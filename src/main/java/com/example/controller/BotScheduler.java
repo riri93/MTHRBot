@@ -437,7 +437,7 @@ public class BotScheduler {
 	 * 
 	 * @throws Exception
 	 */
-	@Scheduled(cron = "0 * * * * *")
+	@Scheduled(cron = "0 0 0 * * *")
 	public void changeToPotentialCandidate() throws Exception {
 		System.out.println("************POTENTIAL CANDIDATE*******************");
 
