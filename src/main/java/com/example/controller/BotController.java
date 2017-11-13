@@ -236,12 +236,12 @@ public class BotController {
 					// session.sendMessage(channel, customerMessage, null);
 
 					TextMessage textMessage = new TextMessage(
-							"Please select 'search for job' in the menu to start or enter a valid area or station address");
+							"Please enter a valid area or station address");
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
 					LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 
 					saveChatLineMessage(candidate,
-							"Please select 'search for job' in the menu to start or enter a valid area or station address");
+							"Please enter a valid area or station address");
 
 				}
 
@@ -354,8 +354,6 @@ public class BotController {
 		}
 
 		if (intentName.equals("search job")) {
-
-			System.out.println("area-name : " + parameters.getString("area-name"));
 
 			TextMessage textMessage = new TextMessage("Please enter an area or station address");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
