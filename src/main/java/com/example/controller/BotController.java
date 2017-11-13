@@ -410,41 +410,37 @@ public class BotController {
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
 			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 			saveChatLineMessage(candidate, "What is your preferred start working time?");
+		}
+
+		if (intentName.equals("Work Time - start")) {
 
 			if (parameters != null) {
 				System.out.println("start : " + parameters.getString("time"));
 
 				SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-				BotInformation botInformation2 = new BotInformation();
-				botInformation2 = candidate.getBotInformation();
-				botInformation2.setStartWorkingTime(formatter.parse(parameters.getString("time")));
-				botInformationRepository.saveAndFlush(botInformation2);
-			} else {
 
-				BotInformation botInformation3 = new BotInformation();
-				botInformation3 = candidate.getBotInformation();
-				botInformation3.setSearchCriteria("address");
-				botInformationRepository.saveAndFlush(botInformation3);
+				System.out.println("start time formatted : " + formatter.parse(parameters.getString("time")));
+
+				BotInformation botInformation = new BotInformation();
+				botInformation = candidate.getBotInformation();
+				botInformation.setStartWorkingTime(formatter.parse(parameters.getString("time")));
+				botInformationRepository.saveAndFlush(botInformation);
 			}
 		}
 
-		if (intentName.equals("Work Time - start")) {
+		if (intentName.equals("Work Time - finish")) {
 
 			if (parameters != null) {
 				System.out.println("finish : " + parameters.getString("time"));
 
 				SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 
+				System.out.println("finish time formatted : " + formatter.parse(parameters.getString("time")));
+
 				BotInformation botInformation = new BotInformation();
 				botInformation = candidate.getBotInformation();
 				botInformation.setFinishWorkingTime(formatter.parse(parameters.getString("time")));
 				botInformationRepository.saveAndFlush(botInformation);
-			} else {
-				BotInformation botInformation = new BotInformation();
-				botInformation = candidate.getBotInformation();
-				botInformation.setSearchCriteria("address");
-				botInformationRepository.saveAndFlush(botInformation);
-
 			}
 
 			if (candidate.getBotInformation().getSearchCriteria().equals("work time")) {
