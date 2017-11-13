@@ -161,6 +161,13 @@ public class BotController {
 			}
 		}
 
+		// create admin shop if not exists
+		if (shopRepository.findByNameShop("admin shop") == null) {
+			Shop shopToAdd = new Shop();
+			shopToAdd.setNameShop("admin shop");
+			shopRepository.saveAndFlush(shopToAdd);
+		}
+
 		// create chatLineAdmin if not exists
 		if (candidate != null) {
 			if (candidate.getChatLineAdmin() == null) {
@@ -384,6 +391,12 @@ public class BotController {
 
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
 			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
+
+			BotInformation botInformation = new BotInformation();
+			botInformation = candidate.getBotInformation();
+			botInformation.setAskForReasonDate((new Date()));
+			botInformationRepository.saveAndFlush(botInformation);
+
 			saveChatLineMessage(candidate, "Please choose your reason");
 		}
 
@@ -492,13 +505,6 @@ public class BotController {
 			botInformationRepository.saveAndFlush(botInformation);
 
 			Shop shop = new Shop();
-
-			if (shopRepository.findByNameShop("admin shop") == null) {
-				Shop shopToAdd = new Shop();
-				shopToAdd.setNameShop("admin shop");
-				shopRepository.saveAndFlush(shopToAdd);
-			}
-
 			shop = shopRepository.findByNameShop("admin shop");
 
 			ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();

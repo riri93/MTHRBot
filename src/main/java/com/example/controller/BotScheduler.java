@@ -22,6 +22,7 @@ import com.example.entity.ShopCandidateRelationPK;
 import com.example.repository.ChatMessageLineRepository;
 import com.example.repository.JobCandidateRelationRepository;
 import com.example.repository.ShopCandidateRelationRepository;
+import com.example.repository.ShopRepository;
 import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.action.MessageAction;
@@ -45,6 +46,9 @@ public class BotScheduler {
 
 	@Autowired
 	ChatMessageLineRepository chatMessageLineRepository;
+
+	@Autowired
+	ShopRepository shopRepository;
 
 	/**
 	 * 
@@ -416,6 +420,48 @@ public class BotScheduler {
 							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 
 							saveChatLineMessage(shopCandidateRelation.getCandidate(), "Tomorrow is the interview!");
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * @author Rihab Kallel
+	 * 
+	 *         sets the candidate to a potential candidate in admin shop-candidate
+	 *         relation if candidate did not reply to the reason message for 2 days
+	 * 
+	 *         scheduler cron checks the database every day
+	 * 
+	 * @throws Exception
+	 */
+	@Scheduled(cron = "0 0 0 * * *")
+	public void changeToPotentialCandidate() throws Exception {
+		System.out.println("************POTENTIAL CANDIDATE*******************");
+
+		List<ShopCandidateRelation> shopCandidateRelations = new ArrayList<>();
+		shopCandidateRelations = shopCandidateRelationRepository.findAll();
+
+		if (shopCandidateRelations != null) {
+
+			for (ShopCandidateRelation shopCandidateRelation : shopCandidateRelations) {
+
+				if (shopCandidateRelation.getCandidate().getBotInformation().getAskForReasonDate() != null) {
+
+					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+					cal.setTime(shopCandidateRelation.getInterviewDate());
+					cal.add(Calendar.DAY_OF_WEEK, 2);
+					cal.getTime();
+
+					Date currentTime = retrieveCurrentTimeStamp();
+
+					if (currentTime.equals(cal.getTime())) {
+
+						if (shopCandidateRelation.getShop().getNameShop().equals("admin shop")) {
+							shopCandidateRelation.setProgress("Potential Candidate");
+							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 						}
 					}
 				}

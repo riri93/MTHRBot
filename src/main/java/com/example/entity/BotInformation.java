@@ -23,6 +23,9 @@ public class BotInformation implements Serializable {
 	private String searchCriteria = "address";
 	private String addressToSearch;
 
+	@Temporal(TemporalType.DATE)
+	private Date askForReasonDate;
+
 	@Temporal(TemporalType.TIME)
 	private Date startWorkingTime;
 
@@ -67,6 +70,14 @@ public class BotInformation implements Serializable {
 
 	public void setFinishWorkingTime(Date finishWorkingTime) {
 		this.finishWorkingTime = finishWorkingTime;
+	}
+
+	public Date getAskForReasonDate() {
+		return askForReasonDate;
+	}
+
+	public void setAskForReasonDate(Date askForReasonDate) {
+		this.askForReasonDate = askForReasonDate;
 	}
 
 }
