@@ -206,6 +206,9 @@ public class BotController {
 				List<Job> jobs = new ArrayList<>();
 				List<Job> jobsToDisplay = new ArrayList<>();
 
+				System.out
+						.println("*********ADDRESS:  ********** " + candidate.getBotInformation().getAddressToSearch());
+
 				jobs = jobRepository.findByAreaOrStation(candidate.getBotInformation().getAddressToSearch());
 
 				if (jobs.size() != 0) {
