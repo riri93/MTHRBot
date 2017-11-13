@@ -1,11 +1,14 @@
 package com.example.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 public class BotInformation implements Serializable {
@@ -19,8 +22,12 @@ public class BotInformation implements Serializable {
 	private int idBotInformation;
 	private String searchCriteria = "address";
 	private String addressToSearch;
-	private String startWorkingTime;
-	private String finishWorkingTime;
+
+	@Temporal(TemporalType.TIME)
+	private Date startWorkingTime;
+
+	@Temporal(TemporalType.TIME)
+	private Date finishWorkingTime;
 
 	public int getIdBotInformation() {
 		return idBotInformation;
@@ -46,19 +53,19 @@ public class BotInformation implements Serializable {
 		this.addressToSearch = addressToSearch;
 	}
 
-	public String getStartWorkingTime() {
+	public Date getStartWorkingTime() {
 		return startWorkingTime;
 	}
 
-	public void setStartWorkingTime(String startWorkingTime) {
+	public void setStartWorkingTime(Date startWorkingTime) {
 		this.startWorkingTime = startWorkingTime;
 	}
 
-	public String getFinishWorkingTime() {
+	public Date getFinishWorkingTime() {
 		return finishWorkingTime;
 	}
 
-	public void setFinishWorkingTime(String finishWorkingTime) {
+	public void setFinishWorkingTime(Date finishWorkingTime) {
 		this.finishWorkingTime = finishWorkingTime;
 	}
 

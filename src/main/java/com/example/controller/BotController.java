@@ -400,7 +400,6 @@ public class BotController {
 			saveChatLineMessage(candidate, "What is your preferred hourly wage?");
 		}
 
-		
 		if (intentName.equals("Work Time")) {
 
 			BotInformation botInformation = new BotInformation();
@@ -418,9 +417,11 @@ public class BotController {
 
 			if (parameters != null) {
 				System.out.println("start : " + parameters.getString("time"));
+
+				SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 				BotInformation botInformation = new BotInformation();
 				botInformation = candidate.getBotInformation();
-				botInformation.setStartWorkingTime(customerMessage);
+				botInformation.setStartWorkingTime(formatter.parse(parameters.getString("time")));
 				botInformationRepository.saveAndFlush(botInformation);
 			} else {
 
@@ -435,9 +436,12 @@ public class BotController {
 
 			if (parameters != null) {
 				System.out.println("finish : " + parameters.getString("time"));
+
+				SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+
 				BotInformation botInformation = new BotInformation();
 				botInformation = candidate.getBotInformation();
-				botInformation.setFinishWorkingTime(customerMessage);
+				botInformation.setFinishWorkingTime(formatter.parse(parameters.getString("time")));
 				botInformationRepository.saveAndFlush(botInformation);
 			} else {
 				BotInformation botInformation = new BotInformation();

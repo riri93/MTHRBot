@@ -1,6 +1,7 @@
 package com.example.repository;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,6 +24,6 @@ public interface JobRepository extends JpaRepository<Job, Serializable> {
 
 	@Query("SELECT j FROM Job j where (j.startWorkingTime >= :startWorkingTime and j.finishWorkingTime <= :finishWorkingTime) and (lower(j.shop.addressShop) like lower(CONCAT('%',:address,'%')) or lower(j.shop.nearestStation) like lower(CONCAT('%',:address,'%')))")
 	public List<Job> findByAreaOrStationAndWorkTime(@Param("address") String addressToSearch,
-			@Param("startWorkingTime") String startWorkingTime, @Param("finishWorkingTime") String finishWorkingTime);
+			@Param("startWorkingTime") Date startWorkingTime, @Param("finishWorkingTime") Date finishWorkingTime);
 
 }
