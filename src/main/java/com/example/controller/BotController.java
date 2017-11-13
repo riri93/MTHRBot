@@ -429,15 +429,18 @@ public class BotController {
 		if (intentName.equals("Work Time - start")) {
 
 			if (parameters != null) {
-				System.out.println("start : " + parameters.getString("time"));
+				System.out.println("start : " + parameters.getString("start-time"));
+
+				System.out.println("finish : " + parameters.getString("finish-time"));
+
+				System.out.println("period : " + parameters.getString("time-period"));
 
 				SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 
-				System.out.println("start time formatted : " + formatter.parse(parameters.getString("time")));
 
 				BotInformation botInformation = new BotInformation();
 				botInformation = candidate.getBotInformation();
-				botInformation.setStartWorkingTime(formatter.parse(parameters.getString("time")));
+				botInformation.setStartWorkingTime(formatter.parse(parameters.getString("start-time")));
 				botInformationRepository.saveAndFlush(botInformation);
 			}
 		}
