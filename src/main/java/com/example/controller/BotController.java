@@ -419,7 +419,7 @@ public class BotController {
 				System.out.println("start : " + parameters.getString("time"));
 				BotInformation botInformation = new BotInformation();
 				botInformation = candidate.getBotInformation();
-				botInformation.setStartWorkingTime(parameters.getString("time"));
+				botInformation.setStartWorkingTime(customerMessage);
 				botInformationRepository.saveAndFlush(botInformation);
 			} else {
 
@@ -436,7 +436,7 @@ public class BotController {
 				System.out.println("finish : " + parameters.getString("time"));
 				BotInformation botInformation = new BotInformation();
 				botInformation = candidate.getBotInformation();
-				botInformation.setFinishWorkingTime(parameters.getString("time"));
+				botInformation.setFinishWorkingTime(customerMessage);
 				botInformationRepository.saveAndFlush(botInformation);
 			} else {
 				BotInformation botInformation = new BotInformation();
