@@ -191,6 +191,8 @@ public class BotController {
 
 		if (intentName.equals("Default Fallback Intent")) {
 
+			System.out.println("******SEARCH CRITERIA**** : " + candidate.getBotInformation().getSearchCriteria());
+
 			RichMenuArea richMenuArea = new RichMenuArea(new RichMenuBounds(0, 0, 2500, 1686),
 					new PostbackAction(null, "action=buy&itemid=123"));
 			RichMenu richMenu = RichMenu.builder().size(RichMenuSize.FULL).selected(false).name("Nice richmenu")
@@ -332,9 +334,8 @@ public class BotController {
 
 				if (candidate.getBotInformation().getSearchCriteria().equals("work time")) {
 
-					
 					System.out.println("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww");
-					
+
 					TextMessage textMessage = new TextMessage("Please enter a valid date");
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
 					LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
