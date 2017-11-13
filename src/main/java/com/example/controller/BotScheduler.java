@@ -451,7 +451,7 @@ public class BotScheduler {
 				if (shopCandidateRelation.getCandidate().getBotInformation().getAskForReasonDate() != null) {
 
 					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-					cal.setTime(shopCandidateRelation.getInterviewDate());
+					cal.setTime(shopCandidateRelation.getCandidate().getBotInformation().getAskForReasonDate());
 					cal.add(Calendar.DAY_OF_WEEK, 2);
 					cal.getTime();
 
