@@ -417,7 +417,7 @@ public class BotController {
 		if (intentName.equals("Work Time")) {
 			BotInformation botInformation = new BotInformation();
 			botInformation = candidate.getBotInformation();
-			botInformation.setSearchCriteria("Work Time");
+			botInformation.setSearchCriteria("work time");
 			botInformationRepository.saveAndFlush(botInformation);
 
 			TextMessage textMessage = new TextMessage("What is your preferred start working time?");
