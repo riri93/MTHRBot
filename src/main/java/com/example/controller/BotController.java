@@ -488,6 +488,12 @@ public class BotController {
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
 					LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 					saveChatLineMessage(candidate, "No jobs found.");
+
+					BotInformation botInformation = new BotInformation();
+					botInformation = candidate.getBotInformation();
+					botInformation.setSearchCriteria("address");
+					botInformationRepository.saveAndFlush(botInformation);
+
 				}
 			}
 		}
