@@ -14,8 +14,6 @@ public class BotInformation {
 	private String searchCriteria = "address";
 	private String addressToSearch;
 
-	private Candidate candidate;
-
 	public int getIdBotInformation() {
 		return idBotInformation;
 	}
@@ -38,14 +36,6 @@ public class BotInformation {
 
 	public void setAddressToSearch(String addressToSearch) {
 		this.addressToSearch = addressToSearch;
-	}
-
-	public Candidate getCandidate() {
-		return candidate;
-	}
-
-	public void setCandidate(Candidate candidate) {
-		this.candidate = candidate;
 	}
 
 }
