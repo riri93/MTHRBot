@@ -306,6 +306,15 @@ public class BotController {
 						saveChatLineMessage(candidate, "No jobs found. Please enter a valid work time");
 					}
 				}
+
+				if (searchCriteria.equals("others")) {
+					TextMessage textMessage = new TextMessage("Okay, thank you!");
+					PushMessage pushMessage = new PushMessage(userId, textMessage);
+					LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
+					saveChatLineMessage(candidate, "Okay, thank you!");
+					saveChatLineMessage(candidate, "Okay, thank you!");
+				}
+
 			}
 		}
 
