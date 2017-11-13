@@ -422,6 +422,13 @@ public class BotController {
 				botInformation = candidate.getBotInformation();
 				botInformation.setStartWorkingTime(parameters.getString("time"));
 				botInformationRepository.saveAndFlush(botInformation);
+			}else {
+				
+				BotInformation botInformation = new BotInformation();
+				botInformation = candidate.getBotInformation();
+				botInformation.setSearchCriteria("address");
+				botInformationRepository.saveAndFlush(botInformation);
+
 			}
 
 			TextMessage textMessage = new TextMessage("What is your preferred finish working time?");
@@ -440,6 +447,12 @@ public class BotController {
 				botInformation = candidate.getBotInformation();
 				botInformation.setFinishWorkingTime(parameters.getString("time"));
 				botInformationRepository.saveAndFlush(botInformation);
+			}else {
+				BotInformation botInformation = new BotInformation();
+				botInformation = candidate.getBotInformation();
+				botInformation.setSearchCriteria("address");
+				botInformationRepository.saveAndFlush(botInformation);
+
 			}
 
 			if (candidate.getBotInformation().getSearchCriteria().equals("work time")) {
