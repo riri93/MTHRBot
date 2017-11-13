@@ -54,7 +54,7 @@ public class Candidate extends UserInformation implements Serializable {
 	@JoinColumn(name = "idPersonCharge", referencedColumnName = "idUser")
 	@JsonIgnoreProperties({ "lineBotAdmin", "candidateAdminRelations", "notifications" })
 	private PersonInCharge personInCharge;
-	
+
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "idBotInformation", referencedColumnName = "idBotInformation")
 	@JsonIgnoreProperties("candidate")
@@ -179,6 +179,14 @@ public class Candidate extends UserInformation implements Serializable {
 
 	public void setShopCandidateRelations(List<ShopCandidateRelation> shopCandidateRelations) {
 		this.shopCandidateRelations = shopCandidateRelations;
+	}
+
+	public BotInformation getBotInformation() {
+		return botInformation;
+	}
+
+	public void setBotInformation(BotInformation botInformation) {
+		this.botInformation = botInformation;
 	}
 
 }

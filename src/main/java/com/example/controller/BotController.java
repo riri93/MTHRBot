@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.entity.BotInformation;
 import com.example.entity.Candidate;
 import com.example.entity.ChatLineAdmin;
 import com.example.entity.ChatMessageLine;
@@ -25,6 +26,7 @@ import com.example.entity.Job;
 import com.example.entity.Shop;
 import com.example.entity.ShopCandidateRelation;
 import com.example.entity.ShopCandidateRelationPK;
+import com.example.repository.BotInformationRepository;
 import com.example.repository.CandidateRepository;
 import com.example.repository.ChatLineAdminRepository;
 import com.example.repository.ChatMessageLineRepository;
@@ -56,10 +58,6 @@ public class BotController {
 	// channel token declaration
 	private static final String CHANNEL_ACCESS_TOKEN = "wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
 
-	// String declaration
-	private String searchCriteria = "address";
-	private String addressToSearch;
-
 	// Repositories and services injection
 	@Autowired
 	CandidateRepository candidateRepository;
@@ -78,6 +76,9 @@ public class BotController {
 
 	@Autowired
 	ChatMessageLineRepository chatMessageLineRepository;
+
+	@Autowired
+	BotInformationRepository botInformationRepository;
 
 	// scheduler declaration
 	@Autowired
@@ -188,14 +189,17 @@ public class BotController {
 			RichMenu richMenu = RichMenu.builder().size(RichMenuSize.FULL).selected(false).name("Nice richmenu")
 					.chatBarText("Tap here").build();
 
-			System.out.println("searchCriteria : " + searchCriteria);
+			if (candidate.getBotInformation().getSearchCriteria().equals("address")) {
 
-			if (searchCriteria.equals("address")) {
-				addressToSearch = customerMessage;
+				BotInformation botInformation = new BotInformation();
+				botInformation = candidate.getBotInformation();
+				botInformation.setAddressToSearch(customerMessage);
+				botInformationRepository.saveAndFlush(botInformation);
+
 				List<Job> jobs = new ArrayList<>();
 				List<Job> jobsToDisplay = new ArrayList<>();
 
-				jobs = jobRepository.findByAreaOrStation(addressToSearch);
+				jobs = jobRepository.findByAreaOrStation(candidate.getBotInformation().getAddressToSearch());
 
 				if (jobs.size() != 0) {
 					if (jobs.size() <= 5) {
@@ -230,7 +234,7 @@ public class BotController {
 				}
 			} else {
 
-				if (searchCriteria.equals("location")) {
+				if (candidate.getBotInformation().getSearchCriteria().equals("location")) {
 					String location = customerMessage;
 					List<Job> jobs = new ArrayList<>();
 					List<Job> jobsToDisplay = new ArrayList<>();
@@ -245,6 +249,12 @@ public class BotController {
 							}
 						}
 						carouselForUser(userId, CHANNEL_ACCESS_TOKEN, jobsToDisplay);
+
+						BotInformation botInformation = new BotInformation();
+						botInformation = candidate.getBotInformation();
+						botInformation.setSearchCriteria("address");
+						botInformationRepository.saveAndFlush(botInformation);
+
 						saveChatLineMessage(candidate, "Send jobs carousel");
 					} else {
 						TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid location");
@@ -256,7 +266,7 @@ public class BotController {
 					}
 				}
 
-				if (searchCriteria.equals("salary")) {
+				if (candidate.getBotInformation().getSearchCriteria().equals("salary")) {
 
 					String salary = customerMessage;
 					List<Job> jobs = new ArrayList<>();
@@ -267,7 +277,8 @@ public class BotController {
 					try {
 						salaryToSearch = Double.parseDouble(salary);
 
-						jobs = jobRepository.findByAreaOrStationAndSalary(addressToSearch, salaryToSearch);
+						jobs = jobRepository.findByAreaOrStationAndSalary(
+								candidate.getBotInformation().getAddressToSearch(), salaryToSearch);
 
 						if (jobs.size() != 0) {
 							if (jobs.size() <= 5) {
@@ -278,6 +289,11 @@ public class BotController {
 								}
 							}
 							carouselForUser(userId, CHANNEL_ACCESS_TOKEN, jobsToDisplay);
+							BotInformation botInformation = new BotInformation();
+							botInformation = candidate.getBotInformation();
+							botInformation.setSearchCriteria("address");
+							botInformationRepository.saveAndFlush(botInformation);
+
 							saveChatLineMessage(candidate, "Send jobs carousel");
 						}
 
@@ -292,7 +308,7 @@ public class BotController {
 					}
 				}
 
-				if (searchCriteria.equals("work time")) {
+				if (candidate.getBotInformation().getSearchCriteria().equals("work time")) {
 					String workTime = customerMessage;
 					List<Job> jobs = new ArrayList<>();
 					List<Job> jobsToDisplay = new ArrayList<>();
@@ -307,6 +323,12 @@ public class BotController {
 							}
 						}
 						carouselForUser(userId, CHANNEL_ACCESS_TOKEN, jobsToDisplay);
+
+						BotInformation botInformation = new BotInformation();
+						botInformation = candidate.getBotInformation();
+						botInformation.setSearchCriteria("address");
+						botInformationRepository.saveAndFlush(botInformation);
+
 						saveChatLineMessage(candidate, "Send jobs carousel");
 					} else {
 						TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid work time");
@@ -317,13 +339,18 @@ public class BotController {
 					}
 				}
 
-				if (searchCriteria.equals("others")) {
+				if (candidate.getBotInformation().getSearchCriteria().equals("others")) {
 					TextMessage textMessage = new TextMessage("Okay, thank you!");
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
 					LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 					saveChatLineMessage(candidate, "Okay, thank you!");
 					saveChatLineMessage(candidate, "Okay, thank you!");
-					searchCriteria = "address";
+
+					BotInformation botInformation = new BotInformation();
+					botInformation = candidate.getBotInformation();
+					botInformation.setSearchCriteria("address");
+					botInformationRepository.saveAndFlush(botInformation);
+
 				}
 			}
 		}
@@ -332,7 +359,7 @@ public class BotController {
 			List<Job> jobs = new ArrayList<>();
 			List<Job> jobsToDisplay = new ArrayList<>();
 
-			jobs = jobRepository.findByAreaOrStation(addressToSearch);
+			jobs = jobRepository.findByAreaOrStation(candidate.getBotInformation().getAddressToSearch());
 
 			if (jobs.size() != 0) {
 				if (jobs.size() <= 5) {
@@ -372,7 +399,11 @@ public class BotController {
 		}
 
 		if (intentName.equals("Location")) {
-			searchCriteria = "location";
+			BotInformation botInformation = new BotInformation();
+			botInformation = candidate.getBotInformation();
+			botInformation.setSearchCriteria("location");
+			botInformationRepository.saveAndFlush(botInformation);
+
 			TextMessage textMessage = new TextMessage("What is your preferred location?");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
 			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
@@ -380,7 +411,12 @@ public class BotController {
 		}
 
 		if (intentName.equals("Salary")) {
-			searchCriteria = "salary";
+
+			BotInformation botInformation = new BotInformation();
+			botInformation = candidate.getBotInformation();
+			botInformation.setSearchCriteria("salary");
+			botInformationRepository.saveAndFlush(botInformation);
+
 			TextMessage textMessage = new TextMessage("What is your preferred hourly wage?");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
 			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
@@ -388,7 +424,12 @@ public class BotController {
 		}
 
 		if (intentName.equals("Work Time")) {
-			searchCriteria = "Work Time";
+
+			BotInformation botInformation = new BotInformation();
+			botInformation = candidate.getBotInformation();
+			botInformation.setSearchCriteria("Work Time");
+			botInformationRepository.saveAndFlush(botInformation);
+
 			TextMessage textMessage = new TextMessage("What is your preferred work time?");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
 			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
@@ -397,7 +438,10 @@ public class BotController {
 
 		if (intentName.equals("Others")) {
 
-			searchCriteria = "others";
+			BotInformation botInformation = new BotInformation();
+			botInformation = candidate.getBotInformation();
+			botInformation.setSearchCriteria("others");
+			botInformationRepository.saveAndFlush(botInformation);
 
 			Shop shop = new Shop();
 
@@ -611,7 +655,6 @@ public class BotController {
 		TemplateMessage templateMessage = new TemplateMessage("Your search result", carouselTemplate);
 		PushMessage pushMessage = new PushMessage(userId, templateMessage);
 
-		searchCriteria = "address";
 		try {
 			LineMessagingServiceBuilder.create(lChannelAccessToken).build().pushMessage(pushMessage).execute();
 		} catch (IOException e) {
