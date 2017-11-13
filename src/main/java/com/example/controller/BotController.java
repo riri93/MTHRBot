@@ -328,7 +328,6 @@ public class BotController {
 					botInformation = candidate.getBotInformation();
 					botInformation.setSearchCriteria("address");
 					botInformationRepository.saveAndFlush(botInformation);
-
 				}
 			}
 		}
@@ -416,6 +415,8 @@ public class BotController {
 
 		if (intentName.equals("Work Time - start")) {
 
+			System.out.println("******start*********");
+
 			if (parameters != null) {
 				BotInformation botInformation = new BotInformation();
 				botInformation = candidate.getBotInformation();
@@ -431,6 +432,9 @@ public class BotController {
 		}
 
 		if (intentName.equals("Work Time - finish")) {
+
+			System.out.println("******finish*********");
+
 			if (parameters != null) {
 				BotInformation botInformation = new BotInformation();
 				botInformation = candidate.getBotInformation();
