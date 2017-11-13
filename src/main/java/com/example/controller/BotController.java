@@ -52,9 +52,6 @@ import com.linecorp.bot.model.richmenu.RichMenuSize;
 @RestController
 public class BotController {
 
-	// class declaration
-	private Candidate candidateToRegister = new Candidate();
-
 	// channel token declaration
 	private static final String CHANNEL_ACCESS_TOKEN = "wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
 
@@ -125,7 +122,7 @@ public class BotController {
 
 		// create candidate if not registered
 		if (candidateRepository.findByUserLineId(userId) == null) {
-			candidateToRegister = new Candidate();
+			Candidate candidateToRegister = new Candidate();
 			candidateToRegister.setUserLineId(userId);
 			candidateRepository.saveAndFlush(candidateToRegister);
 		}
