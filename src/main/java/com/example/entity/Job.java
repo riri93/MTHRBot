@@ -31,6 +31,7 @@ public class Job implements Serializable {
 	private String jobType;
 	private int numberStaffNeeded;
 	private double salary;
+	private double hourlyWage;
 
 	@ManyToOne
 	@JoinColumn(name = "idShop", referencedColumnName = "idShop")
@@ -119,6 +120,14 @@ public class Job implements Serializable {
 
 	public void setJobType(String jobType) {
 		this.jobType = jobType;
+	}
+
+	public double getHourlyWage() {
+		return hourlyWage;
+	}
+
+	public void setHourlyWage(double hourlyWage) {
+		this.hourlyWage = hourlyWage;
 	}
 
 }

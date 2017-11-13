@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -53,6 +54,11 @@ public class Candidate extends UserInformation implements Serializable {
 	@JoinColumn(name = "idPersonCharge", referencedColumnName = "idUser")
 	@JsonIgnoreProperties({ "lineBotAdmin", "candidateAdminRelations", "notifications" })
 	private PersonInCharge personInCharge;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "idBotInformation", referencedColumnName = "idBotInformation")
+	@JsonIgnoreProperties("candidate")
+	private BotInformation botInformation;
 
 	public String getUserLineId() {
 		return userLineId;

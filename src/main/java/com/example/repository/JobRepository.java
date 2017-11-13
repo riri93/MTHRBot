@@ -18,7 +18,7 @@ public interface JobRepository extends JpaRepository<Job, Serializable> {
 	@Query("SELECT j FROM Job j where lower(j.shop.addressShop) like lower(CONCAT('%',:address,'%')) or lower(j.shop.nearestStation) like lower(CONCAT('%',:address,'%'))")
 	public List<Job> findByAreaOrStation(@Param("address") String address);
 
-	@Query("SELECT j FROM Job j where (j.salary >= :salary) and (lower(j.shop.addressShop) like lower(CONCAT('%',:address,'%')) or lower(j.shop.nearestStation) like lower(CONCAT('%',:address,'%')))")
+	@Query("SELECT j FROM Job j where (j.hourlyWage >= :salary) and (lower(j.shop.addressShop) like lower(CONCAT('%',:address,'%')) or lower(j.shop.nearestStation) like lower(CONCAT('%',:address,'%')))")
 	public List<Job> findByAreaOrStationAndSalary(@Param("address") String address, @Param("salary") double salary);
 
 }

@@ -34,6 +34,7 @@ import com.example.repository.ShopRepository;
 import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.action.MessageAction;
+import com.linecorp.bot.model.action.PostbackAction;
 import com.linecorp.bot.model.action.URIAction;
 import com.linecorp.bot.model.message.TemplateMessage;
 import com.linecorp.bot.model.message.TextMessage;
@@ -41,6 +42,10 @@ import com.linecorp.bot.model.message.template.ButtonsTemplate;
 import com.linecorp.bot.model.message.template.CarouselColumn;
 import com.linecorp.bot.model.message.template.CarouselTemplate;
 import com.linecorp.bot.model.message.template.ConfirmTemplate;
+import com.linecorp.bot.model.richmenu.RichMenu;
+import com.linecorp.bot.model.richmenu.RichMenuArea;
+import com.linecorp.bot.model.richmenu.RichMenuBounds;
+import com.linecorp.bot.model.richmenu.RichMenuSize;
 
 @RestController
 public class BotController {
@@ -177,6 +182,11 @@ public class BotController {
 		System.out.println("customerMessage : " + customerMessage);
 
 		if (intentName.equals("Default Fallback Intent")) {
+
+			RichMenuArea richMenuArea = new RichMenuArea(new RichMenuBounds(0, 0, 2500, 1686),
+					new PostbackAction(null, "action=buy&itemid=123"));
+			RichMenu richMenu = RichMenu.builder().size(RichMenuSize.FULL).selected(false).name("Nice richmenu")
+					.chatBarText("Tap here").build();
 
 			System.out.println("searchCriteria : " + searchCriteria);
 
@@ -315,7 +325,6 @@ public class BotController {
 					saveChatLineMessage(candidate, "Okay, thank you!");
 					searchCriteria = "address";
 				}
-
 			}
 		}
 
@@ -372,10 +381,10 @@ public class BotController {
 
 		if (intentName.equals("Salary")) {
 			searchCriteria = "salary";
-			TextMessage textMessage = new TextMessage("What is your expected salary?");
+			TextMessage textMessage = new TextMessage("What is your preferred hourly wage?");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
 			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
-			saveChatLineMessage(candidate, "What is your salary?");
+			saveChatLineMessage(candidate, "What is your preferred hourly wage?");
 		}
 
 		if (intentName.equals("Work Time")) {
