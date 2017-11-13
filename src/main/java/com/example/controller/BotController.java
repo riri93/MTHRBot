@@ -134,6 +134,9 @@ public class BotController {
 			BotInformation botInformation = new BotInformation();
 			botInformation.setSearchCriteria("address");
 			botInformationRepository.saveAndFlush(botInformation);
+
+			candidate.setBotInformation(botInformation);
+			candidateRepository.saveAndFlush(candidate);
 		}
 
 		// create shop candidate relations if not exist
