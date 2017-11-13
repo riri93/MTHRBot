@@ -48,6 +48,9 @@ import com.linecorp.bot.model.richmenu.RichMenu;
 import com.linecorp.bot.model.richmenu.RichMenuArea;
 import com.linecorp.bot.model.richmenu.RichMenuBounds;
 import com.linecorp.bot.model.richmenu.RichMenuSize;
+import com.ullink.slack.simpleslackapi.SlackChannel;
+import com.ullink.slack.simpleslackapi.SlackSession;
+import com.ullink.slack.simpleslackapi.impl.SlackSessionFactory;
 
 @RestController
 public class BotController {
@@ -97,6 +100,11 @@ public class BotController {
 			throws JSONException, IOException, Exception {
 
 		System.out.println("*****************WEBHOOK*********************");
+
+		SlackSession session = SlackSessionFactory.createWebSocketSlackSession(
+				"xoxp-27046751377-127332966816-270221447137-e271238bc56c15e259db94da9cdab047");
+		session.connect();
+		SlackChannel channel = session.findChannelByName("mtproject");
 
 		Candidate candidate = new Candidate();
 
@@ -281,7 +289,7 @@ public class BotController {
 
 						saveChatLineMessage(candidate, "No jobs found. Please enter a valid location");
 					}
-				}
+				} else
 
 				if (candidate.getBotInformation().getSearchCriteria().equals("salary")) {
 
@@ -323,7 +331,7 @@ public class BotController {
 						saveChatLineMessage(candidate, "No jobs found. Please enter a valid salary");
 						e.printStackTrace();
 					}
-				}
+				} else
 
 				if (candidate.getBotInformation().getSearchCriteria().equals("others")) {
 
@@ -337,7 +345,7 @@ public class BotController {
 					botInformation = candidate.getBotInformation();
 					botInformation.setSearchCriteria("address");
 					botInformationRepository.saveAndFlush(botInformation);
-				}
+				} else
 
 				if (candidate.getBotInformation().getSearchCriteria().equals("work time")) {
 
@@ -347,6 +355,9 @@ public class BotController {
 
 					saveChatLineMessage(candidate, "Please enter a valid date");
 
+				} else {
+
+					session.sendMessage(channel, customerMessage, null);
 				}
 			}
 		}

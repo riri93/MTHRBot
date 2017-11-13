@@ -38,6 +38,8 @@ public class BotScheduler {
 	private Shop shop = new Shop();
 	private String channelToken = "wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
 
+	
+	
 	@Autowired
 	JobCandidateRelationRepository jobCandidateRelationRepository;
 

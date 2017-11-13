@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 
@@ -19,8 +18,9 @@ import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 @ComponentScan
 public class HrBotApplication {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		SpringApplication.run(HrBotApplication.class, args);
+
 	}
 
 }
