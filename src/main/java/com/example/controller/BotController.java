@@ -129,6 +129,13 @@ public class BotController {
 
 		candidate = candidateRepository.findByUserLineId(userId);
 
+		// create bot information of null
+		if (candidate.getBotInformation() == null) {
+			BotInformation botInformation = new BotInformation();
+			botInformation.setSearchCriteria("address");
+			botInformationRepository.saveAndFlush(botInformation);
+		}
+
 		// create shop candidate relations if not exist
 		if (shopRepository.findAll() != null) {
 
