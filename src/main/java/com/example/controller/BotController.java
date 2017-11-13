@@ -120,6 +120,13 @@ public class BotController {
 		JSONObject fulfillment = result.getJSONObject("fulfillment");
 		String speech = fulfillment.getString("speech");
 
+		// create admin shop if not exists
+		if (shopRepository.findByNameShop("admin shop") == null) {
+			Shop shopToAdd = new Shop();
+			shopToAdd.setNameShop("admin shop");
+			shopRepository.saveAndFlush(shopToAdd);
+		}
+
 		// create candidate if not registered
 		if (candidateRepository.findByUserLineId(userId) == null) {
 			Candidate candidateToRegister = new Candidate();
@@ -159,13 +166,6 @@ public class BotController {
 					shopCandidateRelationRepository.saveAndFlush(shopCandidateRelationToAdd);
 				}
 			}
-		}
-
-		// create admin shop if not exists
-		if (shopRepository.findByNameShop("admin shop") == null) {
-			Shop shopToAdd = new Shop();
-			shopToAdd.setNameShop("admin shop");
-			shopRepository.saveAndFlush(shopToAdd);
 		}
 
 		// create chatLineAdmin if not exists
