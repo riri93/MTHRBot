@@ -313,6 +313,7 @@ public class BotController {
 					LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 					saveChatLineMessage(candidate, "Okay, thank you!");
 					saveChatLineMessage(candidate, "Okay, thank you!");
+					searchCriteria = "address";
 				}
 
 			}
