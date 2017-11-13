@@ -3,7 +3,6 @@ package com.example.entity;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -30,6 +29,8 @@ public class Job implements Serializable {
 	private String salaryDetail;
 	private String jobDetails;
 	private String jobType;
+	private String startWorkingTime;
+	private String finishWorkingTime;
 	private int numberStaffNeeded;
 	private double salary;
 	private double hourlyWage;
@@ -129,6 +130,22 @@ public class Job implements Serializable {
 
 	public void setHourlyWage(double hourlyWage) {
 		this.hourlyWage = hourlyWage;
+	}
+
+	public String getStartWorkingTime() {
+		return startWorkingTime;
+	}
+
+	public void setStartWorkingTime(String startWorkingTime) {
+		this.startWorkingTime = startWorkingTime;
+	}
+
+	public String getFinishWorkingTime() {
+		return finishWorkingTime;
+	}
+
+	public void setFinishWorkingTime(String finishWorkingTime) {
+		this.finishWorkingTime = finishWorkingTime;
 	}
 
 }

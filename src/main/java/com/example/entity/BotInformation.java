@@ -19,6 +19,8 @@ public class BotInformation implements Serializable {
 	private int idBotInformation;
 	private String searchCriteria = "address";
 	private String addressToSearch;
+	private String startWorkingTime;
+	private String finishWorkingTime;
 
 	public int getIdBotInformation() {
 		return idBotInformation;
@@ -42,6 +44,22 @@ public class BotInformation implements Serializable {
 
 	public void setAddressToSearch(String addressToSearch) {
 		this.addressToSearch = addressToSearch;
+	}
+
+	public String getStartWorkingTime() {
+		return startWorkingTime;
+	}
+
+	public void setStartWorkingTime(String startWorkingTime) {
+		this.startWorkingTime = startWorkingTime;
+	}
+
+	public String getFinishWorkingTime() {
+		return finishWorkingTime;
+	}
+
+	public void setFinishWorkingTime(String finishWorkingTime) {
+		this.finishWorkingTime = finishWorkingTime;
 	}
 
 }
