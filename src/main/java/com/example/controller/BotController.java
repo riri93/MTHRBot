@@ -104,7 +104,7 @@ public class BotController {
 		SlackSession session = SlackSessionFactory.createWebSocketSlackSession(
 				"xoxp-27046751377-127332966816-270221447137-e271238bc56c15e259db94da9cdab047");
 		session.connect();
-		SlackChannel channel = session.findChannelByName("mtproject");
+		SlackChannel channel = session.findChannelByName("testbot");
 
 		Candidate candidate = new Candidate();
 
