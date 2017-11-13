@@ -329,6 +329,16 @@ public class BotController {
 					botInformation.setSearchCriteria("address");
 					botInformationRepository.saveAndFlush(botInformation);
 				}
+
+				if (candidate.getBotInformation().getSearchCriteria().equals("work time")) {
+
+					TextMessage textMessage = new TextMessage("Please enter a valid date");
+					PushMessage pushMessage = new PushMessage(userId, textMessage);
+					LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
+
+					saveChatLineMessage(candidate, "Please enter a valid date");
+
+				}
 			}
 		}
 
