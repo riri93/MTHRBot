@@ -247,6 +247,8 @@ public class BotController {
 					saveChatLineMessage(candidate, "Any interesting jobs?");
 
 				} else {
+					
+					session.sendMessage(channel, customerMessage, null);
 
 					TextMessage textMessage = new TextMessage(
 							"No jobs found. Please enter a valid area name or station");
@@ -282,6 +284,9 @@ public class BotController {
 
 						saveChatLineMessage(candidate, "Send jobs carousel");
 					} else {
+
+						session.sendMessage(channel, customerMessage, null);
+
 						TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid location");
 						PushMessage pushMessage = new PushMessage(userId, textMessage);
 						LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage)
@@ -323,6 +328,7 @@ public class BotController {
 						}
 
 					} catch (Exception e) {
+						session.sendMessage(channel, customerMessage, null);
 
 						TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid salary");
 						PushMessage pushMessage = new PushMessage(userId, textMessage);
@@ -331,9 +337,7 @@ public class BotController {
 						saveChatLineMessage(candidate, "No jobs found. Please enter a valid salary");
 						e.printStackTrace();
 					}
-				} else
-
-				if (candidate.getBotInformation().getSearchCriteria().equals("others")) {
+				} else if (candidate.getBotInformation().getSearchCriteria().equals("others")) {
 
 					TextMessage textMessage = new TextMessage("Okay, thank you!");
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
@@ -345,9 +349,10 @@ public class BotController {
 					botInformation = candidate.getBotInformation();
 					botInformation.setSearchCriteria("address");
 					botInformationRepository.saveAndFlush(botInformation);
-				} else
 
-				if (candidate.getBotInformation().getSearchCriteria().equals("work time")) {
+				} else if (candidate.getBotInformation().getSearchCriteria().equals("work time")) {
+
+					session.sendMessage(channel, customerMessage, null);
 
 					TextMessage textMessage = new TextMessage("Please enter a valid date");
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
