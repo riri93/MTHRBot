@@ -415,39 +415,30 @@ public class BotController {
 
 		if (intentName.equals("Work Time - start")) {
 
-			System.out.println("******start*********");
-
 			if (parameters != null) {
+				System.out.println("start : " + parameters.getString("time"));
 				BotInformation botInformation = new BotInformation();
 				botInformation = candidate.getBotInformation();
 				botInformation.setStartWorkingTime(parameters.getString("time"));
 				botInformationRepository.saveAndFlush(botInformation);
-			}else {
-				
+			} else {
+
 				BotInformation botInformation = new BotInformation();
 				botInformation = candidate.getBotInformation();
 				botInformation.setSearchCriteria("address");
 				botInformationRepository.saveAndFlush(botInformation);
-
 			}
-
-			TextMessage textMessage = new TextMessage("What is your preferred finish working time?");
-			PushMessage pushMessage = new PushMessage(userId, textMessage);
-			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
-			saveChatLineMessage(candidate, "What is your preferred finish working time?");
-
 		}
 
 		if (intentName.equals("Work Time - finish")) {
 
-			System.out.println("******finish*********");
-
 			if (parameters != null) {
+				System.out.println("finish : " + parameters.getString("time"));
 				BotInformation botInformation = new BotInformation();
 				botInformation = candidate.getBotInformation();
 				botInformation.setFinishWorkingTime(parameters.getString("time"));
 				botInformationRepository.saveAndFlush(botInformation);
-			}else {
+			} else {
 				BotInformation botInformation = new BotInformation();
 				botInformation = candidate.getBotInformation();
 				botInformation.setSearchCriteria("address");
