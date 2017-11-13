@@ -352,6 +352,21 @@ public class BotController {
 			}
 		}
 
+		if (intentName.equals("search job")) {
+
+			TextMessage textMessage = new TextMessage("Please enter an area or station address");
+			PushMessage pushMessage = new PushMessage(userId, textMessage);
+			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
+
+			BotInformation botInformation = new BotInformation();
+			botInformation = candidate.getBotInformation();
+			botInformation.setSearchCriteria("address");
+			botInformationRepository.saveAndFlush(botInformation);
+
+			saveChatLineMessage(candidate, "Please enter an area or station address");
+		}
+		
+
 		if (intentName.equals("not interesting jobs")) {
 			List<Job> jobs = new ArrayList<>();
 			List<Job> jobsToDisplay = new ArrayList<>();
