@@ -41,9 +41,6 @@ import com.linecorp.bot.model.message.template.ButtonsTemplate;
 import com.linecorp.bot.model.message.template.CarouselColumn;
 import com.linecorp.bot.model.message.template.CarouselTemplate;
 import com.linecorp.bot.model.message.template.ConfirmTemplate;
-import com.linecorp.bot.model.response.BotApiResponse;
-
-import retrofit2.Response;
 
 @RestController
 public class BotController {
@@ -242,8 +239,8 @@ public class BotController {
 					} else {
 						TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid location");
 						PushMessage pushMessage = new PushMessage(userId, textMessage);
-						LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN)
-								.build().pushMessage(pushMessage).execute();
+						LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage)
+								.execute();
 
 						saveChatLineMessage(candidate, "No jobs found. Please enter a valid location");
 					}
@@ -278,8 +275,8 @@ public class BotController {
 
 						TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid salary");
 						PushMessage pushMessage = new PushMessage(userId, textMessage);
-						LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN)
-								.build().pushMessage(pushMessage).execute();
+						LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage)
+								.execute();
 						saveChatLineMessage(candidate, "No jobs found. Please enter a valid salary");
 						e.printStackTrace();
 					}
@@ -304,8 +301,8 @@ public class BotController {
 					} else {
 						TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid work time");
 						PushMessage pushMessage = new PushMessage(userId, textMessage);
-						LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN)
-								.build().pushMessage(pushMessage).execute();
+						LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage)
+								.execute();
 						saveChatLineMessage(candidate, "No jobs found. Please enter a valid work time");
 					}
 				}
@@ -334,8 +331,7 @@ public class BotController {
 						new MessageAction("No", "not interesting jobs again"));
 				TemplateMessage templateMessage = new TemplateMessage("Any interesting jobs?", confirmTemplate);
 				PushMessage pushMessage = new PushMessage(userId, templateMessage);
-				LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
-						.pushMessage(pushMessage).execute();
+				LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 
 				saveChatLineMessage(candidate, "Send jobs carousel");
 				saveChatLineMessage(candidate, "Any interesting jobs?");
@@ -343,28 +339,6 @@ public class BotController {
 		}
 
 		if (intentName.equals("not interesting jobs again")) {
-
-			Shop shop = new Shop();
-
-			if (shopRepository.findByNameShop("admin shop") == null) {
-				Shop shopToAdd = new Shop();
-				shopToAdd.setNameShop("admin shop");
-				shopRepository.saveAndFlush(shopToAdd);
-			}
-
-			shop = shopRepository.findByNameShop("admin shop");
-
-			ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
-			ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
-			shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
-			shopCandidateRelationPK.setIdShop(shop.getIdShop());
-
-			shopCandidateRelation = shopCandidateRelationRepository.findOne(shopCandidateRelationPK);
-
-			if (shopCandidateRelation != null) {
-				shopCandidateRelation.setProgress("Potential Candidate");
-				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
-			}
 
 			ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
 					"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png", "Reason",
@@ -374,8 +348,7 @@ public class BotController {
 			TemplateMessage templateMessage = new TemplateMessage("Reason", buttonsTemplate);
 
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
-			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
-					.pushMessage(pushMessage).execute();
+			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 			saveChatLineMessage(candidate, "Please choose your reason");
 		}
 
@@ -383,8 +356,7 @@ public class BotController {
 			searchCriteria = "location";
 			TextMessage textMessage = new TextMessage("What is your preferred location?");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
-			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
-					.pushMessage(pushMessage).execute();
+			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 			saveChatLineMessage(candidate, "What is your location?");
 		}
 
@@ -392,8 +364,7 @@ public class BotController {
 			searchCriteria = "salary";
 			TextMessage textMessage = new TextMessage("What is your expected salary?");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
-			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
-					.pushMessage(pushMessage).execute();
+			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 			saveChatLineMessage(candidate, "What is your salary?");
 		}
 
@@ -401,12 +372,13 @@ public class BotController {
 			searchCriteria = "Work Time";
 			TextMessage textMessage = new TextMessage("What is your preferred work time?");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
-			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
-					.pushMessage(pushMessage).execute();
+			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 			saveChatLineMessage(candidate, "What is your work time?");
 		}
 
 		if (intentName.equals("Others")) {
+
+			searchCriteria = "others";
 
 			Shop shop = new Shop();
 
@@ -432,8 +404,7 @@ public class BotController {
 
 			TextMessage textMessage = new TextMessage("What is the reason?");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
-			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
-					.pushMessage(pushMessage).execute();
+			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 			saveChatLineMessage(candidate, "What is the reason?");
 		}
 
@@ -447,8 +418,7 @@ public class BotController {
 			TemplateMessage templateMessage = new TemplateMessage("Reason", buttonsTemplate);
 
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
-			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
-					.pushMessage(pushMessage).execute();
+			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 			saveChatLineMessage(candidate, "Did you confirm the interview time?");
 
 			ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
@@ -468,8 +438,7 @@ public class BotController {
 			TextMessage textMessage = new TextMessage(
 					"Please call the shop: " + botScheduler.getShop().getPhoneNumber());
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
-			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
-					.pushMessage(pushMessage).execute();
+			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 			saveChatLineMessage(candidate, "Please call the shop: " + botScheduler.getShop().getPhoneNumber());
 		}
 
@@ -480,8 +449,7 @@ public class BotController {
 			TemplateMessage templateMessage = new TemplateMessage("Do you want to apply for a job again?",
 					confirmTemplate);
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
-			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
-					.pushMessage(pushMessage).execute();
+			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 
 			ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
 			ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
@@ -500,8 +468,7 @@ public class BotController {
 		if (intentName.equals("Yes I want to apply for a job again")) {
 			TextMessage textMessage = new TextMessage("Please enter an area or a station");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
-			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
-					.pushMessage(pushMessage).execute();
+			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 			saveChatLineMessage(candidate, "Please enter an area or a station");
 		}
 
@@ -537,8 +504,7 @@ public class BotController {
 			if (parameters == null) {
 				TextMessage textMessage = new TextMessage("Please enter a valid date and time");
 				PushMessage pushMessage = new PushMessage(userId, textMessage);
-				LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
-						.pushMessage(pushMessage).execute();
+				LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 				saveChatLineMessage(candidate, "Please enter a valid date and time");
 			} else {
 
@@ -572,8 +538,7 @@ public class BotController {
 
 					TextMessage textMessage = new TextMessage("Okay, good luck!");
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
-					LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
-							.pushMessage(pushMessage).execute();
+					LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 					saveChatLineMessage(candidate, "Okay, good luck!");
 				}
 			}
@@ -586,8 +551,7 @@ public class BotController {
 			TemplateMessage templateMessage = new TemplateMessage("Do you want to apply for a job again?",
 					confirmTemplate);
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
-			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build()
-					.pushMessage(pushMessage).execute();
+			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 			saveChatLineMessage(candidate, "Do you want to apply for a job again?");
 		}
 
@@ -630,8 +594,7 @@ public class BotController {
 
 		searchCriteria = "address";
 		try {
-			LineMessagingServiceBuilder.create(lChannelAccessToken).build()
-					.pushMessage(pushMessage).execute();
+			LineMessagingServiceBuilder.create(lChannelAccessToken).build().pushMessage(pushMessage).execute();
 		} catch (IOException e) {
 			System.out.println("Exception is raised ");
 			e.printStackTrace();
