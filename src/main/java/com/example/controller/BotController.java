@@ -236,11 +236,11 @@ public class BotController {
 					// session.sendMessage(channel, customerMessage, null);
 
 					TextMessage textMessage = new TextMessage(
-							"No jobs found. Please enter a valid area name or station");
+							"Please select 'search job' in the menu to start or enter a valid area or station address");
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
 					LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 
-					saveChatLineMessage(candidate, "No jobs found. Please enter a valid area name or station");
+					saveChatLineMessage(candidate, "Please select 'search job' in the menu to start or enter a valid area or station address");
 
 				}
 
