@@ -1,6 +1,7 @@
 package com.example.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -10,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -29,8 +32,13 @@ public class Job implements Serializable {
 	private String salaryDetail;
 	private String jobDetails;
 	private String jobType;
-	private String startWorkingTime;
-	private String finishWorkingTime;
+
+	@Temporal(TemporalType.TIME)
+	private Date startWorkingTime;
+
+	@Temporal(TemporalType.TIME)
+	private Date finishWorkingTime;
+
 	private int numberStaffNeeded;
 	private double salary;
 	private double hourlyWage;
@@ -132,19 +140,19 @@ public class Job implements Serializable {
 		this.hourlyWage = hourlyWage;
 	}
 
-	public String getStartWorkingTime() {
+	public Date getStartWorkingTime() {
 		return startWorkingTime;
 	}
 
-	public void setStartWorkingTime(String startWorkingTime) {
+	public void setStartWorkingTime(Date startWorkingTime) {
 		this.startWorkingTime = startWorkingTime;
 	}
 
-	public String getFinishWorkingTime() {
+	public Date getFinishWorkingTime() {
 		return finishWorkingTime;
 	}
 
-	public void setFinishWorkingTime(String finishWorkingTime) {
+	public void setFinishWorkingTime(Date finishWorkingTime) {
 		this.finishWorkingTime = finishWorkingTime;
 	}
 

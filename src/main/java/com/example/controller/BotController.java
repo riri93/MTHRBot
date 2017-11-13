@@ -400,6 +400,7 @@ public class BotController {
 			saveChatLineMessage(candidate, "What is your preferred hourly wage?");
 		}
 
+		
 		if (intentName.equals("Work Time")) {
 
 			BotInformation botInformation = new BotInformation();
