@@ -99,12 +99,10 @@ public class BotController {
 	private @ResponseBody Map<String, Object> webhook(@RequestBody Map<String, Object> obj)
 			throws JSONException, IOException, Exception {
 
-		System.out.println("*****************WEBHOOK*********************");
-
-		SlackSession session = SlackSessionFactory.createWebSocketSlackSession(
-				"xoxp-27046751377-127332966816-270221447137-e271238bc56c15e259db94da9cdab047");
-		session.connect();
-		SlackChannel channel = session.findChannelByName("testbot");
+		// SlackSession session = SlackSessionFactory.createWebSocketSlackSession(
+		// "xoxp-27046751377-127332966816-270221447137-e271238bc56c15e259db94da9cdab047");
+		// session.connect();
+		// SlackChannel channel = session.findChannelByName("testbot");
 
 		Candidate candidate = new Candidate();
 
@@ -198,20 +196,7 @@ public class BotController {
 			}
 		}
 
-		System.out.println("userId : " + userId);
-		System.out.println("speech : " + speech);
-		System.out.println("timestamp : " + timestamp);
-		System.out.println("intentName : " + intentName);
-		System.out.println("customerMessage : " + customerMessage);
-
 		if (intentName.equals("Default Fallback Intent")) {
-
-			System.out.println("******SEARCH CRITERIA**** : " + candidate.getBotInformation().getSearchCriteria());
-
-			RichMenuArea richMenuArea = new RichMenuArea(new RichMenuBounds(0, 0, 2500, 1686),
-					new PostbackAction(null, "action=buy&itemid=123"));
-			RichMenu richMenu = RichMenu.builder().size(RichMenuSize.FULL).selected(false).name("Nice richmenu")
-					.chatBarText("Tap here").build();
 
 			if (candidate.getBotInformation().getSearchCriteria().equals("address")) {
 
@@ -247,8 +232,8 @@ public class BotController {
 					saveChatLineMessage(candidate, "Any interesting jobs?");
 
 				} else {
-					
-					session.sendMessage(channel, customerMessage, null);
+
+					// session.sendMessage(channel, customerMessage, null);
 
 					TextMessage textMessage = new TextMessage(
 							"No jobs found. Please enter a valid area name or station");
@@ -285,7 +270,7 @@ public class BotController {
 						saveChatLineMessage(candidate, "Send jobs carousel");
 					} else {
 
-						session.sendMessage(channel, customerMessage, null);
+						// session.sendMessage(channel, customerMessage, null);
 
 						TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid location");
 						PushMessage pushMessage = new PushMessage(userId, textMessage);
@@ -328,7 +313,7 @@ public class BotController {
 						}
 
 					} catch (Exception e) {
-						session.sendMessage(channel, customerMessage, null);
+						// session.sendMessage(channel, customerMessage, null);
 
 						TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid salary");
 						PushMessage pushMessage = new PushMessage(userId, textMessage);
@@ -352,7 +337,7 @@ public class BotController {
 
 				} else if (candidate.getBotInformation().getSearchCriteria().equals("work time")) {
 
-					session.sendMessage(channel, customerMessage, null);
+					// session.sendMessage(channel, customerMessage, null);
 
 					TextMessage textMessage = new TextMessage("Please enter a valid date");
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
@@ -362,7 +347,7 @@ public class BotController {
 
 				} else {
 
-					session.sendMessage(channel, customerMessage, null);
+					// session.sendMessage(channel, customerMessage, null);
 				}
 			}
 		}
