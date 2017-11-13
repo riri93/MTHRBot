@@ -105,7 +105,7 @@ public class BotController {
 		// SlackChannel channel = session.findChannelByName("testbot");
 
 		Candidate candidate = new Candidate();
-
+		boolean menuClicked = false;
 		ChatLineAdmin chatLineAdmin = new ChatLineAdmin();
 
 		Map<String, Object> json = new HashMap<String, Object>();
@@ -235,13 +235,11 @@ public class BotController {
 
 					// session.sendMessage(channel, customerMessage, null);
 
-					TextMessage textMessage = new TextMessage(
-							"Please enter a valid area or station address");
+					TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid area or station address");
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
 					LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 
-					saveChatLineMessage(candidate,
-							"Please enter a valid area or station address");
+					saveChatLineMessage(candidate, "No jobs found. Please enter a valid area or station address");
 
 				}
 
