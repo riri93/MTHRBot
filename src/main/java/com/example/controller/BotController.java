@@ -238,7 +238,7 @@ public class BotController {
 
 				} else {
 
-					String input = "{'text':'" + "userID: " + userId + " , time: " + timestamp + " text: "
+					String input = "{'text':'" + "userID: " + userId + " \n time: " + timestamp + " \n text: "
 							+ customerMessage + "'}";
 
 					HttpHeaders headers = new HttpHeaders();
@@ -281,8 +281,8 @@ public class BotController {
 						saveChatLineMessage(candidate, "Send jobs carousel");
 					} else {
 
-						String input = "{'text':'" + "userID: " + userId + " , time: " + timestamp + " text: "
-								+ customerMessage + "'}";
+						String input = "{'text':'" + "userID: " + userId + " \n time: " + timestamp + " \n text: "
+							+ customerMessage + "'}";
 
 						HttpHeaders headers = new HttpHeaders();
 						headers.setContentType(MediaType.APPLICATION_JSON);
@@ -339,8 +339,8 @@ public class BotController {
 
 					} catch (Exception e) {
 
-						String input = "{'text':'" + "userID: " + userId + " , time: " + timestamp + " text: "
-								+ customerMessage + "'}";
+						String input = "{'text':'" + "userID: " + userId + " \n time: " + timestamp + " \n text: "
+							+ customerMessage + "'}";
 
 						HttpHeaders headers = new HttpHeaders();
 						headers.setContentType(MediaType.APPLICATION_JSON);
@@ -372,7 +372,7 @@ public class BotController {
 
 				} else if (candidate.getBotInformation().getSearchCriteria().equals("work time")) {
 
-					String input = "{'text':'" + "userID: " + userId + " , time: " + timestamp + " text: "
+					String input = "{'text':'" + "userID: " + userId + " \n time: " + timestamp + " \n text: "
 							+ customerMessage + "'}";
 
 					HttpHeaders headers = new HttpHeaders();
@@ -396,7 +396,7 @@ public class BotController {
 
 					saveChatLineMessage(candidate, "Please enter a valid date");
 
-					String input = "{'text':'" + "userID: " + userId + " , time: " + timestamp + " text: "
+					String input = "{'text':'" + "userID: " + userId + " \n time: " + timestamp + " \n text: "
 							+ customerMessage + "'}";
 
 					HttpHeaders headers = new HttpHeaders();
@@ -416,7 +416,7 @@ public class BotController {
 					saveChatLineMessage(candidate,
 							"I am sorry, I am having trouble understading your message. You can search for jobs by clicking on 'search for job menu'");
 
-					String input = "{'text':'" + "userID: " + userId + " , time: " + timestamp + " text: "
+					String input = "{'text':'" + "userID: " + userId + " \n time: " + timestamp + " \n text: "
 							+ customerMessage + "'}";
 
 					HttpHeaders headers = new HttpHeaders();
