@@ -178,6 +178,8 @@ public class BotScheduler {
 
 									shop = jobCandidateRelation.getJob().getShop();
 
+									System.out.println("shop : " + shop.getIdShop());
+
 									callShopMessageCounter++;
 									jobCandidateRelation.setCallShopMessageCounter(callShopMessageCounter);
 									jobCandidateRelation.setCallShopMessageDate((new Date()));
