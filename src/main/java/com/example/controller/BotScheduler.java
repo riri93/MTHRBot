@@ -178,8 +178,6 @@ public class BotScheduler {
 
 									shop = jobCandidateRelation.getJob().getShop();
 
-									System.out.println("shop : " + shop.getIdShop());
-
 									callShopMessageCounter++;
 									jobCandidateRelation.setCallShopMessageCounter(callShopMessageCounter);
 									jobCandidateRelation.setCallShopMessageDate((new Date()));
@@ -262,6 +260,8 @@ public class BotScheduler {
 								shopCandidateRelation.setPassedInterviewMessageDate((new Date()));
 								shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 
+								shop = shopCandidateRelation.getShop();
+								
 								saveChatLineMessage(shopCandidateRelation.getCandidate(),
 										"Have you passed the interview?");
 							}
@@ -311,6 +311,8 @@ public class BotScheduler {
 							shopCandidateRelation.setAskInterviewDate(new Date());
 							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 
+							shop = shopCandidateRelation.getShop();
+							
 							saveChatLineMessage(shopCandidateRelation.getCandidate(),
 									"Did you confirm the interview time?");
 						}
@@ -349,6 +351,8 @@ public class BotScheduler {
 								shopCandidateRelation.setRemindInterviewDate((new Date()));
 								shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 
+								shop = shopCandidateRelation.getShop();
+								
 								saveChatLineMessage(shopCandidateRelation.getCandidate(), "Tomorrow is the interview!");
 							}
 						}
