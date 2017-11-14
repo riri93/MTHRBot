@@ -98,7 +98,6 @@ public class BotController {
 			throws JSONException, IOException, Exception {
 
 		final String uri = "https://hooks.slack.com/services/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";
-		RestTemplate restTemplate = new RestTemplate();
 
 		// SlackSession session = SlackSessionFactory.createWebSocketSlackSession(
 		// "xoxp-27046751377-127332966816-272009034885-29a9b73ce611a58850e448ea7c4956d4");
@@ -238,14 +237,14 @@ public class BotController {
 
 				} else {
 
-					String input = "{'text':'test  bot  2 testt'}";
-
-					HttpHeaders headers = new HttpHeaders();
-					headers.setContentType(MediaType.APPLICATION_JSON);
-
-					HttpEntity<String> entity = new HttpEntity<String>(input, headers);
-
-					ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
+//					String input = "{'text':'test  bot  2 testt'}";
+//
+//					HttpHeaders headers = new HttpHeaders();
+//					headers.setContentType(MediaType.APPLICATION_JSON);
+//
+//					HttpEntity<String> entity = new HttpEntity<String>(input, headers);
+//
+//					ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
 
 					// session.sendMessage(channel,
 					// "userID: " + userId + " , time: " + timestamp + " text: " + customerMessage,
