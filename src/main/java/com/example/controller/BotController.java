@@ -676,10 +676,10 @@ public class BotController {
 				saveChatLineMessage(candidate, "Please enter a valid date and time");
 			} else {
 
-				
 				System.out.println("date : " + parameters.getString("date"));
 				System.out.println("time : " + parameters.getString("time"));
 				System.out.println("date-time : " + parameters.getString("date-time"));
+				System.out.println("botScheduler.getShop().getIdShop() : " + botScheduler.getShop().getIdShop());
 				
 				ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
 				ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
@@ -707,7 +707,7 @@ public class BotController {
 							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 
 						}
-						
+
 					} else {
 
 						SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
