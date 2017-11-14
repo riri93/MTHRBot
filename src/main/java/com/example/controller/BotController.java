@@ -659,7 +659,7 @@ public class BotController {
 			
 			BotInformation botInformation = new BotInformation();
 			botInformation = candidate.getBotInformation();
-			botInformation.setSearchCriteria("address);
+			botInformation.setSearchCriteria("address");
 			botInformationRepository.saveAndFlush(botInformation);
 			
 			TextMessage textMessage = new TextMessage("Please enter an area or a station");

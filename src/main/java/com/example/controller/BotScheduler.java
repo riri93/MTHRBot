@@ -13,12 +13,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import com.example.entity.BotInformation;
 import com.example.entity.Candidate;
 import com.example.entity.ChatMessageLine;
 import com.example.entity.JobCandidateRelation;
 import com.example.entity.Shop;
 import com.example.entity.ShopCandidateRelation;
 import com.example.entity.ShopCandidateRelationPK;
+import com.example.repository.BotInformationRepository;
 import com.example.repository.ChatMessageLineRepository;
 import com.example.repository.JobCandidateRelationRepository;
 import com.example.repository.ShopCandidateRelationRepository;
@@ -49,6 +51,9 @@ public class BotScheduler {
 
 	@Autowired
 	ShopRepository shopRepository;
+
+	@Autowired
+	BotInformationRepository botInformationRepository;
 
 	/**
 	 * 
@@ -95,6 +100,12 @@ public class BotScheduler {
 					shopCandidateRelationPK.setIdShop(jobCandidateRelation.getJob().getShop().getIdShop());
 
 					shopCandidateRelation = shopCandidateRelationRepository.findOne(shopCandidateRelationPK);
+
+					BotInformation botInformation = new BotInformation();
+					botInformation = shopCandidateRelation.getCandidate().getBotInformation();
+					botInformation.setSearchCriteria("call shop");
+					botInformationRepository.saveAndFlush(botInformation);
+
 					Date askInterviewDate = null;
 					if (shopCandidateRelation != null) {
 						askInterviewDate = shopCandidateRelation.getAskInterviewDate();
@@ -231,6 +242,11 @@ public class BotScheduler {
 					cal.add(Calendar.DAY_OF_WEEK, 2);
 					cal.getTime();
 
+					BotInformation botInformation = new BotInformation();
+					botInformation = shopCandidateRelation.getCandidate().getBotInformation();
+					botInformation.setSearchCriteria("pass interview");
+					botInformationRepository.saveAndFlush(botInformation);
+
 					int passedInterviewMessageCounter = shopCandidateRelation.getPassedInterviewMessageCounter();
 
 					if (passedInterviewMessageCounter < 1) {
@@ -261,7 +277,7 @@ public class BotScheduler {
 								shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 
 								shop = shopCandidateRelation.getShop();
-								
+
 								saveChatLineMessage(shopCandidateRelation.getCandidate(),
 										"Have you passed the interview?");
 							}
@@ -276,6 +292,11 @@ public class BotScheduler {
 						|| (shopCandidateRelation.getAskInterviewDate() != null
 								&& shopCandidateRelation.isConfirmedInterview()
 								&& shopCandidateRelation.getInterviewDate() == null)) {
+
+					BotInformation botInformation = new BotInformation();
+					botInformation = shopCandidateRelation.getCandidate().getBotInformation();
+					botInformation.setSearchCriteria("confirm interview");
+					botInformationRepository.saveAndFlush(botInformation);
 
 					int askInterviewCounter = shopCandidateRelation.getAskInterviewCounter();
 
@@ -312,7 +333,7 @@ public class BotScheduler {
 							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 
 							shop = shopCandidateRelation.getShop();
-							
+
 							saveChatLineMessage(shopCandidateRelation.getCandidate(),
 									"Did you confirm the interview time?");
 						}
@@ -328,6 +349,11 @@ public class BotScheduler {
 					cal.getTime();
 
 					int remindInterviewCounter = shopCandidateRelation.getRemindInterviewCounter();
+
+					BotInformation botInformation = new BotInformation();
+					botInformation = shopCandidateRelation.getCandidate().getBotInformation();
+					botInformation.setSearchCriteria("remind interview");
+					botInformationRepository.saveAndFlush(botInformation);
 
 					if (remindInterviewCounter < 1)
 						if (shopCandidateRelation.getRemindInterviewDate() == null) {
@@ -352,7 +378,7 @@ public class BotScheduler {
 								shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 
 								shop = shopCandidateRelation.getShop();
-								
+
 								saveChatLineMessage(shopCandidateRelation.getCandidate(), "Tomorrow is the interview!");
 							}
 						}
