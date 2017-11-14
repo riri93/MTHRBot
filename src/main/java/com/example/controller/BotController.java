@@ -670,17 +670,19 @@ public class BotController {
 		// (enter a valid date and time)
 		if (intentName.equals("interview-time")) {
 			if (parameters == null) {
-				TextMessage textMessage = new TextMessage("Please enter a valid date and time (dd/mm/yyyy)");
+				TextMessage textMessage = new TextMessage(
+						"Please enter a valid date and time (ex: mm/dd/yyyy, tomorrow 9am, next monday)");
 				PushMessage pushMessage = new PushMessage(userId, textMessage);
 				LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
-				saveChatLineMessage(candidate, "Please enter a valid date and time (dd/mm/yyyy)");
+				saveChatLineMessage(candidate,
+						"Please enter a valid date and time (ex: mm/dd/yyyy, tomorrow 9am, next monday)");
 			} else {
 
 				System.out.println("date : " + parameters.getString("date"));
 				System.out.println("time : " + parameters.getString("time"));
 				System.out.println("date-time : " + parameters.getString("date-time"));
 				System.out.println("botScheduler.getShop().getIdShop() : " + botScheduler.getShop().getIdShop());
-				
+
 				ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
 				ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
 				shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
@@ -708,7 +710,8 @@ public class BotController {
 
 						}
 
-					} else {
+					} else if (parameters.getString("date-time") != null
+							&& !parameters.getString("date-time").equals("")) {
 
 						SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 						String dateTime = parameters.getString("date-time");
@@ -716,6 +719,13 @@ public class BotController {
 						shopCandidateRelation.setInterviewDate(interviewDate);
 						shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 
+					} else {
+
+						TextMessage textMessage = new TextMessage("Please enter a valid date and time (mm/dd/yyyy)");
+						PushMessage pushMessage = new PushMessage(userId, textMessage);
+						LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage)
+								.execute();
+						saveChatLineMessage(candidate, "Please enter a valid date and time (mm/dd/yyyy)");
 					}
 
 					TextMessage textMessage = new TextMessage("Okay, good luck!");
