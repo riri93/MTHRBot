@@ -38,8 +38,6 @@ public class BotScheduler {
 	private Shop shop = new Shop();
 	private String channelToken = "wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
 
-	
-	
 	@Autowired
 	JobCandidateRelationRepository jobCandidateRelationRepository;
 
@@ -61,19 +59,35 @@ public class BotScheduler {
 	 *         send this message after two days from the call shop message date
 	 *         (second time)
 	 * 
-	 *         scheduler cron checks the database every day
+	 *         send this message after 3 hours if user answered no to "have got in
+	 *         contact with the shop?" (3 hours after the call shop message date)
+	 * 
+	 *         send this message after two days from interview send this message if
+	 *         interview time is not yet confirmed after two days
+	 * 
+	 *         send interview reminder one day before the interview
+	 * 
+	 *         sets the candidate to a potential candidate in admin shop-candidate
+	 *         relation if candidate did not reply to the reason message for 2 days
+	 * 
+	 *         scheduler cron checks the database every hour
 	 * 
 	 * @throws Exception
 	 */
-	@Scheduled(cron = "0 0 0 * * *")
+	@Scheduled(cron = "0 0 * * * *")
 	public void sendCallShopMessage() throws Exception {
 
 		List<JobCandidateRelation> jobCandidateRelations = new ArrayList<>();
 		jobCandidateRelations = jobCandidateRelationRepository.getAllAppliedCandidates();
 
+		List<ShopCandidateRelation> shopCandidateRelations = new ArrayList<>();
+		shopCandidateRelations = shopCandidateRelationRepository.findAll();
+
 		if (jobCandidateRelations != null) {
 
 			for (JobCandidateRelation jobCandidateRelation : jobCandidateRelations) {
+				
+				
 				if (jobCandidateRelation.getAppliedDate() != null) {
 					ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
 					ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
@@ -89,8 +103,6 @@ public class BotScheduler {
 					// if user answered with NO
 					if (askInterviewDate == null) {
 						if (jobCandidateRelation.getCallShopMessageDate() == null) {
-
-							System.out.println("************CALL SHOP AFTER 1 DAY FROM APPLY*******************");
 
 							int callShopMessageCounter = jobCandidateRelation.getCallShopMessageCounter();
 
@@ -131,9 +143,6 @@ public class BotScheduler {
 								}
 							} else {
 
-								System.out.println(
-										"************CALL SHOP AFTER 2 DAYS FROM ANSWERING NO*******************");
-
 								Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 								cal.setTime(jobCandidateRelation.getCallShopMessageDate());
 								cal.add(Calendar.DAY_OF_WEEK, 2);
@@ -173,31 +182,7 @@ public class BotScheduler {
 						}
 					}
 				}
-			}
-		}
-	}
 
-	/**
-	 * @author Rihab Kallel
-	 * 
-	 *         send this message after 3 hours if user answered no to "have got in
-	 *         contact with the shop?" (3 hours after the call shop message date)
-	 * 
-	 *         scheduler cron checks the database every hour
-	 * @throws Exception
-	 * 
-	 */
-	@Scheduled(cron = "0 0 * * * *")
-	public void sendCallShopMessage3Hours() throws Exception {
-
-		System.out.println("************CALL SHOP AFTER 3 HOURS*******************");
-
-		List<JobCandidateRelation> jobCandidateRelations = new ArrayList<>();
-		jobCandidateRelations = jobCandidateRelationRepository.getAllAppliedCandidates();
-
-		if (jobCandidateRelations != null) {
-
-			for (JobCandidateRelation jobCandidateRelation : jobCandidateRelations) {
 				if (jobCandidateRelation.getAppliedDate() != null) {
 
 					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -259,32 +244,14 @@ public class BotScheduler {
 						}
 					}
 				}
+
 			}
 		}
-	}
-
-	/**
-	 * 
-	 * @author Rihab Kallel
-	 * 
-	 *         send this message after two days from interview
-	 * 
-	 *         scheduler cron checks the database every day
-	 * 
-	 * @throws Exception
-	 * 
-	 */
-	@Scheduled(cron = "0 0 0 * * *")
-	public void sendHaveYouPassedMessage() throws Exception {
-
-		System.out.println("************PASSED*******************");
-
-		List<ShopCandidateRelation> shopCandidateRelations = new ArrayList<>();
-		shopCandidateRelations = shopCandidateRelationRepository.findAll();
 
 		if (shopCandidateRelations != null) {
 
 			for (ShopCandidateRelation shopCandidateRelation : shopCandidateRelations) {
+
 				if (shopCandidateRelation.getInterviewDate() != null) {
 
 					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -313,31 +280,6 @@ public class BotScheduler {
 						}
 					}
 				}
-			}
-		}
-	}
-
-	/**
-	 * @author Rihab Kallel
-	 * 
-	 *         send this message if interview time is not yet confirmed after two
-	 *         days
-	 * 
-	 *         scheduler cron checks the database every day
-	 * 
-	 * @throws Exception
-	 */
-	@Scheduled(cron = "0 0 0 * * *")
-	public void sendInterviewTimeMessage() throws Exception {
-
-		System.out.println("************INTERVIEW*******************");
-
-		List<ShopCandidateRelation> shopCandidateRelations = new ArrayList<>();
-		shopCandidateRelations = shopCandidateRelationRepository.findAll();
-
-		if (shopCandidateRelations != null) {
-
-			for (ShopCandidateRelation shopCandidateRelation : shopCandidateRelations) {
 
 				if ((shopCandidateRelation.getAskInterviewDate() != null
 						&& !shopCandidateRelation.isConfirmedInterview())
@@ -378,29 +320,7 @@ public class BotScheduler {
 						}
 					}
 				}
-			}
-		}
-	}
 
-	/**
-	 * @author Rihab Kallel
-	 * 
-	 *         send interview reminder one day before the interview
-	 * 
-	 *         scheduler cron checks the database every day
-	 * 
-	 * @throws Exception
-	 */
-	@Scheduled(cron = "0 0 0 * * *")
-	public void sendInterviewRemider() throws Exception {
-		System.out.println("************REMINDER*******************");
-
-		List<ShopCandidateRelation> shopCandidateRelations = new ArrayList<>();
-		shopCandidateRelations = shopCandidateRelationRepository.findAll();
-
-		if (shopCandidateRelations != null) {
-
-			for (ShopCandidateRelation shopCandidateRelation : shopCandidateRelations) {
 				if (shopCandidateRelation.getInterviewDate() != null) {
 
 					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -425,30 +345,6 @@ public class BotScheduler {
 						}
 					}
 				}
-			}
-		}
-	}
-
-	/**
-	 * @author Rihab Kallel
-	 * 
-	 *         sets the candidate to a potential candidate in admin shop-candidate
-	 *         relation if candidate did not reply to the reason message for 2 days
-	 * 
-	 *         scheduler cron checks the database every day
-	 * 
-	 * @throws Exception
-	 */
-	@Scheduled(cron = "0 0 0 * * *")
-	public void changeToPotentialCandidate() throws Exception {
-		System.out.println("************POTENTIAL CANDIDATE*******************");
-
-		List<ShopCandidateRelation> shopCandidateRelations = new ArrayList<>();
-		shopCandidateRelations = shopCandidateRelationRepository.findAll();
-
-		if (shopCandidateRelations != null) {
-
-			for (ShopCandidateRelation shopCandidateRelation : shopCandidateRelations) {
 
 				if (shopCandidateRelation.getCandidate().getBotInformation().getAskForReasonDate() != null) {
 
@@ -467,8 +363,11 @@ public class BotScheduler {
 						}
 					}
 				}
+
 			}
+
 		}
+
 	}
 
 	/**
