@@ -1,6 +1,5 @@
 package com.example.controller;
 
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -294,11 +293,12 @@ public class BotScheduler {
 
 							ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
 									"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png",
-									"Reason", "Did you confirm the interview time?",
+									"Did you confirm the interview time?", "Did you confirm the interview time?",
 									Arrays.asList(new MessageAction("Confirmed", "Interview confirmed"),
 											new MessageAction("Not confirmed", "Interview not confirmed"),
 											new MessageAction("No interview", "No interview")));
-							TemplateMessage templateMessage = new TemplateMessage("Reason", buttonsTemplate);
+							TemplateMessage templateMessage = new TemplateMessage("Did you confirm the interview time?",
+									buttonsTemplate);
 
 							PushMessage pushMessage = new PushMessage(
 									shopCandidateRelation.getCandidate().getUserLineId().toString(), templateMessage);
@@ -306,6 +306,7 @@ public class BotScheduler {
 
 							askInterviewCounter++;
 							shopCandidateRelation.setAskInterviewCounter(askInterviewCounter);
+							shopCandidateRelation.setAskInterviewDate(new Date());
 							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 
 							saveChatLineMessage(shopCandidateRelation.getCandidate(),
