@@ -348,7 +348,6 @@ public class BotScheduler {
 					String time = sdf.format(date);
 					Date currentTime = sdf.parse(time);
 
-
 					if (currentTime.equals(cal.getTime())) {
 
 						if (shopCandidateRelation.getShop().getNameShop().equals("admin shop")) {
@@ -381,25 +380,6 @@ public class BotScheduler {
 		chatMessageLineToAdd.setMessageDate((new Date()));
 		chatMessageLineRepository.saveAndFlush(chatMessageLineToAdd);
 
-	}
-
-	/**
-	 * @author Rihab Kallel
-	 * 
-	 *         method to get current date
-	 * 
-	 */
-	public Date retrieveCurrentTimeStamp() {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
-		Date currentDateAux = new Date();
-		String formattedDate = formatter.format(currentDateAux);
-		try {
-			Date currentDate = formatter.parse(formattedDate);
-			return currentDate;
-
-		} catch (Exception e) {
-			return null;
-		}
 	}
 
 	public Shop getShop() {
