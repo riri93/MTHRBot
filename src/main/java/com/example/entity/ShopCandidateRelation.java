@@ -29,6 +29,15 @@ public class ShopCandidateRelation implements Serializable {
 	@Column(columnDefinition = "int default 0")
 	private int askInterviewCounter;
 
+	@Column(columnDefinition = "int default 0")
+	private int passedInterviewMessageCounter;
+
+	@Column(columnDefinition = "int default 0")
+	private int remindInterviewCounter;
+
+	@Column(columnDefinition = "int default 0")
+	private int askForReasonCounter;
+
 	@Column(columnDefinition = "boolean default false", nullable = false)
 	private boolean confirmedInterview;
 
@@ -132,6 +141,30 @@ public class ShopCandidateRelation implements Serializable {
 
 	public void setAskInterviewCounter(int askInterviewCounter) {
 		this.askInterviewCounter = askInterviewCounter;
+	}
+
+	public int getPassedInterviewMessageCounter() {
+		return passedInterviewMessageCounter;
+	}
+
+	public void setPassedInterviewMessageCounter(int passedInterviewMessageCounter) {
+		this.passedInterviewMessageCounter = passedInterviewMessageCounter;
+	}
+
+	public int getRemindInterviewCounter() {
+		return remindInterviewCounter;
+	}
+
+	public void setRemindInterviewCounter(int remindInterviewCounter) {
+		this.remindInterviewCounter = remindInterviewCounter;
+	}
+
+	public int getAskForReasonCounter() {
+		return askForReasonCounter;
+	}
+
+	public void setAskForReasonCounter(int askForReasonCounter) {
+		this.askForReasonCounter = askForReasonCounter;
 	}
 
 }

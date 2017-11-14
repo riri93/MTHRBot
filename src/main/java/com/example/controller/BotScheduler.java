@@ -1,5 +1,6 @@
 package com.example.controller;
 
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,8 +75,8 @@ public class BotScheduler {
 	 * 
 	 * @throws Exception
 	 */
-	@Scheduled(cron = "0 0 * * * *")
-	public void sendCallShopMessage() throws Exception {
+	@Scheduled(cron = "0 * * * * *")
+	public void sendPushMessages() throws Exception {
 
 		List<JobCandidateRelation> jobCandidateRelations = new ArrayList<>();
 		jobCandidateRelations = jobCandidateRelationRepository.getAllAppliedCandidates();
@@ -231,28 +232,38 @@ public class BotScheduler {
 					cal.add(Calendar.DAY_OF_WEEK, 2);
 					cal.getTime();
 
-					if (shopCandidateRelation.getPassedInterviewMessageDate() == null) {
+					int passedInterviewMessageCounter = shopCandidateRelation.getPassedInterviewMessageCounter();
 
-						Date date = new Date();
-						SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
-						sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-						String time = sdf.format(date);
-						Date currentTime = sdf.parse(time);
+					if (passedInterviewMessageCounter < 1) {
+						if (shopCandidateRelation.getPassedInterviewMessageDate() == null) {
 
-						if (currentTime.equals(cal.getTime())) {
+							Date date = new Date();
+							SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
+							sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+							String time = sdf.format(date);
+							Date currentTime = sdf.parse(time);
 
-							ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you passed the interview?",
-									new MessageAction("Yes", "Yes I passed"), new MessageAction("No", "No I failed"));
-							TemplateMessage templateMessage = new TemplateMessage("Have you passed the interview?",
-									confirmTemplate);
-							PushMessage pushMessage = new PushMessage(
-									shopCandidateRelation.getCandidate().getUserLineId().toString(), templateMessage);
-							LineMessagingServiceBuilder.create(channelToken).build().pushMessage(pushMessage).execute();
+							if (currentTime.after(cal.getTime())) {
 
-							shopCandidateRelation.setPassedInterviewMessageDate((new Date()));
-							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
+								ConfirmTemplate confirmTemplate = new ConfirmTemplate("Have you passed the interview?",
+										new MessageAction("Yes", "Yes I passed"),
+										new MessageAction("No", "No I failed"));
+								TemplateMessage templateMessage = new TemplateMessage("Have you passed the interview?",
+										confirmTemplate);
+								PushMessage pushMessage = new PushMessage(
+										shopCandidateRelation.getCandidate().getUserLineId().toString(),
+										templateMessage);
+								LineMessagingServiceBuilder.create(channelToken).build().pushMessage(pushMessage)
+										.execute();
 
-							saveChatLineMessage(shopCandidateRelation.getCandidate(), "Have you passed the interview?");
+								passedInterviewMessageCounter++;
+								shopCandidateRelation.setPassedInterviewMessageCounter(passedInterviewMessageCounter);
+								shopCandidateRelation.setPassedInterviewMessageDate((new Date()));
+								shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
+
+								saveChatLineMessage(shopCandidateRelation.getCandidate(),
+										"Have you passed the interview?");
+							}
 						}
 					}
 				}
@@ -311,7 +322,45 @@ public class BotScheduler {
 					cal.add(Calendar.DAY_OF_WEEK, -1);
 					cal.getTime();
 
-					if (shopCandidateRelation.getRemindInterviewDate() == null) {
+					int remindInterviewCounter = shopCandidateRelation.getRemindInterviewCounter();
+
+					if (remindInterviewCounter < 1)
+						if (shopCandidateRelation.getRemindInterviewDate() == null) {
+
+							Date date = new Date();
+							SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
+							sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+							String time = sdf.format(date);
+							Date currentTime = sdf.parse(time);
+
+							if (currentTime.after(cal.getTime())) {
+
+								TextMessage textMessage = new TextMessage("Tomorrow is the interview!");
+								PushMessage pushMessage = new PushMessage(
+										shopCandidateRelation.getCandidate().getUserLineId().toString(), textMessage);
+								LineMessagingServiceBuilder.create(channelToken).build().pushMessage(pushMessage)
+										.execute();
+
+								remindInterviewCounter++;
+								shopCandidateRelation.setRemindInterviewCounter(remindInterviewCounter);
+								shopCandidateRelation.setRemindInterviewDate((new Date()));
+								shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
+
+								saveChatLineMessage(shopCandidateRelation.getCandidate(), "Tomorrow is the interview!");
+							}
+						}
+				}
+
+				// set user to potential candidate if he did not reply to the reason message
+				// after 2 days from asking
+				int askForReasonCounter = shopCandidateRelation.getAskForReasonCounter();
+				if (askForReasonCounter < 1) {
+					if (shopCandidateRelation.getCandidate().getBotInformation().getAskForReasonDate() != null) {
+
+						Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+						cal.setTime(shopCandidateRelation.getCandidate().getBotInformation().getAskForReasonDate());
+						cal.add(Calendar.DAY_OF_WEEK, 2);
+						cal.getTime();
 
 						Date date = new Date();
 						SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
@@ -319,44 +368,20 @@ public class BotScheduler {
 						String time = sdf.format(date);
 						Date currentTime = sdf.parse(time);
 
-						if (currentTime.equals(cal.getTime())) {
+						if (currentTime.after(cal.getTime())) {
 
-							TextMessage textMessage = new TextMessage("Tomorrow is the interview!");
-							PushMessage pushMessage = new PushMessage(
-									shopCandidateRelation.getCandidate().getUserLineId().toString(), textMessage);
-							LineMessagingServiceBuilder.create(channelToken).build().pushMessage(pushMessage).execute();
-							shopCandidateRelation.setRemindInterviewDate((new Date()));
+							if (shopCandidateRelation.getShop().getNameShop().equals("admin shop")) {
+								shopCandidateRelation.setProgress("Potential Candidate");
+								shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
+							}
+
+							askForReasonCounter++;
+							shopCandidateRelation.setAskForReasonCounter(askForReasonCounter);
 							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 
-							saveChatLineMessage(shopCandidateRelation.getCandidate(), "Tomorrow is the interview!");
 						}
 					}
 				}
-
-				// set user to potential candidate if he did not reply to the reason message
-				// after 2 days from asking
-				if (shopCandidateRelation.getCandidate().getBotInformation().getAskForReasonDate() != null) {
-
-					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-					cal.setTime(shopCandidateRelation.getCandidate().getBotInformation().getAskForReasonDate());
-					cal.add(Calendar.DAY_OF_WEEK, 2);
-					cal.getTime();
-
-					Date date = new Date();
-					SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
-					sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-					String time = sdf.format(date);
-					Date currentTime = sdf.parse(time);
-
-					if (currentTime.equals(cal.getTime())) {
-
-						if (shopCandidateRelation.getShop().getNameShop().equals("admin shop")) {
-							shopCandidateRelation.setProgress("Potential Candidate");
-							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
-						}
-					}
-				}
-
 			}
 
 		}
