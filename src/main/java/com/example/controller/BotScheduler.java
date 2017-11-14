@@ -145,8 +145,6 @@ public class BotScheduler {
 
 							} else {
 
-								// send after 2 days from ask first message date
-								// send after 3 hours from ask second message date
 								Calendar calDay = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 								calDay.setTime(jobCandidateRelation.getCallShopMessageDate());
 								calDay.add(Calendar.DAY_OF_WEEK, 2);
@@ -163,6 +161,7 @@ public class BotScheduler {
 								String time = sdf.format(date);
 								Date currentTime = sdf.parse(time);
 
+								// send after 2 days from ask first message date
 								if (currentTime.after(calDay.getTime())) {
 
 									ConfirmTemplate confirmTemplate = new ConfirmTemplate(
@@ -188,7 +187,7 @@ public class BotScheduler {
 											"Have you got in contact with the shop?");
 
 								}
-
+								// send after 3 hours from ask second message date
 								if (currentTime.after(calHour.getTime())) {
 
 									ConfirmTemplate confirmTemplate = new ConfirmTemplate(
@@ -224,6 +223,7 @@ public class BotScheduler {
 
 			for (ShopCandidateRelation shopCandidateRelation : shopCandidateRelations) {
 
+				// have you passed the interview message after 2 days from the interview
 				if (shopCandidateRelation.getInterviewDate() != null) {
 
 					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));

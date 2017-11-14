@@ -51,7 +51,7 @@ import com.ullink.slack.simpleslackapi.impl.SlackSessionFactory;
 public class BotController {
 
 	// channel token declaration
-	private static final String CHANNEL_ACCESS_TOKEN = "xoxa-27046751377-272029738837-271811869491-58a11eddd13396222fbb284609df573d";
+	private static final String CHANNEL_ACCESS_TOKEN = "wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
 
 	// Repositories and services injection
 	@Autowired
@@ -95,7 +95,7 @@ public class BotController {
 			throws JSONException, IOException, Exception {
 
 		SlackSession session = SlackSessionFactory.createWebSocketSlackSession(
-				"xoxp-27046751377-127332966816-272009034885-29a9b73ce611a58850e448ea7c4956d4");
+				"xoxa-27046751377-272029738837-271811869491-58a11eddd13396222fbb284609df573d");
 		session.connect();
 		SlackChannel channel = session.findChannelByName("testbot");
 
