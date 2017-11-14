@@ -366,11 +366,12 @@ public class BotController {
 				} else {
 
 					TextMessage textMessage = new TextMessage(
-							"I am sorry, I am having trouble understing your message.");
+							"I am sorry, I am having trouble understading your message. You can search for jobs by clicking on 'search for job menu'");
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
 					LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
 
-					saveChatLineMessage(candidate, "I am sorry, I am having trouble understing your message");
+					saveChatLineMessage(candidate,
+							"I am sorry, I am having trouble understading your message. You can search for jobs by clicking on 'search for job menu'");
 
 					// session.sendMessage(channel,
 					// "userID: " + userId + " , time: " + timestamp + " text: " + customerMessage,
@@ -423,6 +424,16 @@ public class BotController {
 				saveChatLineMessage(candidate, "Send jobs carousel");
 				saveChatLineMessage(candidate, "Any interesting jobs?");
 			}
+		}
+
+		// when user clicks yes for interesting jobs? question
+		if (intentName.equals("interesting jobs again")) {
+
+			TextMessage textMessage = new TextMessage("Thank you");
+			PushMessage pushMessage = new PushMessage(userId, textMessage);
+			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
+			saveChatLineMessage(candidate, "Thank you");
+
 		}
 
 		// when user clicks no for interesting jobs? question (second time)
