@@ -670,10 +670,10 @@ public class BotController {
 		// (enter a valid date and time)
 		if (intentName.equals("interview-time")) {
 			if (parameters == null) {
-				TextMessage textMessage = new TextMessage("Please enter a valid date and time");
+				TextMessage textMessage = new TextMessage("Please enter a valid date and time (dd/mm/yyyy)");
 				PushMessage pushMessage = new PushMessage(userId, textMessage);
 				LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
-				saveChatLineMessage(candidate, "Please enter a valid date and time");
+				saveChatLineMessage(candidate, "Please enter a valid date and time (dd/mm/yyyy)");
 			} else {
 
 				System.out.println("date : " + parameters.getString("date"));
