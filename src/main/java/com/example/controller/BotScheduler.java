@@ -86,8 +86,8 @@ public class BotScheduler {
 		if (jobCandidateRelations != null) {
 
 			for (JobCandidateRelation jobCandidateRelation : jobCandidateRelations) {
-				
-				
+
+				// have you got in contact with the shop
 				if (jobCandidateRelation.getAppliedDate() != null) {
 					ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
 					ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
@@ -99,14 +99,15 @@ public class BotScheduler {
 					if (shopCandidateRelation != null) {
 						askInterviewDate = shopCandidateRelation.getAskInterviewDate();
 					}
+					int callShopMessageCounter = jobCandidateRelation.getCallShopMessageCounter();
 
-					// if user answered with NO
+					// if user answered with NO or did not get asked for interview time
 					if (askInterviewDate == null) {
-						if (jobCandidateRelation.getCallShopMessageDate() == null) {
+						if (callShopMessageCounter < 3) {
 
-							int callShopMessageCounter = jobCandidateRelation.getCallShopMessageCounter();
+							// send after one day from apply
+							if (jobCandidateRelation.getCallShopMessageDate() == null) {
 
-							if (callShopMessageCounter < 3) {
 								Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 								cal.setTime(jobCandidateRelation.getAppliedDate());
 								cal.add(Calendar.DAY_OF_WEEK, 1);
@@ -141,19 +142,28 @@ public class BotScheduler {
 									saveChatLineMessage(jobCandidateRelation.getCandidate(),
 											"Have you got in contact with the shop?");
 								}
+
 							} else {
 
-								Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-								cal.setTime(jobCandidateRelation.getCallShopMessageDate());
-								cal.add(Calendar.DAY_OF_WEEK, 2);
-								cal.getTime();
+								// send after 2 days from ask first message date
+								// send after 3 hours from ask second message date
+								Calendar calDay = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+								calDay.setTime(jobCandidateRelation.getCallShopMessageDate());
+								calDay.add(Calendar.DAY_OF_WEEK, 2);
+								calDay.getTime();
+
+								Calendar calHour = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+								calHour.setTime(jobCandidateRelation.getCallShopMessageDate());
+								calHour.add(Calendar.HOUR_OF_DAY, 3);
+								calHour.getTime();
+
 								Date date = new Date();
 								SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
 								sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 								String time = sdf.format(date);
 								Date currentTime = sdf.parse(time);
 
-								if (currentTime.after(cal.getTime())) {
+								if (currentTime.after(calDay.getTime())) {
 
 									ConfirmTemplate confirmTemplate = new ConfirmTemplate(
 											"Have you got in contact with the shop?",
@@ -178,45 +188,8 @@ public class BotScheduler {
 											"Have you got in contact with the shop?");
 
 								}
-							}
-						}
-					}
-				}
 
-				if (jobCandidateRelation.getAppliedDate() != null) {
-
-					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-					cal.setTime(jobCandidateRelation.getCallShopMessageDate());
-					cal.add(Calendar.HOUR_OF_DAY, 3);
-					cal.getTime();
-
-					ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
-					ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
-					shopCandidateRelationPK.setIdCandidate(jobCandidateRelation.getCandidate().getIdUser());
-					shopCandidateRelationPK.setIdShop(jobCandidateRelation.getJob().getShop().getIdShop());
-
-					shopCandidateRelation = shopCandidateRelationRepository.findOne(shopCandidateRelationPK);
-					Date askInterviewDate = null;
-					if (shopCandidateRelation != null) {
-						askInterviewDate = shopCandidateRelation.getAskInterviewDate();
-					}
-
-					int callShopMessageCounter = jobCandidateRelation.getCallShopMessageCounter();
-
-					// if user answered with NO
-					if (askInterviewDate == null) {
-						if (callShopMessageCounter < 3) {
-							if (jobCandidateRelation.getCallShopMessageDate() != null) {
-								Date date = new Date();
-
-								SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
-
-								sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-								String time = sdf.format(date);
-
-								Date currentTime = sdf.parse(time);
-
-								if (currentTime.after(cal.getTime())) {
+								if (currentTime.after(calHour.getTime())) {
 
 									ConfirmTemplate confirmTemplate = new ConfirmTemplate(
 											"Have you got in contact with the shop?",
@@ -244,7 +217,6 @@ public class BotScheduler {
 						}
 					}
 				}
-
 			}
 		}
 

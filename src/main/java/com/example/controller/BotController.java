@@ -51,7 +51,7 @@ import com.ullink.slack.simpleslackapi.impl.SlackSessionFactory;
 public class BotController {
 
 	// channel token declaration
-	private static final String CHANNEL_ACCESS_TOKEN = "wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
+	private static final String CHANNEL_ACCESS_TOKEN = "xoxa-27046751377-272029738837-271811869491-58a11eddd13396222fbb284609df573d";
 
 	// Repositories and services injection
 	@Autowired
