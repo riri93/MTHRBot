@@ -43,9 +43,6 @@ import com.linecorp.bot.model.message.template.ButtonsTemplate;
 import com.linecorp.bot.model.message.template.CarouselColumn;
 import com.linecorp.bot.model.message.template.CarouselTemplate;
 import com.linecorp.bot.model.message.template.ConfirmTemplate;
-import com.ullink.slack.simpleslackapi.SlackChannel;
-import com.ullink.slack.simpleslackapi.SlackSession;
-import com.ullink.slack.simpleslackapi.impl.SlackSessionFactory;
 
 @RestController
 public class BotController {
@@ -391,6 +388,9 @@ public class BotController {
 
 		// when user clicks no for interesting jobs? question (first time)
 		if (intentName.equals("not interesting jobs")) {
+			
+
+			
 			List<Job> jobs = new ArrayList<>();
 			List<Job> jobsToDisplay = new ArrayList<>();
 
@@ -574,6 +574,12 @@ public class BotController {
 		// when user clicks on yes when he is asked whether he got in contact with the
 		// shop or not
 		if (intentName.equals("Yes I called")) {
+			
+			BotInformation botInformation = new BotInformation();
+			botInformation = candidate.getBotInformation();
+			botInformation.setSearchCriteria("confirm interview");
+			botInformationRepository.saveAndFlush(botInformation);
+			
 			ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
 					"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png",
 					"Did you confirm the interview time?", "Did you confirm the interview time?",
@@ -603,6 +609,12 @@ public class BotController {
 		// when user clicks on no when he is asked whether he got in contact with the
 		// shop or not
 		if (intentName.equals("No I did not")) {
+			
+			BotInformation botInformation = new BotInformation();
+			botInformation = candidate.getBotInformation();
+			botInformation.setSearchCriteria("confirm interview");
+			botInformationRepository.saveAndFlush(botInformation);
+			
 			TextMessage textMessage = new TextMessage(
 					"Please call the shop: " + botScheduler.getShop().getPhoneNumber());
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
@@ -612,6 +624,13 @@ public class BotController {
 
 		// when user clicks on no interview when he is asked about the interview time
 		if (intentName.equals("No interview")) {
+			
+			
+			BotInformation botInformation = new BotInformation();
+			botInformation = candidate.getBotInformation();
+			botInformation.setSearchCriteria("confirm interview");
+			botInformationRepository.saveAndFlush(botInformation);
+			
 			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Do you want to apply for a job again?",
 					new MessageAction("yes", "Yes I want to apply for a job again"),
 					new MessageAction("No", "No I do not want to apply for a job again"));
@@ -637,6 +656,12 @@ public class BotController {
 		// when user clicks on yes when he is asked whether he wants to apply for a job
 		// again
 		if (intentName.equals("Yes I want to apply for a job again")) {
+			
+			BotInformation botInformation = new BotInformation();
+			botInformation = candidate.getBotInformation();
+			botInformation.setSearchCriteria("address);
+			botInformationRepository.saveAndFlush(botInformation);
+			
 			TextMessage textMessage = new TextMessage("Please enter an area or a station");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
 			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
@@ -646,6 +671,12 @@ public class BotController {
 		// when user clicks on interview not confirmed when he is asked about the
 		// interview time
 		if (intentName.equals("Interview not confirmed")) {
+			
+			BotInformation botInformation = new BotInformation();
+			botInformation = candidate.getBotInformation();
+			botInformation.setSearchCriteria("confirm interview");
+			botInformationRepository.saveAndFlush(botInformation);
+			
 			ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
 			ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
 			shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
@@ -692,11 +723,6 @@ public class BotController {
 				saveChatLineMessage(candidate,
 						"Please enter a valid date and time (ex: mm/dd/yyyy, tomorrow 9am, next monday)");
 			} else {
-
-				System.out.println("date : " + parameters.getString("date"));
-				System.out.println("time : " + parameters.getString("time"));
-				System.out.println("date-time : " + parameters.getString("date-time"));
-				System.out.println("botScheduler.getShop().getIdShop() : " + botScheduler.getShop().getIdShop());
 
 				ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
 				ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
@@ -754,6 +780,12 @@ public class BotController {
 
 		// when user did not pass the interview
 		if (intentName.equals("No I failed")) {
+			
+			BotInformation botInformation = new BotInformation();
+			botInformation = candidate.getBotInformation();
+			botInformation.setSearchCriteria("address");
+			botInformationRepository.saveAndFlush(botInformation);
+			
 			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Do you want to apply for a job again?",
 					new MessageAction("yes", "Yes I want to apply for a job again"),
 					new MessageAction("No", "No I do not want to apply for a job again"));
