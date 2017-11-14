@@ -238,7 +238,8 @@ public class BotController {
 
 				} else {
 
-					String input = "{'text':'test  bot  2 testt'}";
+					String input = "{'text':'" + "userID: " + userId + " , time: " + timestamp + " text: "
+							+ customerMessage + "'}";
 
 					HttpHeaders headers = new HttpHeaders();
 					headers.setContentType(MediaType.APPLICATION_JSON);
@@ -246,10 +247,6 @@ public class BotController {
 					HttpEntity<String> entity = new HttpEntity<String>(input, headers);
 
 					ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
-
-					// session.sendMessage(channel,
-					// "userID: " + userId + " , time: " + timestamp + " text: " + customerMessage,
-					// null);
 
 					TextMessage textMessage = new TextMessage("Please enter a valid area or station address");
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
@@ -284,19 +281,16 @@ public class BotController {
 						saveChatLineMessage(candidate, "Send jobs carousel");
 					} else {
 
-						
-						String input = "{'text':'test  bot  2 testt'}";
+						String input = "{'text':'" + "userID: " + userId + " , time: " + timestamp + " text: "
+								+ customerMessage + "'}";
 
 						HttpHeaders headers = new HttpHeaders();
 						headers.setContentType(MediaType.APPLICATION_JSON);
 
 						HttpEntity<String> entity = new HttpEntity<String>(input, headers);
 
-						ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
-						
-						// session.sendMessage(channel,
-						// "userID: " + userId + " , time: " + timestamp + " text: " + customerMessage,
-						// null);
+						ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity,
+								String.class);
 
 						TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid location");
 						PushMessage pushMessage = new PushMessage(userId, textMessage);
@@ -344,19 +338,17 @@ public class BotController {
 						}
 
 					} catch (Exception e) {
-						
-						String input = "{'text':'test  bot  2 testt'}";
+
+						String input = "{'text':'" + "userID: " + userId + " , time: " + timestamp + " text: "
+								+ customerMessage + "'}";
 
 						HttpHeaders headers = new HttpHeaders();
 						headers.setContentType(MediaType.APPLICATION_JSON);
 
 						HttpEntity<String> entity = new HttpEntity<String>(input, headers);
 
-						ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
-						
-						// session.sendMessage(channel,
-						// "userID: " + userId + " , time: " + timestamp + " text: " + customerMessage,
-						// null);
+						ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity,
+								String.class);
 
 						TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid salary");
 						PushMessage pushMessage = new PushMessage(userId, textMessage);
@@ -380,8 +372,8 @@ public class BotController {
 
 				} else if (candidate.getBotInformation().getSearchCriteria().equals("work time")) {
 
-					
-					String input = "{'text':'test  bot  2 testt'}";
+					String input = "{'text':'" + "userID: " + userId + " , time: " + timestamp + " text: "
+							+ customerMessage + "'}";
 
 					HttpHeaders headers = new HttpHeaders();
 					headers.setContentType(MediaType.APPLICATION_JSON);
@@ -389,10 +381,6 @@ public class BotController {
 					HttpEntity<String> entity = new HttpEntity<String>(input, headers);
 
 					ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
-					
-					// session.sendMessage(channel,
-					// "userID: " + userId + " , time: " + timestamp + " text: " + customerMessage,
-					// null);
 
 					TextMessage textMessage = new TextMessage("Please enter a valid date");
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
@@ -408,8 +396,8 @@ public class BotController {
 
 					saveChatLineMessage(candidate, "Please enter a valid date");
 
-					
-					String input = "{'text':'test  bot  2 testt'}";
+					String input = "{'text':'" + "userID: " + userId + " , time: " + timestamp + " text: "
+							+ customerMessage + "'}";
 
 					HttpHeaders headers = new HttpHeaders();
 					headers.setContentType(MediaType.APPLICATION_JSON);
@@ -417,10 +405,7 @@ public class BotController {
 					HttpEntity<String> entity = new HttpEntity<String>(input, headers);
 
 					ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
-					
-					// session.sendMessage(channel,
-					// "userID: " + userId + " , time: " + timestamp + " text: " + customerMessage,
-					// null);
+
 				} else {
 
 					TextMessage textMessage = new TextMessage(
@@ -431,8 +416,8 @@ public class BotController {
 					saveChatLineMessage(candidate,
 							"I am sorry, I am having trouble understading your message. You can search for jobs by clicking on 'search for job menu'");
 
-					
-					String input = "{'text':'test  bot  2 testt'}";
+					String input = "{'text':'" + "userID: " + userId + " , time: " + timestamp + " text: "
+							+ customerMessage + "'}";
 
 					HttpHeaders headers = new HttpHeaders();
 					headers.setContentType(MediaType.APPLICATION_JSON);
@@ -440,10 +425,7 @@ public class BotController {
 					HttpEntity<String> entity = new HttpEntity<String>(input, headers);
 
 					ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
-					
-					// session.sendMessage(channel,
-					// "userID: " + userId + " , time: " + timestamp + " text: " + customerMessage,
-					// null);
+
 				}
 			}
 		}
