@@ -36,7 +36,6 @@ import com.example.repository.ShopRepository;
 import com.linecorp.bot.client.LineMessagingServiceBuilder;
 import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.action.MessageAction;
-import com.linecorp.bot.model.action.PostbackAction;
 import com.linecorp.bot.model.action.URIAction;
 import com.linecorp.bot.model.message.TemplateMessage;
 import com.linecorp.bot.model.message.TextMessage;
@@ -44,10 +43,6 @@ import com.linecorp.bot.model.message.template.ButtonsTemplate;
 import com.linecorp.bot.model.message.template.CarouselColumn;
 import com.linecorp.bot.model.message.template.CarouselTemplate;
 import com.linecorp.bot.model.message.template.ConfirmTemplate;
-import com.linecorp.bot.model.richmenu.RichMenu;
-import com.linecorp.bot.model.richmenu.RichMenuArea;
-import com.linecorp.bot.model.richmenu.RichMenuBounds;
-import com.linecorp.bot.model.richmenu.RichMenuSize;
 import com.ullink.slack.simpleslackapi.SlackChannel;
 import com.ullink.slack.simpleslackapi.SlackSession;
 import com.ullink.slack.simpleslackapi.impl.SlackSessionFactory;
@@ -99,8 +94,7 @@ public class BotController {
 	private @ResponseBody Map<String, Object> webhook(@RequestBody Map<String, Object> obj)
 			throws JSONException, IOException, Exception {
 
-		SlackSession session = SlackSessionFactory.createWebSocketSlackSession(
-				"xoxp-27046751377-127332966816-272009034885-29a9b73ce611a58850e448ea7c4956d4");
+		SlackSession session = SlackSessionFactory.createWebSocketSlackSession("8el1Nfcgye5Uei0HbX8BWZ6c");
 		session.connect();
 		SlackChannel channel = session.findChannelByName("testbot");
 
@@ -195,6 +189,11 @@ public class BotController {
 			}
 		}
 
+		// this intent treats every user message depending on his/her search criteria
+		// if user enters a valid address ,5 jobs carousel is displayed
+		// if user enters a non valid address , he is asked to enter a correct one
+		// also treats search by salary, working time, location and the answer for
+		// "other reason" message
 		if (intentName.equals("Default Fallback Intent")) {
 
 			if (candidate.getBotInformation().getSearchCriteria().equals("address")) {
@@ -232,7 +231,8 @@ public class BotController {
 
 				} else {
 
-					session.sendMessage(channel, customerMessage, null);
+					session.sendMessage(channel,
+							"userID: " + userId + " , time: " + timestamp + " text: " + customerMessage, null);
 
 					TextMessage textMessage = new TextMessage("Please enter a valid area or station address");
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
@@ -267,7 +267,8 @@ public class BotController {
 						saveChatLineMessage(candidate, "Send jobs carousel");
 					} else {
 
-						session.sendMessage(channel, customerMessage, null);
+						session.sendMessage(channel,
+								"userID: " + userId + " , time: " + timestamp + " text: " + customerMessage, null);
 
 						TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid location");
 						PushMessage pushMessage = new PushMessage(userId, textMessage);
@@ -307,10 +308,18 @@ public class BotController {
 							botInformationRepository.saveAndFlush(botInformation);
 
 							saveChatLineMessage(candidate, "Send jobs carousel");
+						} else {
+
+							TextMessage textMessage = new TextMessage("No jobs found.");
+							PushMessage pushMessage = new PushMessage(userId, textMessage);
+							LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage)
+									.execute();
+							saveChatLineMessage(candidate, "No jobs found.");
 						}
 
 					} catch (Exception e) {
-						session.sendMessage(channel, customerMessage, null);
+						session.sendMessage(channel,
+								"userID: " + userId + " , time: " + timestamp + " text: " + customerMessage, null);
 
 						TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid salary");
 						PushMessage pushMessage = new PushMessage(userId, textMessage);
@@ -334,7 +343,8 @@ public class BotController {
 
 				} else if (candidate.getBotInformation().getSearchCriteria().equals("work time")) {
 
-					session.sendMessage(channel, customerMessage, null);
+					session.sendMessage(channel,
+							"userID: " + userId + " , time: " + timestamp + " text: " + customerMessage, null);
 
 					TextMessage textMessage = new TextMessage("Please enter a valid date");
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
@@ -344,11 +354,13 @@ public class BotController {
 
 				} else {
 
-					session.sendMessage(channel, customerMessage, null);
+					session.sendMessage(channel,
+							"userID: " + userId + " , time: " + timestamp + " text: " + customerMessage, null);
 				}
 			}
 		}
 
+		// when user clicks the menu
 		if (intentName.equals("search job")) {
 
 			TextMessage textMessage = new TextMessage("Please enter an area or station address");
@@ -363,6 +375,7 @@ public class BotController {
 			saveChatLineMessage(candidate, "Please enter an area or station address");
 		}
 
+		// when user clicks no for interesting jobs? question (first time)
 		if (intentName.equals("not interesting jobs")) {
 			List<Job> jobs = new ArrayList<>();
 			List<Job> jobsToDisplay = new ArrayList<>();
@@ -392,6 +405,7 @@ public class BotController {
 			}
 		}
 
+		// when user clicks no for interesting jobs? question (second time)
 		if (intentName.equals("not interesting jobs again")) {
 
 			ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
@@ -412,6 +426,7 @@ public class BotController {
 			saveChatLineMessage(candidate, "Please choose your reason");
 		}
 
+		// when user chooses location as a reason
 		if (intentName.equals("Location")) {
 			BotInformation botInformation = new BotInformation();
 			botInformation = candidate.getBotInformation();
@@ -424,6 +439,7 @@ public class BotController {
 			saveChatLineMessage(candidate, "What is your location?");
 		}
 
+		// when user chooses salary as a reason
 		if (intentName.equals("Salary")) {
 
 			BotInformation botInformation = new BotInformation();
@@ -437,6 +453,7 @@ public class BotController {
 			saveChatLineMessage(candidate, "What is your preferred hourly wage?");
 		}
 
+		// when user chooses worktime as a reason
 		if (intentName.equals("Work Time")) {
 			BotInformation botInformation = new BotInformation();
 			botInformation = candidate.getBotInformation();
@@ -449,6 +466,8 @@ public class BotController {
 			saveChatLineMessage(candidate, "What is your preferred start working time?");
 		}
 
+		// when user enters the start and finish time when asking about his/her
+		// preferred working time
 		if (intentName.equals("Work Time - start")) {
 
 			if (parameters != null) {
@@ -509,6 +528,7 @@ public class BotController {
 			}
 		}
 
+		// when user chooses others as a reason
 		if (intentName.equals("Others")) {
 
 			BotInformation botInformation = new BotInformation();
@@ -537,6 +557,8 @@ public class BotController {
 			saveChatLineMessage(candidate, "What is the reason?");
 		}
 
+		// when user clicks on yes when he is asked whether he got in contact with the
+		// shop or not
 		if (intentName.equals("Yes I called")) {
 			ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
 					"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png",
@@ -563,6 +585,8 @@ public class BotController {
 			}
 		}
 
+		// when user clicks on no when he is asked whether he got in contact with the
+		// shop or not
 		if (intentName.equals("No I did not")) {
 			TextMessage textMessage = new TextMessage(
 					"Please call the shop: " + botScheduler.getShop().getPhoneNumber());
@@ -571,6 +595,7 @@ public class BotController {
 			saveChatLineMessage(candidate, "Please call the shop: " + botScheduler.getShop().getPhoneNumber());
 		}
 
+		// when user clicks on no interview when he is asked about the interview time
 		if (intentName.equals("No interview")) {
 			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Do you want to apply for a job again?",
 					new MessageAction("yes", "Yes I want to apply for a job again"),
@@ -594,6 +619,8 @@ public class BotController {
 			saveChatLineMessage(candidate, "Do you want to apply for a job again?");
 		}
 
+		// when user clicks on yes when he is asked whether he wants to apply for a job
+		// again
 		if (intentName.equals("Yes I want to apply for a job again")) {
 			TextMessage textMessage = new TextMessage("Please enter an area or a station");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
@@ -601,6 +628,8 @@ public class BotController {
 			saveChatLineMessage(candidate, "Please enter an area or a station");
 		}
 
+		// when user clicks on interview not confirmed when he is asked about the
+		// interview time
 		if (intentName.equals("Interview not confirmed")) {
 			ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
 			ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
@@ -615,6 +644,8 @@ public class BotController {
 			}
 		}
 
+		// when user clicks on interview confirmed when he is asked about the
+		// interview time
 		if (intentName.equals("Interview confirmed")) {
 			ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
 			ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
@@ -629,6 +660,8 @@ public class BotController {
 			}
 		}
 
+		// when user clicks on interview confirmed he is asked about the interview time
+		// (enter a valid date and time)
 		if (intentName.equals("interview-time")) {
 			if (parameters == null) {
 				TextMessage textMessage = new TextMessage("Please enter a valid date and time");
@@ -673,6 +706,7 @@ public class BotController {
 			}
 		}
 
+		// when user did not pass the interview
 		if (intentName.equals("No I failed")) {
 			ConfirmTemplate confirmTemplate = new ConfirmTemplate("Do you want to apply for a job again?",
 					new MessageAction("yes", "Yes I want to apply for a job again"),
