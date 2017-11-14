@@ -56,10 +56,6 @@ public class BotController {
 	// channel token declaration
 	private static final String CHANNEL_ACCESS_TOKEN = "wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
 
-	final String uri = "https://hooks.slack.com/services/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";
-    RestTemplate restTemplate = new RestTemplate();
-    
-    
 	// Repositories and services injection
 	@Autowired
 	CandidateRepository candidateRepository;
@@ -100,6 +96,9 @@ public class BotController {
 	@RequestMapping(value = "/webhook", method = RequestMethod.POST)
 	private @ResponseBody Map<String, Object> webhook(@RequestBody Map<String, Object> obj)
 			throws JSONException, IOException, Exception {
+
+		final String uri = "https://hooks.slack.com/services/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";
+		RestTemplate restTemplate = new RestTemplate();
 
 		// SlackSession session = SlackSessionFactory.createWebSocketSlackSession(
 		// "xoxp-27046751377-127332966816-272009034885-29a9b73ce611a58850e448ea7c4956d4");
@@ -239,17 +238,15 @@ public class BotController {
 
 				} else {
 
-					
-				    String input = "{'text':'test  bot  2 testt'}";
+					String input = "{'text':'test  bot  2 testt'}";
 
-				    HttpHeaders headers = new HttpHeaders();
-				    headers.setContentType(MediaType.APPLICATION_JSON);
-				   
-				    HttpEntity<String> entity = new HttpEntity<String>(input, headers);
+					HttpHeaders headers = new HttpHeaders();
+					headers.setContentType(MediaType.APPLICATION_JSON);
 
-				    ResponseEntity<String> response = restTemplate
-				            .exchange(uri, HttpMethod.POST, entity, String.class);
-					
+					HttpEntity<String> entity = new HttpEntity<String>(input, headers);
+
+					ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
+
 					// session.sendMessage(channel,
 					// "userID: " + userId + " , time: " + timestamp + " text: " + customerMessage,
 					// null);
