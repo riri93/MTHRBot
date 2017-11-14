@@ -79,7 +79,7 @@ public class BotScheduler {
 	 * 
 	 * @throws Exception
 	 */
-	@Scheduled(cron = "0 * * * * *")
+	@Scheduled(cron = "0 0 * * * *")
 	public void sendPushMessages() throws Exception {
 
 		List<JobCandidateRelation> jobCandidateRelations = new ArrayList<>();

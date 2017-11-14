@@ -427,7 +427,7 @@ public class BotController {
 		}
 
 		// when user clicks yes for interesting jobs? question
-		if (intentName.equals("interesting jobs again")) {
+		if (intentName.equals("interesting jobs")) {
 
 			TextMessage textMessage = new TextMessage("Thank you");
 			PushMessage pushMessage = new PushMessage(userId, textMessage);
