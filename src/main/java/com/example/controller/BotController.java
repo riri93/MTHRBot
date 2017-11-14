@@ -676,32 +676,46 @@ public class BotController {
 				saveChatLineMessage(candidate, "Please enter a valid date and time");
 			} else {
 
-				if (parameters != null && parameters.getString("date") != null
-						&& !parameters.getString("date").equals("")) {
+				
+				System.out.println("date : " + parameters.getString("date"));
+				System.out.println("time : " + parameters.getString("time"));
+				System.out.println("date-time : " + parameters.getString("date-time"));
+				
+				ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
+				ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
+				shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
+				shopCandidateRelationPK.setIdShop(botScheduler.getShop().getIdShop());
 
-					ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
-					ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
-					shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
-					shopCandidateRelationPK.setIdShop(botScheduler.getShop().getIdShop());
+				shopCandidateRelation = shopCandidateRelationRepository.findOne(shopCandidateRelationPK);
+				if (shopCandidateRelation != null) {
 
-					shopCandidateRelation = shopCandidateRelationRepository.findOne(shopCandidateRelationPK);
+					if (parameters != null && parameters.getString("date") != null
+							&& !parameters.getString("date").equals("")) {
 
-					if (parameters.getString("time") != null && !parameters.getString("time").equals("")) {
-						if (shopCandidateRelation != null) {
-							SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+						SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+						String date = parameters.getString("date");
+						Date interviewDate = formatter.parse(date);
+						shopCandidateRelation.setInterviewDate(interviewDate);
+						shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
+
+						if (parameters.getString("time") != null && !parameters.getString("time").equals("")) {
+
+							SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 							String dateTime = parameters.getString("date") + " " + parameters.getString("time");
-							Date interviewDate = formatter.parse(dateTime);
-							shopCandidateRelation.setInterviewDate(interviewDate);
+							Date interviewDate1 = formatter1.parse(dateTime);
+							shopCandidateRelation.setInterviewDate(interviewDate1);
 							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
+
 						}
+						
 					} else {
-						if (shopCandidateRelation != null) {
-							SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-							String dateTime = parameters.getString("date-time");
-							Date interviewDate = formatter.parse(dateTime);
-							shopCandidateRelation.setInterviewDate(interviewDate);
-							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
-						}
+
+						SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+						String dateTime = parameters.getString("date-time");
+						Date interviewDate = formatter.parse(dateTime);
+						shopCandidateRelation.setInterviewDate(interviewDate);
+						shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
+
 					}
 
 					TextMessage textMessage = new TextMessage("Okay, good luck!");
@@ -710,6 +724,7 @@ public class BotController {
 					saveChatLineMessage(candidate, "Okay, good luck!");
 				}
 			}
+
 		}
 
 		// when user did not pass the interview
