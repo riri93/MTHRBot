@@ -697,7 +697,7 @@ public class BotController {
 					} else {
 						if (shopCandidateRelation != null) {
 							SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-							String dateTime = parameters.getString("date");
+							String dateTime = parameters.getString("date-time");
 							Date interviewDate = formatter.parse(dateTime);
 							shopCandidateRelation.setInterviewDate(interviewDate);
 							shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
