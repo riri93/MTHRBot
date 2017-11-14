@@ -23,7 +23,7 @@ public class BotInformation implements Serializable {
 	private String searchCriteria = "address";
 	private String addressToSearch;
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date askForReasonDate;
 
 	@Temporal(TemporalType.TIME)

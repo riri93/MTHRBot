@@ -35,7 +35,7 @@ public class ShopCandidateRelation implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date interviewDate;
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date askInterviewDate;
 
 	@Temporal(TemporalType.TIMESTAMP)

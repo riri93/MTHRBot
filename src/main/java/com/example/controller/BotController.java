@@ -95,7 +95,7 @@ public class BotController {
 			throws JSONException, IOException, Exception {
 
 		SlackSession session = SlackSessionFactory.createWebSocketSlackSession(
-				"xoxa-27046751377-272029738837-271811869491-58a11eddd13396222fbb284609df573d");
+				"xoxp-27046751377-127332966816-272009034885-29a9b73ce611a58850e448ea7c4956d4");
 		session.connect();
 		SlackChannel channel = session.findChannelByName("testbot");
 

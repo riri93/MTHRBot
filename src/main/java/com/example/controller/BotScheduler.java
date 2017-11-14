@@ -233,7 +233,11 @@ public class BotScheduler {
 
 					if (shopCandidateRelation.getPassedInterviewMessageDate() == null) {
 
-						Date currentTime = retrieveCurrentTimeStamp();
+						Date date = new Date();
+						SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
+						sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+						String time = sdf.format(date);
+						Date currentTime = sdf.parse(time);
 
 						if (currentTime.equals(cal.getTime())) {
 
@@ -253,6 +257,8 @@ public class BotScheduler {
 					}
 				}
 
+				// ask did you confirm the interview time second time if user answered did not
+				// confirm in the first time
 				if ((shopCandidateRelation.getAskInterviewDate() != null
 						&& !shopCandidateRelation.isConfirmedInterview())
 						|| (shopCandidateRelation.getAskInterviewDate() != null
@@ -266,10 +272,14 @@ public class BotScheduler {
 					cal.add(Calendar.DAY_OF_WEEK, 2);
 					cal.getTime();
 
-					Date currentTime = retrieveCurrentTimeStamp();
+					Date date = new Date();
+					SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
+					sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+					String time = sdf.format(date);
+					Date currentTime = sdf.parse(time);
 
 					if (askInterviewCounter < 2) {
-						if (currentTime.equals(cal.getTime())) {
+						if (currentTime.after(cal.getTime())) {
 
 							ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
 									"https://cdn2.iconfinder.com/data/icons/employment-business/256/Job_Search-512.png",
@@ -293,6 +303,7 @@ public class BotScheduler {
 					}
 				}
 
+				// interview reminder
 				if (shopCandidateRelation.getInterviewDate() != null) {
 
 					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -302,7 +313,11 @@ public class BotScheduler {
 
 					if (shopCandidateRelation.getRemindInterviewDate() == null) {
 
-						Date currentTime = retrieveCurrentTimeStamp();
+						Date date = new Date();
+						SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
+						sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+						String time = sdf.format(date);
+						Date currentTime = sdf.parse(time);
 
 						if (currentTime.equals(cal.getTime())) {
 
@@ -318,6 +333,8 @@ public class BotScheduler {
 					}
 				}
 
+				// set user to potential candidate if he did not reply to the reason message
+				// after 2 days from asking
 				if (shopCandidateRelation.getCandidate().getBotInformation().getAskForReasonDate() != null) {
 
 					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -325,7 +342,12 @@ public class BotScheduler {
 					cal.add(Calendar.DAY_OF_WEEK, 2);
 					cal.getTime();
 
-					Date currentTime = retrieveCurrentTimeStamp();
+					Date date = new Date();
+					SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
+					sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+					String time = sdf.format(date);
+					Date currentTime = sdf.parse(time);
+
 
 					if (currentTime.equals(cal.getTime())) {
 
