@@ -12,11 +12,17 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.example.entity.BotInformation;
 import com.example.entity.Candidate;
@@ -50,6 +56,10 @@ public class BotController {
 	// channel token declaration
 	private static final String CHANNEL_ACCESS_TOKEN = "wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
 
+	final String uri = "https://hooks.slack.com/services/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";
+    RestTemplate restTemplate = new RestTemplate();
+    
+    
 	// Repositories and services injection
 	@Autowired
 	CandidateRepository candidateRepository;
@@ -229,6 +239,17 @@ public class BotController {
 
 				} else {
 
+					
+				    String input = "{'text':'test  bot  2 testt'}";
+
+				    HttpHeaders headers = new HttpHeaders();
+				    headers.setContentType(MediaType.APPLICATION_JSON);
+				   
+				    HttpEntity<String> entity = new HttpEntity<String>(input, headers);
+
+				    ResponseEntity<String> response = restTemplate
+				            .exchange(uri, HttpMethod.POST, entity, String.class);
+					
 					// session.sendMessage(channel,
 					// "userID: " + userId + " , time: " + timestamp + " text: " + customerMessage,
 					// null);
