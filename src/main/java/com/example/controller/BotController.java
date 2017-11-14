@@ -284,6 +284,16 @@ public class BotController {
 						saveChatLineMessage(candidate, "Send jobs carousel");
 					} else {
 
+						
+						String input = "{'text':'test  bot  2 testt'}";
+
+						HttpHeaders headers = new HttpHeaders();
+						headers.setContentType(MediaType.APPLICATION_JSON);
+
+						HttpEntity<String> entity = new HttpEntity<String>(input, headers);
+
+						ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
+						
 						// session.sendMessage(channel,
 						// "userID: " + userId + " , time: " + timestamp + " text: " + customerMessage,
 						// null);
@@ -334,6 +344,16 @@ public class BotController {
 						}
 
 					} catch (Exception e) {
+						
+						String input = "{'text':'test  bot  2 testt'}";
+
+						HttpHeaders headers = new HttpHeaders();
+						headers.setContentType(MediaType.APPLICATION_JSON);
+
+						HttpEntity<String> entity = new HttpEntity<String>(input, headers);
+
+						ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
+						
 						// session.sendMessage(channel,
 						// "userID: " + userId + " , time: " + timestamp + " text: " + customerMessage,
 						// null);
@@ -360,6 +380,16 @@ public class BotController {
 
 				} else if (candidate.getBotInformation().getSearchCriteria().equals("work time")) {
 
+					
+					String input = "{'text':'test  bot  2 testt'}";
+
+					HttpHeaders headers = new HttpHeaders();
+					headers.setContentType(MediaType.APPLICATION_JSON);
+
+					HttpEntity<String> entity = new HttpEntity<String>(input, headers);
+
+					ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
+					
 					// session.sendMessage(channel,
 					// "userID: " + userId + " , time: " + timestamp + " text: " + customerMessage,
 					// null);
@@ -378,6 +408,16 @@ public class BotController {
 
 					saveChatLineMessage(candidate, "Please enter a valid date");
 
+					
+					String input = "{'text':'test  bot  2 testt'}";
+
+					HttpHeaders headers = new HttpHeaders();
+					headers.setContentType(MediaType.APPLICATION_JSON);
+
+					HttpEntity<String> entity = new HttpEntity<String>(input, headers);
+
+					ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
+					
 					// session.sendMessage(channel,
 					// "userID: " + userId + " , time: " + timestamp + " text: " + customerMessage,
 					// null);
@@ -391,6 +431,16 @@ public class BotController {
 					saveChatLineMessage(candidate,
 							"I am sorry, I am having trouble understading your message. You can search for jobs by clicking on 'search for job menu'");
 
+					
+					String input = "{'text':'test  bot  2 testt'}";
+
+					HttpHeaders headers = new HttpHeaders();
+					headers.setContentType(MediaType.APPLICATION_JSON);
+
+					HttpEntity<String> entity = new HttpEntity<String>(input, headers);
+
+					ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
+					
 					// session.sendMessage(channel,
 					// "userID: " + userId + " , time: " + timestamp + " text: " + customerMessage,
 					// null);
