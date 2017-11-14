@@ -10,8 +10,14 @@ import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.client.RestTemplate;
 
 import com.example.entity.BotInformation;
 import com.example.entity.Candidate;
@@ -39,6 +45,9 @@ public class BotScheduler {
 
 	private Shop shop = new Shop();
 	private String channelToken = "wvydTwaiKtsG4Z90XPfG6hWB31/TX2tceTz+v1NqSXgOMgUZ55c4GnZZ6rd+i9lJn8d0k17/7A5E0Mq1kKpmAdMKWkmqGaiezxDAZykxJIA8MoDYx+a19t4cQbRd5zLWl3k30y2pSM1zzZQz/JVSjwdB04t89/1O/w1cDnyilFU=";
+
+	final String uri = "https://hooks.slack.com/services/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";
+	RestTemplate restTemplate = new RestTemplate();
 
 	@Autowired
 	JobCandidateRelationRepository jobCandidateRelationRepository;
@@ -406,6 +415,18 @@ public class BotScheduler {
 							if (shopCandidateRelation.getShop().getNameShop().equals("admin shop")) {
 								shopCandidateRelation.setProgress("Potential Candidate");
 								shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
+
+								String input = "{'text':'" + "userID: "
+										+ shopCandidateRelation.getCandidate().getUserLineId() + " \n time: "
+										+ (new Date()) + " \n Potential candidate: True'}";
+
+								HttpHeaders headers = new HttpHeaders();
+								headers.setContentType(MediaType.APPLICATION_JSON);
+
+								HttpEntity<String> entity = new HttpEntity<String>(input, headers);
+
+								ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity,
+										String.class);
 							}
 
 							askForReasonCounter++;

@@ -282,7 +282,7 @@ public class BotController {
 					} else {
 
 						String input = "{'text':'" + "userID: " + userId + " \n time: " + timestamp + " \n text: "
-							+ customerMessage + "'}";
+								+ customerMessage + "'}";
 
 						HttpHeaders headers = new HttpHeaders();
 						headers.setContentType(MediaType.APPLICATION_JSON);
@@ -340,7 +340,7 @@ public class BotController {
 					} catch (Exception e) {
 
 						String input = "{'text':'" + "userID: " + userId + " \n time: " + timestamp + " \n text: "
-							+ customerMessage + "'}";
+								+ customerMessage + "'}";
 
 						HttpHeaders headers = new HttpHeaders();
 						headers.setContentType(MediaType.APPLICATION_JSON);
@@ -612,6 +612,11 @@ public class BotController {
 		// when user chooses others as a reason
 		if (intentName.equals("Others")) {
 
+			TextMessage textMessage = new TextMessage("What is the reason?");
+			PushMessage pushMessage = new PushMessage(userId, textMessage);
+			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
+			saveChatLineMessage(candidate, "What is the reason?");
+
 			BotInformation botInformation = new BotInformation();
 			botInformation = candidate.getBotInformation();
 			botInformation.setSearchCriteria("others");
@@ -632,10 +637,16 @@ public class BotController {
 				shopCandidateRelationRepository.saveAndFlush(shopCandidateRelation);
 			}
 
-			TextMessage textMessage = new TextMessage("What is the reason?");
-			PushMessage pushMessage = new PushMessage(userId, textMessage);
-			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
-			saveChatLineMessage(candidate, "What is the reason?");
+			String input = "{'text':'" + "userID: " + userId + " \n time: " + timestamp
+					+ " \n Potential candidate: True'}";
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+
+			HttpEntity<String> entity = new HttpEntity<String>(input, headers);
+
+			ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
+
 		}
 
 		// when user clicks on yes when he is asked whether he got in contact with the
