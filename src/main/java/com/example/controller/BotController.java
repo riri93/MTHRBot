@@ -580,7 +580,8 @@ public class BotController {
 					Arrays.asList(new MessageAction("Confirmed", "Interview confirmed"),
 							new MessageAction("Not confirmed", "Interview not confirmed"),
 							new MessageAction("No interview", "No interview")));
-			TemplateMessage templateMessage = new TemplateMessage("Reason", buttonsTemplate);
+			TemplateMessage templateMessage = new TemplateMessage("Did you confirm the interview time?",
+					buttonsTemplate);
 
 			PushMessage pushMessage = new PushMessage(userId, templateMessage);
 			LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
@@ -661,6 +662,11 @@ public class BotController {
 		// when user clicks on interview confirmed when he is asked about the
 		// interview time
 		if (intentName.equals("Interview confirmed")) {
+
+			BotInformation botInformation = candidate.getBotInformation();
+			botInformation.setSearchCriteria("interview-time");
+			botInformationRepository.saveAndFlush(botInformation);
+
 			ShopCandidateRelation shopCandidateRelation = new ShopCandidateRelation();
 			ShopCandidateRelationPK shopCandidateRelationPK = new ShopCandidateRelationPK();
 			shopCandidateRelationPK.setIdCandidate(candidate.getIdUser());
@@ -677,10 +683,6 @@ public class BotController {
 		// when user clicks on interview confirmed he is asked about the interview time
 		// (enter a valid date and time)
 		if (intentName.equals("interview-time")) {
-
-			BotInformation botInformation = candidate.getBotInformation();
-			botInformation.setSearchCriteria("interview-time");
-			botInformationRepository.saveAndFlush(botInformation);
 
 			if (parameters == null) {
 				TextMessage textMessage = new TextMessage(
