@@ -94,10 +94,10 @@ public class BotController {
 	private @ResponseBody Map<String, Object> webhook(@RequestBody Map<String, Object> obj)
 			throws JSONException, IOException, Exception {
 
-		SlackSession session = SlackSessionFactory.createWebSocketSlackSession(
-				"xoxp-27046751377-127332966816-272009034885-29a9b73ce611a58850e448ea7c4956d4");
-		session.connect();
-		SlackChannel channel = session.findChannelByName("testbot");
+//		SlackSession session = SlackSessionFactory.createWebSocketSlackSession(
+//				"xoxp-27046751377-127332966816-272009034885-29a9b73ce611a58850e448ea7c4956d4");
+//		session.connect();
+//		SlackChannel channel = session.findChannelByName("testbot");
 
 		Candidate candidate = new Candidate();
 		ChatLineAdmin chatLineAdmin = new ChatLineAdmin();
@@ -232,8 +232,8 @@ public class BotController {
 
 				} else {
 
-					session.sendMessage(channel,
-							"userID: " + userId + " , time: " + timestamp + " text: " + customerMessage, null);
+//					session.sendMessage(channel,
+//							"userID: " + userId + " , time: " + timestamp + " text: " + customerMessage, null);
 
 					TextMessage textMessage = new TextMessage("Please enter a valid area or station address");
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
@@ -268,8 +268,8 @@ public class BotController {
 						saveChatLineMessage(candidate, "Send jobs carousel");
 					} else {
 
-						session.sendMessage(channel,
-								"userID: " + userId + " , time: " + timestamp + " text: " + customerMessage, null);
+//						session.sendMessage(channel,
+//								"userID: " + userId + " , time: " + timestamp + " text: " + customerMessage, null);
 
 						TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid location");
 						PushMessage pushMessage = new PushMessage(userId, textMessage);
@@ -319,8 +319,8 @@ public class BotController {
 						}
 
 					} catch (Exception e) {
-						session.sendMessage(channel,
-								"userID: " + userId + " , time: " + timestamp + " text: " + customerMessage, null);
+//						session.sendMessage(channel,
+//								"userID: " + userId + " , time: " + timestamp + " text: " + customerMessage, null);
 
 						TextMessage textMessage = new TextMessage("No jobs found. Please enter a valid salary");
 						PushMessage pushMessage = new PushMessage(userId, textMessage);
@@ -344,8 +344,8 @@ public class BotController {
 
 				} else if (candidate.getBotInformation().getSearchCriteria().equals("work time")) {
 
-					session.sendMessage(channel,
-							"userID: " + userId + " , time: " + timestamp + " text: " + customerMessage, null);
+//					session.sendMessage(channel,
+//							"userID: " + userId + " , time: " + timestamp + " text: " + customerMessage, null);
 
 					TextMessage textMessage = new TextMessage("Please enter a valid date");
 					PushMessage pushMessage = new PushMessage(userId, textMessage);
@@ -355,8 +355,9 @@ public class BotController {
 
 				} else {
 
-					session.sendMessage(channel,
-							"userID: " + userId + " , time: " + timestamp + " text: " + customerMessage, null);
+					// session.sendMessage(channel,
+					// "userID: " + userId + " , time: " + timestamp + " text: " + customerMessage,
+					// null);
 				}
 			}
 		}
