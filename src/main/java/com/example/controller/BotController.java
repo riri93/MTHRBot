@@ -280,9 +280,7 @@ public class BotController {
 
 						saveChatLineMessage(candidate, "No jobs found. Please enter a valid location");
 					}
-				} else
-
-				if (candidate.getBotInformation().getSearchCriteria().equals("salary")) {
+				} else if (candidate.getBotInformation().getSearchCriteria().equals("salary")) {
 
 					String salary = customerMessage;
 					List<Job> jobs = new ArrayList<>();
@@ -357,8 +355,18 @@ public class BotController {
 
 					saveChatLineMessage(candidate, "Please enter a valid date");
 
-				} else {
+				} else if (candidate.getBotInformation().getSearchCriteria().equals("interview-time")) {
 
+					TextMessage textMessage = new TextMessage("Please enter a valid date");
+					PushMessage pushMessage = new PushMessage(userId, textMessage);
+					LineMessagingServiceBuilder.create(CHANNEL_ACCESS_TOKEN).build().pushMessage(pushMessage).execute();
+
+					saveChatLineMessage(candidate, "Please enter a valid date");
+
+					// session.sendMessage(channel,
+					// "userID: " + userId + " , time: " + timestamp + " text: " + customerMessage,
+					// null);
+				} else {
 					// session.sendMessage(channel,
 					// "userID: " + userId + " , time: " + timestamp + " text: " + customerMessage,
 					// null);
@@ -669,6 +677,11 @@ public class BotController {
 		// when user clicks on interview confirmed he is asked about the interview time
 		// (enter a valid date and time)
 		if (intentName.equals("interview-time")) {
+
+			BotInformation botInformation = candidate.getBotInformation();
+			botInformation.setSearchCriteria("interview-time");
+			botInformationRepository.saveAndFlush(botInformation);
+
 			if (parameters == null) {
 				TextMessage textMessage = new TextMessage(
 						"Please enter a valid date and time (ex: mm/dd/yyyy, tomorrow 9am, next monday)");
